@@ -1,0 +1,5 @@
+recovery open: wal: corrupt record: segment 21 offset 5986: unexpected EOF
+trial 6 FAILED: recovery child exited on its own with code 2
+
+6 trials: 5 passed, 1 failed; 1983 acked ops verified, 3361 values validated, 4 trials had data below L0, 1 trials killed before first ack, 9 recovery kills (5 during Open with WAL data), 1 torn tails injected, 0 seen truncated by the final Open (2s)
+wrote $HOME/projects/raftkv/results/audit/m0-fixes/m3-new-harness-tail-mutant.json

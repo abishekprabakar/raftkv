@@ -1,0 +1,7 @@
+trial   25/100  kill@   0ms acked=    0 unacked_durable=0 ssts= 6 deepest=L2 replayed=0  pass=25 fail=0
+trial   50/100  kill@ 241ms acked=  216 unacked_durable=4 ssts= 9 deepest=L2 replayed=220  pass=50 fail=0
+trial   75/100  kill@ 928ms acked=  893 unacked_durable=4 ssts=10 deepest=L2 replayed=228  pass=75 fail=0
+trial  100/100  kill@ 225ms acked=  204 unacked_durable=4 ssts= 8 deepest=L2 replayed=208  pass=100 fail=0
+
+100 trials: 100 passed, 0 failed; 31726 acked ops verified, 159804 values validated, 98 trials had data below L0, 10 trials killed before first ack, 0 torn WAL tails truncated (39s)
+wrote $HOME/projects/raftkv/results/audit/m0-fixes/m1-old-harness-recovery-mutant.json

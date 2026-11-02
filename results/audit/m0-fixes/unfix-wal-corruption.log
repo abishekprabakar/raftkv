@@ -1,0 +1,28 @@
+=== RUN   TestMidSegmentCorruptionRefusesOpen
+    regression_test.go:189: Open succeeded and dropped acknowledged records (WALTruncatedBytes=3000)
+--- FAIL: TestMidSegmentCorruptionRefusesOpen (0.03s)
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/storage/engine	0.228s
+testing: warning: no tests to run
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/storage/ikey	0.338s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/storage/memtable	0.613s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/storage/sstable	0.475s [no tests to run]
+=== RUN   TestMidSegmentCorruptionIsAnError
+=== RUN   TestMidSegmentCorruptionIsAnError/payload
+    wal_test.go:163: Replay returned <nil>, want ErrCorrupt: "second" is valid and must not be dropped
+=== RUN   TestMidSegmentCorruptionIsAnError/crc
+    wal_test.go:163: Replay returned <nil>, want ErrCorrupt: "second" is valid and must not be dropped
+=== RUN   TestMidSegmentCorruptionIsAnError/length
+    wal_test.go:163: Replay returned <nil>, want ErrCorrupt: "second" is valid and must not be dropped
+--- FAIL: TestMidSegmentCorruptionIsAnError (0.05s)
+    --- FAIL: TestMidSegmentCorruptionIsAnError/payload (0.02s)
+    --- FAIL: TestMidSegmentCorruptionIsAnError/crc (0.01s)
+    --- FAIL: TestMidSegmentCorruptionIsAnError/length (0.01s)
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/storage/wal	0.796s
+FAIL

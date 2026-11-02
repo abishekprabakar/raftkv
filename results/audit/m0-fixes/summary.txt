@@ -1,0 +1,14 @@
+t1-gofmt exit=0 seconds=0
+t2-vet exit=0 seconds=1
+t3-test exit=0 seconds=9
+t4-race-x5 exit=0 seconds=52
+unfix-snapshot-order exit=1 seconds=1
+unfix-oversize exit=1 seconds=1
+unfix-iterator exit=1 seconds=1
+unfix-wal-corruption exit=1 seconds=1
+h1-crash-seed1 exit=0 seconds=214
+h2-crash-seed20261102 exit=0 seconds=226
+m1-old-harness-recovery-mutant exit=0 seconds=39
+m2-new-harness-recovery-mutant exit=1 seconds=2
+m3-new-harness-tail-mutant exit=1 seconds=3
+m4-new-harness-ack-mutant exit=1 seconds=1

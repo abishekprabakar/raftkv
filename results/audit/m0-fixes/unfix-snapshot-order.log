@@ -1,0 +1,21 @@
+=== RUN   TestGetSnapshotOrder
+    regression_test.go:44: key has existed the whole time, but Get returned "", engine: key not found
+--- FAIL: TestGetSnapshotOrder (0.03s)
+=== RUN   TestScanSnapshotOrder
+    regression_test.go:62: key has existed the whole time, but Scan returned nothing (err <nil>)
+--- FAIL: TestScanSnapshotOrder (0.02s)
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/storage/engine	0.268s
+testing: warning: no tests to run
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/storage/ikey	0.345s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/storage/memtable	0.617s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/storage/sstable	0.479s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/storage/wal	0.759s [no tests to run]
+FAIL

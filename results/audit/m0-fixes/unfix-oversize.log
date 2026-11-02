@@ -1,0 +1,20 @@
+=== RUN   TestOversizeRecordRejected
+    regression_test.go:128: Put returned <nil>, want ErrTooLarge
+--- FAIL: TestOversizeRecordRejected (0.17s)
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/storage/engine	0.370s
+testing: warning: no tests to run
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/storage/ikey	0.369s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/storage/memtable	0.510s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/storage/sstable	0.651s [no tests to run]
+=== RUN   TestOversizeRecordRejected
+    wal_test.go:192: Append returned <nil>, want ErrTooLarge
+--- FAIL: TestOversizeRecordRejected (0.08s)
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/storage/wal	0.873s
+FAIL

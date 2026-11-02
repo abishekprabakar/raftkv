@@ -5,6 +5,74 @@ questions worth being able to answer about it. Every number comes from a real ru
 and names the file it came from. Numbers from the audit are in
 `results/audit/m0/`, and their criteria are in `docs/acceptance/M0.md`.
 
+## M0 fixes: the audit's bugs, and a stricter crash test
+
+Criteria: `docs/acceptance/M0-fixes.md`. Results: `results/audit/m0-fixes/` and
+`results/crash.json`. The corrections listed under M0 below are now in the docs.
+
+### What changed
+
+- `Get` and `Scan` capture the files first and load the snapshot second.
+- A record too big for the WAL to replay is rejected before it is acknowledged.
+- An exhausted iterator stays exhausted.
+- Damage with a valid record after it now refuses to open, instead of being cut
+  off as a torn tail. Tail truncation is fsynced.
+- The crash harness now kills recovery while it has work to do, adds torn WAL
+  tails, reads every ack before `cmd.Wait`, and fails if a child exits by itself.
+
+Each regression test was checked by undoing its fix: all of them failed without
+the fix and pass with it.
+
+### Do the old crash numbers still hold?
+
+| Claim | Verdict | Evidence |
+|---|---|---|
+| 500 trials | Holds | 500 of 500 on seed 1 and on seed 20261102, on the stricter test |
+| Zero corruption | Holds | 0 failures on both seeds |
+| 151,604 acked writes | True of that one run, not repeatable | The count depends on OS scheduling. Seed 1 now gives 155,462, and seed 20261102 gives 170,535 |
+
+The number to quote from now on is 155,462 (`results/crash.json`). The old
+harness never killed a recovery with work to do. This one did so 321 times on
+seed 1 and 414 times on seed 20261102, and it added 123 and 138 torn tails.
+
+The harness still cannot detect a missing fsync, so do not claim power-loss
+durability from it.
+
+### Proof the stricter harness is stricter
+
+A bug was added on purpose: recovery deletes the old WAL files before their data
+reaches a table, so a crash in that gap loses acknowledged writes.
+
+| Harness | Result |
+|---|---|
+| Old | Passed 100 of 100: it never saw the bug |
+| New | Failed on trial 2 |
+
+Removing tail truncation made the new harness fail on trial 6. A WAL segment with
+a torn tail stopped being the newest one after a kill, so it turned into
+corruption that recovery correctly refused to open. Acknowledging before the WAL
+write still fails on trial 2.
+
+### Questions and answers
+
+**Q: Your crash test passed before and after you made it stricter. What did
+making it stricter achieve?**
+It now catches a whole class of recovery bugs it could not see. I showed that by
+adding one such bug: the old harness passed it 100 of 100 times and the new one
+failed it on trial 2. A passing test only means something when it can fail.
+
+**Q: Why does the torn tail need to be truncated at all? It gets skipped anyway.**
+Only while its segment is the newest one. Recovery starts a new segment, so if it
+crashes before deleting the old ones, the torn tail is now in an older segment,
+where damage means real corruption and the database refuses to open. Truncating
+first keeps that from happening.
+
+**Q: How does the WAL tell a torn write from corruption?**
+Records reach the file in order, so a write that was cut off cannot have a valid
+record after it. If one exists, the damage is in data that reached the disk. The
+exception is the very last record: damage there looks the same as an unfinished
+write, so it gets cut off.
+
 ## M0: audit of the storage engine
 
 ### What happened

@@ -62,21 +62,25 @@ Bloom filters cut disk block reads for missing keys by 116.3x (`bloom.disk_read_
 
 ## Crash recovery harness (`make crash-test` -> `results/crash.json`)
 
-Hardware: Apple M5, 10 cores, 16 GB RAM, macOS 26.5.1 arm64, filesystem apfs, go1.27.2. Collected 2026-10-19T17:47:24Z.
+Hardware: Apple M5, 10 cores, 16 GB RAM, macOS 26.5.1 arm64, filesystem apfs, go1.27.2. Collected 2026-11-02T05:25:07Z.
 
 Note: On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware.
 
-Each trial starts a child process with 4 writer goroutines over 500 keys each (memtable 65536 bytes, L0 trigger 2, group_commit), kills it with SIGKILL after a random delay (30% in [0,60), 45% in [60,400), 25% in [400,1500)), reopens the directory and verifies acknowledged writes, prefix consistency per writer and every value checksum.
+Each trial starts a child process with 4 writer goroutines over 500 keys each (memtable 65536 bytes, L0 trigger 2, group_commit) and kills it with SIGKILL after a random delay (30% in [0,60), 45% in [60,400), 25% in [400,1500)). It adds a torn WAL tail in 1 in 4 trials, kills recovery 0 to 3 times in a row (0 to 29 after Open starts), then reopens the directory and verifies acknowledged writes, prefix consistency per writer and every value checksum. Seed 1.
+
+SIGKILL leaves the OS page cache intact, so this harness cannot detect a missing fsync and says nothing about power loss.
 
 | Metric | Value | JSON field |
 |---|---|---|
 | Trials (SIGKILL at a random point) | 500 | trials |
 | Passed / failed | 500 / 0 | passed, failed |
-| Acknowledged writes verified present after recovery | 151,604 | total_acked_ops |
-| Stored values checksum-validated | 858,175 | total_values_validated |
-| Trials with data already compacted below L0 at the kill | 498 | trials_with_data_below_l0 |
-| Trials killed during startup/recovery (before first ack) | 41 | trials_killed_before_first_ack |
-| Durable but unacknowledged writes seen (total / max per trial) | 1,548 / 4 | total_unacked_durable_ops, max_unacked_durable_ops |
-| Torn WAL tails truncated | 0 | trials_with_truncated_wal_tail |
-| Wall time | 189 s | wall_seconds |
+| Acknowledged writes checked against the recovered state | 155,462 | total_acked_ops |
+| Stored values checksum-validated | 864,802 | total_values_validated |
+| Trials with data already compacted below L0 at the kill | 499 | trials_with_data_below_l0 |
+| Trials killed before the first ack | 49 | trials_killed_before_first_ack |
+| Recovery kills (total / during Open with WAL data present) | 692 / 321 | recovery_kills, recovery_kills_mid_open |
+| Durable but unacknowledged writes seen (total / max per trial) | 1,438 / 4 | total_unacked_durable_ops, max_unacked_durable_ops |
+| Torn WAL tails injected | 123 | torn_tails_injected |
+| Torn tails seen truncated by the final Open (a recovery child truncates the rest) | 43 | trials_with_truncated_wal_tail |
+| Wall time | 214 s | wall_seconds |
 

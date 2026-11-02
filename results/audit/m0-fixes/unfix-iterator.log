@@ -1,0 +1,35 @@
+=== RUN   TestExhaustedIteratorStaysExhausted
+--- FAIL: TestExhaustedIteratorStaysExhausted (0.01s)
+panic: runtime error: index out of range [0] with length 0 [recovered, repanicked]
+
+goroutine 35 [running]:
+testing.tRunner.func1.2({0x104fa0c50, 0x338ff9826030})
+	/opt/homebrew/Cellar/go/1.27.2/libexec/src/testing/testing.go:2125 +0x1a0
+testing.tRunner.func1()
+	/opt/homebrew/Cellar/go/1.27.2/libexec/src/testing/testing.go:2128 +0x2c8
+panic({0x104fa0c50?, 0x338ff9826030?})
+	/opt/homebrew/Cellar/go/1.27.2/libexec/src/runtime/panic.go:859 +0x120
+github.com/abishekprabakar/raftkv/internal/storage/engine.(*mergeIter).Next(0x400?)
+	$TMPDIR/raftkv-fixes.Ik4D2s/unfix-iterator/internal/storage/engine/iterator.go:186 +0xf8
+github.com/abishekprabakar/raftkv/internal/storage/engine.(*Iterator).Next(0x338ff98143c0)
+	$TMPDIR/raftkv-fixes.Ik4D2s/unfix-iterator/internal/storage/engine/iterator.go:268 +0x40
+github.com/abishekprabakar/raftkv/internal/storage/engine.TestExhaustedIteratorStaysExhausted(0x338ff986a248)
+	$TMPDIR/raftkv-fixes.Ik4D2s/unfix-iterator/internal/storage/engine/regression_test.go:143 +0x118
+testing.tRunner(0x338ff986a248, 0x104fae9c0)
+	/opt/homebrew/Cellar/go/1.27.2/libexec/src/testing/testing.go:2195 +0xc4
+created by testing.(*T).Run in goroutine 1
+	/opt/homebrew/Cellar/go/1.27.2/libexec/src/testing/testing.go:2260 +0x3b8
+FAIL	github.com/abishekprabakar/raftkv/internal/storage/engine	0.200s
+testing: warning: no tests to run
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/storage/ikey	0.600s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/storage/memtable	0.327s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/storage/sstable	0.736s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/storage/wal	0.466s [no tests to run]
+FAIL

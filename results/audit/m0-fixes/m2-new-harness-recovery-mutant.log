@@ -1,0 +1,4 @@
+trial 2 FAILED: writer 0: recovered state is not a prefix of the op stream (last ack op 202, 447 keys differ)
+
+2 trials: 1 passed, 1 failed; 815 acked ops verified, 516 values validated, 1 trials had data below L0, 1 trials killed before first ack, 4 recovery kills (1 during Open with WAL data), 0 torn tails injected, 0 seen truncated by the final Open (1s)
+wrote $HOME/projects/raftkv/results/audit/m0-fixes/m2-new-harness-recovery-mutant.json

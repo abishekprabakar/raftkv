@@ -125,12 +125,14 @@ Bloom filters cut disk block reads for missing keys by 116.3x (`bloom.disk_read_
 |---|---|---|
 | Trials (SIGKILL at a random point) | 500 | trials |
 | Passed / failed | 500 / 0 | passed, failed |
-| Acknowledged writes verified present after recovery | 151,604 | total_acked_ops |
-| Stored values checksum-validated | 858,175 | total_values_validated |
-| Trials with data already compacted below L0 at the kill | 498 | trials_with_data_below_l0 |
-| Trials killed during startup/recovery (before first ack) | 41 | trials_killed_before_first_ack |
-| Durable but unacknowledged writes seen (total / max per trial) | 1,548 / 4 | total_unacked_durable_ops, max_unacked_durable_ops |
-| Torn WAL tails truncated | 0 | trials_with_truncated_wal_tail |
-| Wall time | 189 s | wall_seconds |
+| Acknowledged writes checked against the recovered state | 155,462 | total_acked_ops |
+| Stored values checksum-validated | 864,802 | total_values_validated |
+| Trials with data already compacted below L0 at the kill | 499 | trials_with_data_below_l0 |
+| Trials killed before the first ack | 49 | trials_killed_before_first_ack |
+| Recovery kills (total / during Open with WAL data present) | 692 / 321 | recovery_kills, recovery_kills_mid_open |
+| Durable but unacknowledged writes seen (total / max per trial) | 1,438 / 4 | total_unacked_durable_ops, max_unacked_durable_ops |
+| Torn WAL tails injected | 123 | torn_tails_injected |
+| Torn tails seen truncated by the final Open (a recovery child truncates the rest) | 43 | trials_with_truncated_wal_tail |
+| Wall time | 214 s | wall_seconds |
 
 <!-- results:end -->
