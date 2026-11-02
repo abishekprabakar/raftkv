@@ -1,0 +1,7 @@
+2000 schedules, 23 failed, 1.4s: 11147138 events, 4046472 sent, 160141 dropped, 66744 duplicated, 15423 long delays, 382353 reordered, 5915 partitions (1129 one-way), 33685 crashes (3284 during save, 3105 after save, 16913 power losses), 21078 leaders, 232000 entries committed
+  188556 writes acknowledged, 112907 retries dropped, 80889 reads served, 42529 reads refused, 25710 compactions, 1892 snapshots installed
+  leader-completeness        23 schedules, first at seed 5
+  seed 5 (figure8): leader-completeness at 8744249us on node 2: leader of term 80 lacks index 37, committed in term 52
+  seed 37 (figure8): leader-completeness at 5144928us on node 2: leader of term 43 lacks index 58, committed in term 35
+  seed 237 (figure8): leader-completeness at 8806099us on node 2: leader of term 67 lacks index 45, committed in term 52
+wrote $HOME/projects/raftkv/results/audit/m3/q-count-old-terms.json

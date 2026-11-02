@@ -1,0 +1,8 @@
+2000 schedules, 14 failed, 1.5s: 11286060 events, 4047477 sent, 161522 dropped, 66377 duplicated, 15304 long delays, 376332 reordered, 5900 partitions (1126 one-way), 34415 crashes (3340 during save, 3162 after save, 17282 power losses), 21694 leaders, 230086 entries committed
+  185654 writes acknowledged, 115658 retries dropped, 79521 reads served, 42573 reads refused, 24407 compactions, 2090 snapshots installed
+  commit-monotonic           11 schedules, first at seed 32
+  panic                       3 schedules, first at seed 711
+  seed 32 (calm): commit-monotonic at 1771146us on node 3: commit index went from 405 to 404
+  seed 104 (calm): commit-monotonic at 1545253us on node 4: commit index went from 461 to 460
+  seed 496 (calm): commit-monotonic at 4776204us on node 1: commit index went from 689 to 688
+wrote $HOME/projects/raftkv/results/audit/m3/q-stale-snapshot-rolls-back.json

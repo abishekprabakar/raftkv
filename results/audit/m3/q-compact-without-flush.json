@@ -1,0 +1,228 @@
+{
+  "generated_at": "2026-11-02T07:12:18Z",
+  "hardware": {
+    "collected_at": "2026-11-02T07:12:18Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1,
+  "properties_only": false,
+  "wall_seconds": 1.178162292,
+  "schedules": 2000,
+  "violations": 278,
+  "by_check": [
+    {
+      "check": "panic",
+      "schedules": 278,
+      "first_seed": 3
+    }
+  ],
+  "schedules_by_profile": {
+    "calm": 250,
+    "chaos": 250,
+    "crash": 250,
+    "figure8": 250,
+    "lossy": 250,
+    "partition": 250,
+    "snapshot": 250,
+    "solo": 250
+  },
+  "totals": {
+    "events": 10737154,
+    "virtual_ms": 10185168,
+    "messages_sent": 3857523,
+    "messages_delivered": 3377024,
+    "messages_dropped": 156664,
+    "messages_blocked_by_partition": 143093,
+    "messages_to_crashed_nodes": 235545,
+    "messages_duplicated": 60499,
+    "messages_delayed_past_election_timeout": 14150,
+    "messages_reordered": 370395,
+    "partitions": 5198,
+    "one_way_cuts": 1087,
+    "crashes": 31862,
+    "crashes_between_events": 26027,
+    "crashes_during_save": 3004,
+    "crashes_after_save": 2831,
+    "restarts": 31367,
+    "commands_proposed": 666588,
+    "leaders_elected": 20745,
+    "entries_committed": 222124,
+    "writes_acknowledged": 180221,
+    "retried_writes_dropped": 112099,
+    "reads_served": 77215,
+    "reads_refused": 38987,
+    "log_compactions": 21605,
+    "snapshots_installed": 1062,
+    "power_loss_crashes": 15956
+  },
+  "failures": [
+    {
+      "seed": 3,
+      "profile": "crash",
+      "check": "panic",
+      "at_us": 2046637,
+      "node": 0,
+      "detail": "raft: state machine at 5 is behind the snapshot at 10"
+    },
+    {
+      "seed": 7,
+      "profile": "snapshot",
+      "check": "panic",
+      "at_us": 1124570,
+      "node": 0,
+      "detail": "raft: state machine at 14 is behind the snapshot at 18"
+    },
+    {
+      "seed": 12,
+      "profile": "chaos",
+      "check": "panic",
+      "at_us": 3232411,
+      "node": 0,
+      "detail": "raft: state machine at 23 is behind the snapshot at 25"
+    },
+    {
+      "seed": 15,
+      "profile": "snapshot",
+      "check": "panic",
+      "at_us": 2216085,
+      "node": 0,
+      "detail": "raft: state machine at 3 is behind the snapshot at 6"
+    },
+    {
+      "seed": 35,
+      "profile": "crash",
+      "check": "panic",
+      "at_us": 3025450,
+      "node": 0,
+      "detail": "raft: state machine at 7 is behind the snapshot at 20"
+    },
+    {
+      "seed": 47,
+      "profile": "snapshot",
+      "check": "panic",
+      "at_us": 1893011,
+      "node": 0,
+      "detail": "raft: state machine at 23 is behind the snapshot at 24"
+    },
+    {
+      "seed": 55,
+      "profile": "snapshot",
+      "check": "panic",
+      "at_us": 585064,
+      "node": 0,
+      "detail": "raft: state machine at 2 is behind the snapshot at 5"
+    },
+    {
+      "seed": 63,
+      "profile": "snapshot",
+      "check": "panic",
+      "at_us": 4605326,
+      "node": 0,
+      "detail": "raft: state machine at 10 is behind the snapshot at 20"
+    },
+    {
+      "seed": 71,
+      "profile": "snapshot",
+      "check": "panic",
+      "at_us": 456978,
+      "node": 0,
+      "detail": "raft: state machine at 9 is behind the snapshot at 10"
+    },
+    {
+      "seed": 79,
+      "profile": "snapshot",
+      "check": "panic",
+      "at_us": 546587,
+      "node": 0,
+      "detail": "raft: state machine at 5 is behind the snapshot at 10"
+    },
+    {
+      "seed": 87,
+      "profile": "snapshot",
+      "check": "panic",
+      "at_us": 2416016,
+      "node": 0,
+      "detail": "raft: state machine at 26 is behind the snapshot at 28"
+    },
+    {
+      "seed": 91,
+      "profile": "crash",
+      "check": "panic",
+      "at_us": 1004426,
+      "node": 0,
+      "detail": "raft: state machine at 20 is behind the snapshot at 21"
+    },
+    {
+      "seed": 99,
+      "profile": "crash",
+      "check": "panic",
+      "at_us": 1234225,
+      "node": 0,
+      "detail": "raft: state machine at 14 is behind the snapshot at 20"
+    },
+    {
+      "seed": 123,
+      "profile": "crash",
+      "check": "panic",
+      "at_us": 2254144,
+      "node": 0,
+      "detail": "raft: state machine at 33 is behind the snapshot at 51"
+    },
+    {
+      "seed": 127,
+      "profile": "snapshot",
+      "check": "panic",
+      "at_us": 656338,
+      "node": 0,
+      "detail": "raft: state machine at 3 is behind the snapshot at 7"
+    },
+    {
+      "seed": 131,
+      "profile": "crash",
+      "check": "panic",
+      "at_us": 479444,
+      "node": 0,
+      "detail": "raft: state machine at 7 is behind the snapshot at 21"
+    },
+    {
+      "seed": 134,
+      "profile": "solo",
+      "check": "panic",
+      "at_us": 2393549,
+      "node": 0,
+      "detail": "raft: state machine at 8 is behind the snapshot at 11"
+    },
+    {
+      "seed": 135,
+      "profile": "snapshot",
+      "check": "panic",
+      "at_us": 449638,
+      "node": 0,
+      "detail": "raft: state machine at 2 is behind the snapshot at 3"
+    },
+    {
+      "seed": 143,
+      "profile": "snapshot",
+      "check": "panic",
+      "at_us": 1676392,
+      "node": 0,
+      "detail": "raft: state machine at 19 is behind the snapshot at 20"
+    },
+    {
+      "seed": 151,
+      "profile": "snapshot",
+      "check": "panic",
+      "at_us": 3750502,
+      "node": 0,
+      "detail": "raft: state machine at 5 is behind the snapshot at 14"
+    }
+  ]
+}

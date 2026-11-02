@@ -1,0 +1,7 @@
+2000 schedules, 10 failed, 1.5s: 11322780 events, 4075219 sent, 162143 dropped, 66671 duplicated, 15351 long delays, 383701 reordered, 5870 partitions (1126 one-way), 34376 crashes (3339 during save, 3154 after save, 17251 power losses), 21673 leaders, 232027 entries committed
+  187692 writes acknowledged, 115438 retries dropped, 80567 reads served, 42314 reads refused, 25252 compactions, 1844 snapshots installed
+  state-machine-safety       10 schedules, first at seed 215
+  seed 215 (snapshot): state-machine-safety at 1279562us on node 1: index 10 committed as term 3, but another node committed term 6
+  seed 487 (snapshot): state-machine-safety at 1401424us on node 1: index 11 committed as term 4, but another node committed term 6
+  seed 495 (snapshot): state-machine-safety at 1338690us on node 1: index 3 committed as term 1, but another node committed term 2
+wrote $HOME/projects/raftkv/results/audit/m3/q-install-keeps-conflicting-log.json

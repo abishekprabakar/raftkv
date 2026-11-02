@@ -1,0 +1,11 @@
+--- FAIL: TestSimSchedules (1.16s)
+    sim_test.go:24: 2000 schedules, 10737154 events, 31862 crashes, 5198 partitions
+    sim_test.go:29: seed 3 (crash): panic at 2046637us on node 0: raft: state machine at 5 is behind the snapshot at 10
+    sim_test.go:29: seed 7 (snapshot): panic at 1124570us on node 0: raft: state machine at 14 is behind the snapshot at 18
+    sim_test.go:29: seed 12 (chaos): panic at 3232411us on node 0: raft: state machine at 23 is behind the snapshot at 25
+    sim_test.go:29: seed 15 (snapshot): panic at 2216085us on node 0: raft: state machine at 3 is behind the snapshot at 6
+    sim_test.go:29: seed 35 (crash): panic at 3025450us on node 0: raft: state machine at 7 is behind the snapshot at 20
+    sim_test.go:33: 278 of 2000 schedules failed: [{Check:panic Schedules:278 FirstSeed:3}]
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft/sim	1.351s
+FAIL

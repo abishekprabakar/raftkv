@@ -1,0 +1,7 @@
+2000 schedules, 584 failed, 1.0s: 7328375 events, 2832810 sent, 121185 dropped, 60365 duplicated, 13987 long delays, 260554 reordered, 4798 partitions (849 one-way), 20128 crashes (2062 during save, 1923 after save, 10175 power losses), 11430 leaders, 175370 entries committed
+  152807 writes acknowledged, 39798 retries dropped, 67181 reads served, 31770 reads refused, 21462 compactions, 1368 snapshots installed
+  commit-monotonic          584 schedules, first at seed 2
+  seed 2 (partition): commit-monotonic at 4381158us on node 2: commit index went from 77 to 76
+  seed 5 (figure8): commit-monotonic at 1059997us on node 5: commit index went from 7 to 6
+  seed 11 (crash): commit-monotonic at 1057015us on node 2: commit index went from 4 to 3
+wrote $HOME/projects/raftkv/results/audit/m3/q-commit-can-decrease.json

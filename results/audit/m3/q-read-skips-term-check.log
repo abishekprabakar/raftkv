@@ -1,0 +1,7 @@
+2000 schedules, 28 failed, 1.5s: 11260691 events, 4057511 sent, 162453 dropped, 66872 duplicated, 15278 long delays, 384127 reordered, 5851 partitions (1113 one-way), 33990 crashes (3249 during save, 3085 after save, 16993 power losses), 21595 leaders, 231273 entries committed
+  187318 writes acknowledged, 113207 retries dropped, 80710 reads served, 33569 reads refused, 25450 compactions, 1827 snapshots installed
+  kv-linearizable            28 schedules, first at seed 51
+  seed 51 (crash): kv-linearizable at 2776287us on node 1: read of key k0 went backwards: 45 tokens after an earlier read saw 58
+  seed 259 (crash): kv-linearizable at 1926784us on node 3: read of key k0 misses c1-1, acknowledged before the read began
+  seed 386 (partition): kv-linearizable at 3773251us on node 2: read of key k2 misses c4-40, acknowledged before the read began
+wrote $HOME/projects/raftkv/results/audit/m3/q-read-skips-term-check.json

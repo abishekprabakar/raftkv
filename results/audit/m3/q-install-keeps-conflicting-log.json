@@ -1,0 +1,148 @@
+{
+  "generated_at": "2026-11-02T07:12:22Z",
+  "hardware": {
+    "collected_at": "2026-11-02T07:12:22Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1,
+  "properties_only": false,
+  "wall_seconds": 1.4685365,
+  "schedules": 2000,
+  "violations": 10,
+  "by_check": [
+    {
+      "check": "state-machine-safety",
+      "schedules": 10,
+      "first_seed": 215
+    }
+  ],
+  "schedules_by_profile": {
+    "calm": 250,
+    "chaos": 250,
+    "crash": 250,
+    "figure8": 250,
+    "lossy": 250,
+    "partition": 250,
+    "snapshot": 250,
+    "solo": 250
+  },
+  "totals": {
+    "events": 11322780,
+    "virtual_ms": 10969731,
+    "messages_sent": 4075219,
+    "messages_delivered": 3548283,
+    "messages_dropped": 162143,
+    "messages_blocked_by_partition": 168732,
+    "messages_to_crashed_nodes": 257277,
+    "messages_duplicated": 66671,
+    "messages_delayed_past_election_timeout": 15351,
+    "messages_reordered": 383701,
+    "partitions": 5870,
+    "one_way_cuts": 1126,
+    "crashes": 34376,
+    "crashes_between_events": 27883,
+    "crashes_during_save": 3339,
+    "crashes_after_save": 3154,
+    "restarts": 34374,
+    "commands_proposed": 683044,
+    "leaders_elected": 21673,
+    "entries_committed": 232027,
+    "writes_acknowledged": 187692,
+    "retried_writes_dropped": 115438,
+    "reads_served": 80567,
+    "reads_refused": 42314,
+    "log_compactions": 25252,
+    "snapshots_installed": 1844,
+    "power_loss_crashes": 17251
+  },
+  "failures": [
+    {
+      "seed": 215,
+      "profile": "snapshot",
+      "check": "state-machine-safety",
+      "at_us": 1279562,
+      "node": 1,
+      "detail": "index 10 committed as term 3, but another node committed term 6"
+    },
+    {
+      "seed": 487,
+      "profile": "snapshot",
+      "check": "state-machine-safety",
+      "at_us": 1401424,
+      "node": 1,
+      "detail": "index 11 committed as term 4, but another node committed term 6"
+    },
+    {
+      "seed": 495,
+      "profile": "snapshot",
+      "check": "state-machine-safety",
+      "at_us": 1338690,
+      "node": 1,
+      "detail": "index 3 committed as term 1, but another node committed term 2"
+    },
+    {
+      "seed": 738,
+      "profile": "partition",
+      "check": "state-machine-safety",
+      "at_us": 1397466,
+      "node": 2,
+      "detail": "index 176 committed as term 5, but another node committed term 7"
+    },
+    {
+      "seed": 975,
+      "profile": "snapshot",
+      "check": "state-machine-safety",
+      "at_us": 5705091,
+      "node": 3,
+      "detail": "index 49 committed as term 18, but another node committed term 20"
+    },
+    {
+      "seed": 991,
+      "profile": "snapshot",
+      "check": "state-machine-safety",
+      "at_us": 3327227,
+      "node": 2,
+      "detail": "index 42 committed as term 11, but another node committed term 16"
+    },
+    {
+      "seed": 1087,
+      "profile": "snapshot",
+      "check": "state-machine-safety",
+      "at_us": 5003024,
+      "node": 3,
+      "detail": "index 49 committed as term 1, but another node committed term 11"
+    },
+    {
+      "seed": 1322,
+      "profile": "partition",
+      "check": "state-machine-safety",
+      "at_us": 2255763,
+      "node": 2,
+      "detail": "index 61 committed as term 5, but another node committed term 6"
+    },
+    {
+      "seed": 1375,
+      "profile": "snapshot",
+      "check": "state-machine-safety",
+      "at_us": 633851,
+      "node": 1,
+      "detail": "index 16 committed as term 1, but another node committed term 2"
+    },
+    {
+      "seed": 1770,
+      "profile": "partition",
+      "check": "state-machine-safety",
+      "at_us": 1593772,
+      "node": 4,
+      "detail": "index 26 committed as term 1, but another node committed term 2"
+    }
+  ]
+}

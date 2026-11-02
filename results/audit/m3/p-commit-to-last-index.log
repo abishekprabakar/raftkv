@@ -1,0 +1,11 @@
+--- FAIL: TestSimSchedules (1.39s)
+    sim_test.go:24: 2000 schedules, 10969657 events, 33046 crashes, 5862 partitions
+    sim_test.go:29: seed 32 (calm): commit-bound at 3620053us on node 3: commit index reached 815, but this message allowed 814
+    sim_test.go:29: seed 82 (partition): commit-bound at 721870us on node 3: commit index reached 51, but this message allowed 50
+    sim_test.go:29: seed 99 (crash): commit-bound at 2849939us on node 3: commit index reached 128, but this message allowed 127
+    sim_test.go:29: seed 104 (calm): commit-bound at 3743578us on node 2: commit index reached 1200, but this message allowed 1199
+    sim_test.go:29: seed 141 (figure8): commit-bound at 545884us on node 1: commit index reached 7, but this message allowed 6
+    sim_test.go:33: 52 of 2000 schedules failed: [{Check:commit-bound Schedules:52 FirstSeed:32}]
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft/sim	1.580s
+FAIL

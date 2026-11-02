@@ -1,0 +1,11 @@
+2000 schedules, 1639 failed, 0.2s: 1437768 events, 394382 sent, 15347 dropped, 8091 duplicated, 1870 long delays, 13809 reordered, 1368 partitions (207 one-way), 6632 crashes (802 during save, 696 after save, 3364 power losses), 4324 leaders, 28023 entries committed
+  22053 writes acknowledged, 1155 retries dropped, 10855 reads served, 15512 reads refused, 2174 compactions, 141 snapshots installed
+  panic                    1502 schedules, first at seed 1
+  commit-majority           132 schedules, first at seed 71
+  leader-completeness         3 schedules, first at seed 351
+  durable-promise             1 schedules, first at seed 1047
+  liveness                    1 schedules, first at seed 876
+  seed 1 (lossy): panic at 487100us on node 0: raft: node 3 truncating committed index 6 (commit 6)
+  seed 2 (partition): panic at 428535us on node 0: raft: node 2 truncating committed index 2 (commit 2)
+  seed 3 (crash): panic at 553816us on node 0: raft: node 4 truncating committed index 9 (commit 11)
+wrote $HOME/projects/raftkv/results/audit/m3/q-always-truncate.json

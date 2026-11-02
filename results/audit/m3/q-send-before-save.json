@@ -1,0 +1,228 @@
+{
+  "generated_at": "2026-11-02T07:11:39Z",
+  "hardware": {
+    "collected_at": "2026-11-02T07:11:39Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1,
+  "properties_only": false,
+  "wall_seconds": 0.086521208,
+  "schedules": 2000,
+  "violations": 1750,
+  "by_check": [
+    {
+      "check": "durable-promise",
+      "schedules": 1750,
+      "first_seed": 1
+    }
+  ],
+  "schedules_by_profile": {
+    "calm": 250,
+    "chaos": 250,
+    "crash": 250,
+    "figure8": 250,
+    "lossy": 250,
+    "partition": 250,
+    "snapshot": 250,
+    "solo": 250
+  },
+  "totals": {
+    "events": 404189,
+    "virtual_ms": 1497934,
+    "messages_sent": 5520,
+    "messages_delivered": 0,
+    "messages_dropped": 335,
+    "messages_blocked_by_partition": 0,
+    "messages_to_crashed_nodes": 0,
+    "messages_duplicated": 163,
+    "messages_delayed_past_election_timeout": 35,
+    "messages_reordered": 0,
+    "partitions": 276,
+    "one_way_cuts": 33,
+    "crashes": 3027,
+    "crashes_between_events": 2132,
+    "crashes_during_save": 506,
+    "crashes_after_save": 389,
+    "restarts": 2759,
+    "commands_proposed": 40400,
+    "leaders_elected": 1442,
+    "entries_committed": 8705,
+    "writes_acknowledged": 6931,
+    "retried_writes_dropped": 0,
+    "reads_served": 3419,
+    "reads_refused": 10765,
+    "log_compactions": 155,
+    "snapshots_installed": 0,
+    "power_loss_crashes": 1548
+  },
+  "failures": [
+    {
+      "seed": 1,
+      "profile": "lossy",
+      "check": "durable-promise",
+      "at_us": 100000,
+      "node": 3,
+      "detail": "RequestVote for term 1 with term 0, vote 0 on disk"
+    },
+    {
+      "seed": 2,
+      "profile": "partition",
+      "check": "durable-promise",
+      "at_us": 115226,
+      "node": 1,
+      "detail": "RequestVote for term 1 with term 0, vote 0 on disk"
+    },
+    {
+      "seed": 3,
+      "profile": "crash",
+      "check": "durable-promise",
+      "at_us": 92064,
+      "node": 1,
+      "detail": "RequestVote for term 1 with term 0, vote 0 on disk"
+    },
+    {
+      "seed": 4,
+      "profile": "chaos",
+      "check": "durable-promise",
+      "at_us": 125093,
+      "node": 3,
+      "detail": "RequestVote for term 1 with term 0, vote 0 on disk"
+    },
+    {
+      "seed": 5,
+      "profile": "figure8",
+      "check": "durable-promise",
+      "at_us": 102173,
+      "node": 2,
+      "detail": "RequestVote for term 1 with term 0, vote 0 on disk"
+    },
+    {
+      "seed": 7,
+      "profile": "snapshot",
+      "check": "durable-promise",
+      "at_us": 92667,
+      "node": 1,
+      "detail": "RequestVote for term 1 with term 0, vote 0 on disk"
+    },
+    {
+      "seed": 8,
+      "profile": "calm",
+      "check": "durable-promise",
+      "at_us": 150000,
+      "node": 1,
+      "detail": "RequestVote for term 1 with term 0, vote 0 on disk"
+    },
+    {
+      "seed": 9,
+      "profile": "lossy",
+      "check": "durable-promise",
+      "at_us": 100000,
+      "node": 1,
+      "detail": "RequestVote for term 1 with term 0, vote 0 on disk"
+    },
+    {
+      "seed": 10,
+      "profile": "partition",
+      "check": "durable-promise",
+      "at_us": 89634,
+      "node": 5,
+      "detail": "RequestVote for term 1 with term 0, vote 0 on disk"
+    },
+    {
+      "seed": 11,
+      "profile": "crash",
+      "check": "durable-promise",
+      "at_us": 134910,
+      "node": 1,
+      "detail": "RequestVote for term 1 with term 0, vote 0 on disk"
+    },
+    {
+      "seed": 12,
+      "profile": "chaos",
+      "check": "durable-promise",
+      "at_us": 130943,
+      "node": 2,
+      "detail": "RequestVote for term 1 with term 0, vote 0 on disk"
+    },
+    {
+      "seed": 13,
+      "profile": "figure8",
+      "check": "durable-promise",
+      "at_us": 97947,
+      "node": 5,
+      "detail": "RequestVote for term 1 with term 0, vote 0 on disk"
+    },
+    {
+      "seed": 15,
+      "profile": "snapshot",
+      "check": "durable-promise",
+      "at_us": 117192,
+      "node": 2,
+      "detail": "RequestVote for term 1 with term 0, vote 0 on disk"
+    },
+    {
+      "seed": 16,
+      "profile": "calm",
+      "check": "durable-promise",
+      "at_us": 134959,
+      "node": 2,
+      "detail": "RequestVote for term 1 with term 0, vote 0 on disk"
+    },
+    {
+      "seed": 17,
+      "profile": "lossy",
+      "check": "durable-promise",
+      "at_us": 96162,
+      "node": 3,
+      "detail": "RequestVote for term 1 with term 0, vote 0 on disk"
+    },
+    {
+      "seed": 18,
+      "profile": "partition",
+      "check": "durable-promise",
+      "at_us": 104061,
+      "node": 1,
+      "detail": "RequestVote for term 1 with term 0, vote 0 on disk"
+    },
+    {
+      "seed": 19,
+      "profile": "crash",
+      "check": "durable-promise",
+      "at_us": 122562,
+      "node": 2,
+      "detail": "RequestVote for term 1 with term 0, vote 0 on disk"
+    },
+    {
+      "seed": 20,
+      "profile": "chaos",
+      "check": "durable-promise",
+      "at_us": 117832,
+      "node": 1,
+      "detail": "RequestVote for term 1 with term 0, vote 0 on disk"
+    },
+    {
+      "seed": 21,
+      "profile": "figure8",
+      "check": "durable-promise",
+      "at_us": 102819,
+      "node": 2,
+      "detail": "RequestVote for term 1 with term 0, vote 0 on disk"
+    },
+    {
+      "seed": 23,
+      "profile": "snapshot",
+      "check": "durable-promise",
+      "at_us": 122579,
+      "node": 2,
+      "detail": "RequestVote for term 1 with term 0, vote 0 on disk"
+    }
+  ]
+}

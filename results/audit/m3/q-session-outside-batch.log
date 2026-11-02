@@ -1,0 +1,8 @@
+2000 schedules, 853 failed, 1.4s: 10471412 events, 3804633 sent, 154791 dropped, 64110 duplicated, 14640 long delays, 362065 reordered, 5592 partitions (1058 one-way), 29714 crashes (2677 during save, 2613 after save, 14907 power losses), 19437 leaders, 216669 entries committed
+  177206 writes acknowledged, 101404 retries dropped, 76096 reads served, 38910 reads refused, 24351 compactions, 1667 snapshots installed
+  kv-exactly-once           562 schedules, first at seed 4
+  kv-divergence             291 schedules, first at seed 3
+  seed 3 (crash): kv-divergence at 4240000us on node 2: state machine differs from node 1 at index 26
+  seed 4 (chaos): kv-exactly-once at 2909592us on node 3: key k1 holds c1-2 twice
+  seed 11 (crash): kv-exactly-once at 4205014us on node 1: key k1 holds c1-5 twice
+wrote $HOME/projects/raftkv/results/audit/m3/q-session-outside-batch.json

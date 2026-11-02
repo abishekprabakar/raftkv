@@ -1,0 +1,7 @@
+2000 schedules, 1770 failed, 0.4s: 2721042 events, 1155683 sent, 22027 dropped, 11641 duplicated, 2596 long delays, 109054 reordered, 1620 partitions (241 one-way), 4679 crashes (380 during save, 386 after save, 2332 power losses), 3605 leaders, 83385 entries committed
+  77861 writes acknowledged, 2898 retries dropped, 34800 reads served, 13737 reads refused, 10571 compactions, 378 snapshots installed
+  durable-apply            1770 schedules, first at seed 1
+  seed 1 (lossy): durable-apply at 437797us on node 3: applied index 6 of term 1 with term 0 on disk
+  seed 2 (partition): durable-apply at 411150us on node 2: applied index 1 of term 1 with term 0 on disk
+  seed 3 (crash): durable-apply at 847473us on node 4: applied index 1 of term 1 with term 0 on disk
+wrote $HOME/projects/raftkv/results/audit/m3/q-save-after-apply.json

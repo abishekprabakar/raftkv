@@ -1,0 +1,7 @@
+2000 schedules, 332 failed, 1.4s: 12210336 events, 4075445 sent, 157283 dropped, 58161 duplicated, 13555 long delays, 312383 reordered, 5889 partitions (1091 one-way), 33232 crashes (3596 during save, 3376 after save, 16683 power losses), 19988 leaders, 164175 entries committed
+  123813 writes acknowledged, 107718 retries dropped, 52197 reads served, 72256 reads refused, 16480 compactions, 1485 snapshots installed
+  liveness                  332 schedules, first at seed 1
+  seed 1 (lossy): liveness at 9000000us on node 0: nothing applied for 5000ms of quiet: [1 candidate term 89 commit 0 log 0] [2 candidate term 89 commit 0 log 0] [3 candidate term 89 commit 0 log 0] 
+  seed 8 (calm): liveness at 7000000us on node 0: nothing applied for 5000ms of quiet: [1 candidate term 69 commit 0 log 0] [2 candidate term 69 commit 0 log 0] [3 candidate term 69 commit 0 log 0] 
+  seed 9 (lossy): liveness at 8000000us on node 0: nothing applied for 5000ms of quiet: [1 candidate term 79 commit 0 log 0] [2 candidate term 79 commit 0 log 0] [3 candidate term 79 commit 0 log 0] [4 candidate term 79 commit 0 log 0] [5 candidate term 79 commit 0 log 0] 
+wrote $HOME/projects/raftkv/results/audit/m3/q-fixed-timeout.json

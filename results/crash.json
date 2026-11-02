@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-11-02T05:25:07Z",
+  "generated_at": "2026-11-02T07:12:35Z",
   "hardware": {
-    "collected_at": "2026-11-02T05:25:07Z",
+    "collected_at": "2026-11-02T07:12:35Z",
     "os": "darwin",
     "os_version": "macOS 26.5.1",
     "arch": "arm64",
@@ -29,16 +29,16 @@
   "trials": 500,
   "passed": 500,
   "failed": 0,
-  "total_acked_ops": 155462,
-  "total_values_validated": 864802,
-  "trials_killed_before_first_ack": 49,
+  "total_acked_ops": 153460,
+  "total_values_validated": 864464,
+  "trials_killed_before_first_ack": 46,
   "recovery_kills": 692,
-  "recovery_kills_mid_open": 321,
+  "recovery_kills_mid_open": 318,
   "torn_tails_injected": 123,
   "trials_with_sstables": 499,
   "trials_with_data_below_l0": 499,
   "trials_with_truncated_wal_tail": 43,
   "max_unacked_durable_ops": 4,
-  "total_unacked_durable_ops": 1438,
-  "wall_seconds": 214.182605666
+  "total_unacked_durable_ops": 1358,
+  "wall_seconds": 213.504538417
 }

@@ -1,0 +1,228 @@
+{
+  "generated_at": "2026-11-02T07:12:00Z",
+  "hardware": {
+    "collected_at": "2026-11-02T07:12:00Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1,
+  "properties_only": false,
+  "wall_seconds": 0.415484667,
+  "schedules": 2000,
+  "violations": 1770,
+  "by_check": [
+    {
+      "check": "durable-apply",
+      "schedules": 1770,
+      "first_seed": 1
+    }
+  ],
+  "schedules_by_profile": {
+    "calm": 250,
+    "chaos": 250,
+    "crash": 250,
+    "figure8": 250,
+    "lossy": 250,
+    "partition": 250,
+    "snapshot": 250,
+    "solo": 250
+  },
+  "totals": {
+    "events": 2721042,
+    "virtual_ms": 2404215,
+    "messages_sent": 1155683,
+    "messages_delivered": 1067540,
+    "messages_dropped": 22027,
+    "messages_blocked_by_partition": 42152,
+    "messages_to_crashed_nodes": 26891,
+    "messages_duplicated": 11641,
+    "messages_delayed_past_election_timeout": 2596,
+    "messages_reordered": 109054,
+    "partitions": 1620,
+    "one_way_cuts": 241,
+    "crashes": 4679,
+    "crashes_between_events": 3913,
+    "crashes_during_save": 380,
+    "crashes_after_save": 386,
+    "restarts": 4169,
+    "commands_proposed": 137210,
+    "leaders_elected": 3605,
+    "entries_committed": 83385,
+    "writes_acknowledged": 77861,
+    "retried_writes_dropped": 2898,
+    "reads_served": 34800,
+    "reads_refused": 13737,
+    "log_compactions": 10571,
+    "snapshots_installed": 378,
+    "power_loss_crashes": 2332
+  },
+  "failures": [
+    {
+      "seed": 1,
+      "profile": "lossy",
+      "check": "durable-apply",
+      "at_us": 437797,
+      "node": 3,
+      "detail": "applied index 6 of term 1 with term 0 on disk"
+    },
+    {
+      "seed": 2,
+      "profile": "partition",
+      "check": "durable-apply",
+      "at_us": 411150,
+      "node": 2,
+      "detail": "applied index 1 of term 1 with term 0 on disk"
+    },
+    {
+      "seed": 3,
+      "profile": "crash",
+      "check": "durable-apply",
+      "at_us": 847473,
+      "node": 4,
+      "detail": "applied index 1 of term 1 with term 0 on disk"
+    },
+    {
+      "seed": 4,
+      "profile": "chaos",
+      "check": "durable-apply",
+      "at_us": 852554,
+      "node": 3,
+      "detail": "applied index 1 of term 2 with term 0 on disk"
+    },
+    {
+      "seed": 5,
+      "profile": "figure8",
+      "check": "durable-apply",
+      "at_us": 740508,
+      "node": 5,
+      "detail": "applied index 3 of term 3 with term 0 on disk"
+    },
+    {
+      "seed": 6,
+      "profile": "solo",
+      "check": "durable-apply",
+      "at_us": 145490,
+      "node": 1,
+      "detail": "applied index 1 of term 1 with term 0 on disk"
+    },
+    {
+      "seed": 7,
+      "profile": "snapshot",
+      "check": "durable-apply",
+      "at_us": 147218,
+      "node": 3,
+      "detail": "applied index 1 of term 1 with term 0 on disk"
+    },
+    {
+      "seed": 9,
+      "profile": "lossy",
+      "check": "durable-apply",
+      "at_us": 227520,
+      "node": 2,
+      "detail": "applied index 6 of term 1 with term 0 on disk"
+    },
+    {
+      "seed": 10,
+      "profile": "partition",
+      "check": "durable-apply",
+      "at_us": 577437,
+      "node": 3,
+      "detail": "applied index 14 of term 1 with term 0 on disk"
+    },
+    {
+      "seed": 11,
+      "profile": "crash",
+      "check": "durable-apply",
+      "at_us": 1026393,
+      "node": 2,
+      "detail": "applied index 2 of term 2 with term 0 on disk"
+    },
+    {
+      "seed": 12,
+      "profile": "chaos",
+      "check": "durable-apply",
+      "at_us": 784312,
+      "node": 1,
+      "detail": "applied index 2 of term 4 with term 3 on disk"
+    },
+    {
+      "seed": 13,
+      "profile": "figure8",
+      "check": "durable-apply",
+      "at_us": 569374,
+      "node": 4,
+      "detail": "applied index 7 of term 3 with term 0 on disk"
+    },
+    {
+      "seed": 14,
+      "profile": "solo",
+      "check": "durable-apply",
+      "at_us": 117754,
+      "node": 1,
+      "detail": "applied index 1 of term 1 with term 0 on disk"
+    },
+    {
+      "seed": 15,
+      "profile": "snapshot",
+      "check": "durable-apply",
+      "at_us": 1663223,
+      "node": 1,
+      "detail": "applied index 2 of term 4 with term 0 on disk"
+    },
+    {
+      "seed": 17,
+      "profile": "lossy",
+      "check": "durable-apply",
+      "at_us": 152108,
+      "node": 2,
+      "detail": "applied index 1 of term 1 with term 0 on disk"
+    },
+    {
+      "seed": 20,
+      "profile": "chaos",
+      "check": "durable-apply",
+      "at_us": 180714,
+      "node": 2,
+      "detail": "applied index 2 of term 1 with term 0 on disk"
+    },
+    {
+      "seed": 21,
+      "profile": "figure8",
+      "check": "durable-apply",
+      "at_us": 509384,
+      "node": 2,
+      "detail": "applied index 3 of term 2 with term 0 on disk"
+    },
+    {
+      "seed": 22,
+      "profile": "solo",
+      "check": "durable-apply",
+      "at_us": 117844,
+      "node": 1,
+      "detail": "applied index 1 of term 1 with term 0 on disk"
+    },
+    {
+      "seed": 23,
+      "profile": "snapshot",
+      "check": "durable-apply",
+      "at_us": 422348,
+      "node": 5,
+      "detail": "applied index 1 of term 2 with term 0 on disk"
+    },
+    {
+      "seed": 25,
+      "profile": "lossy",
+      "check": "durable-apply",
+      "at_us": 2211579,
+      "node": 2,
+      "detail": "applied index 8 of term 2 with term 0 on disk"
+    }
+  ]
+}

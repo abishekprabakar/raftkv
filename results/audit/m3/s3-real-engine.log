@@ -1,0 +1,3 @@
+200 schedules, 0 failed, 83.0s: 1108871 events, 396786 sent, 16304 dropped, 6919 duplicated, 2062 long delays, 38217 reordered, 554 partitions (89 one-way), 3534 crashes (363 during save, 264 after save, 0 power losses), 2138 leaders, 24063 entries committed
+  19665 writes acknowledged, 9590 retries dropped, 6975 reads served, 3270 reads refused, 1651 compactions, 155 snapshots installed
+wrote $HOME/projects/raftkv/results/audit/m3/sim-lsm.json

@@ -1,0 +1,7 @@
+2000 schedules, 1750 failed, 0.1s: 404425 events, 5520 sent, 343 dropped, 163 duplicated, 28 long delays, 0 reordered, 277 partitions (34 one-way), 3034 crashes (504 during save, 396 after save, 1557 power losses), 1442 leaders, 8705 entries committed
+  6931 writes acknowledged, 0 retries dropped, 3419 reads served, 10768 reads refused, 155 compactions, 0 snapshots installed
+  durable-promise          1750 schedules, first at seed 1
+  seed 1 (lossy): durable-promise at 100000us on node 3: RequestVote for term 1 with term 1, vote 0 on disk
+  seed 2 (partition): durable-promise at 115226us on node 1: RequestVote for term 1 with term 1, vote 0 on disk
+  seed 3 (crash): durable-promise at 92064us on node 1: RequestVote for term 1 with term 1, vote 0 on disk
+wrote $HOME/projects/raftkv/results/audit/m3/q-forget-voted-for.json

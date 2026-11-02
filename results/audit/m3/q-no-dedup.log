@@ -1,0 +1,7 @@
+2000 schedules, 1344 failed, 0.9s: 7198933 events, 2540175 sent, 78780 dropped, 28209 duplicated, 6783 long delays, 243139 reordered, 3233 partitions (594 one-way), 22309 crashes (2062 during save, 1943 after save, 11159 power losses), 14693 leaders, 156275 entries committed
+  130728 writes acknowledged, 0 retries dropped, 56864 reads served, 28016 reads refused, 16933 compactions, 684 snapshots installed
+  kv-exactly-once          1344 schedules, first at seed 1
+  seed 1 (lossy): kv-exactly-once at 2858862us on node 1: key k1 holds c1-7 twice
+  seed 2 (partition): kv-exactly-once at 671004us on node 1: key k0 holds c2-2 twice
+  seed 3 (crash): kv-exactly-once at 2938004us on node 4: key k3 holds c1-3 twice
+wrote $HOME/projects/raftkv/results/audit/m3/q-no-dedup.json

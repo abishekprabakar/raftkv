@@ -1,0 +1,11 @@
+--- FAIL: TestSimSchedules (1.44s)
+    sim_test.go:24: 2000 schedules, 11218696 events, 34045 crashes, 5737 partitions
+    sim_test.go:29: seed 4 (chaos): kv-divergence at 4240000us on node 2: state machine differs from node 1 at index 58
+    sim_test.go:29: seed 12 (chaos): kv-exactly-once at 5204364us on node 2: key k1 holds c3-1 twice
+    sim_test.go:29: seed 18 (partition): kv-divergence at 3240000us on node 2: state machine differs from node 1 at index 80
+    sim_test.go:29: seed 26 (partition): kv-exactly-once at 3204705us on node 2: key k0 holds c4-18 twice
+    sim_test.go:29: seed 71 (snapshot): kv-exactly-once at 4904033us on node 2: key k0 holds c4-12 twice
+    sim_test.go:33: 200 of 2000 schedules failed: [{Check:kv-divergence Schedules:101 FirstSeed:4} {Check:kv-exactly-once Schedules:99 FirstSeed:12}]
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft/sim	1.639s
+FAIL

@@ -1,0 +1,7 @@
+2000 schedules, 7 failed, 1.5s: 11352604 events, 4089818 sent, 162222 dropped, 66689 duplicated, 15394 long delays, 386557 reordered, 5905 partitions (1127 one-way), 34365 crashes (3326 during save, 3150 after save, 17255 power losses), 21686 leaders, 232992 entries committed
+  188537 writes acknowledged, 115764 retries dropped, 80954 reads served, 42592 reads refused, 25630 compactions, 1843 snapshots installed
+  panic                       7 schedules, first at seed 91
+  seed 91 (crash): panic at 1908876us on node 0: raft: state machine at 54 is behind the snapshot at 67
+  seed 99 (crash): panic at 2104092us on node 0: raft: state machine at 54 is behind the snapshot at 68
+  seed 535 (snapshot): panic at 5376404us on node 0: raft: state machine at 86 is behind the snapshot at 120
+wrote $HOME/projects/raftkv/results/audit/m3/q-save-before-restore.json

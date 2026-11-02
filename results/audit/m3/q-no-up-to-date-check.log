@@ -1,0 +1,8 @@
+2000 schedules, 1000 failed, 0.8s: 5926479 events, 2458295 sent, 102192 dropped, 52397 duplicated, 12013 long delays, 251846 reordered, 2798 partitions (498 one-way), 15309 crashes (1724 during save, 1549 after save, 7721 power losses), 8497 leaders, 164644 entries committed
+  149164 writes acknowledged, 25857 retries dropped, 65847 reads served, 24410 reads refused, 19427 compactions, 730 snapshots installed
+  leader-completeness       999 schedules, first at seed 2
+  state-machine-safety        1 schedules, first at seed 732
+  seed 2 (partition): leader-completeness at 334965us on node 2: leader of term 3 lacks index 1, committed in term 1
+  seed 4 (chaos): leader-completeness at 1338868us on node 1: leader of term 9 lacks index 7, committed in term 5
+  seed 5 (figure8): leader-completeness at 4271572us on node 4: leader of term 28 lacks index 30, committed in term 20
+wrote $HOME/projects/raftkv/results/audit/m3/q-no-up-to-date-check.json

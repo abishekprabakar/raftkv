@@ -1,0 +1,5 @@
+--- FAIL: TestRestoreHappensBeforeSave (0.00s)
+    snapshot_test.go:236: events [save restore send]
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft	0.188s
+FAIL

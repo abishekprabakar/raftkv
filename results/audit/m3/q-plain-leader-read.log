@@ -1,0 +1,7 @@
+2000 schedules, 16 failed, 1.5s: 11578463 events, 4235900 sent, 164108 dropped, 67988 duplicated, 15845 long delays, 426576 reordered, 5849 partitions (1133 one-way), 34479 crashes (3427 during save, 3239 after save, 17238 power losses), 21648 leaders, 248982 entries committed
+  203777 writes acknowledged, 117211 retries dropped, 88308 reads served, 29835 reads refused, 27798 compactions, 2034 snapshots installed
+  kv-linearizable            16 schedules, first at seed 279
+  seed 279 (snapshot): kv-linearizable at 4177801us on node 1: read of key k0 went backwards: 35 tokens after an earlier read saw 45
+  seed 290 (partition): kv-linearizable at 531860us on node 1: read of key k3 went backwards: 0 tokens after an earlier read saw 2
+  seed 407 (snapshot): kv-linearizable at 1298246us on node 3: read of key k0 went backwards: 2 tokens after an earlier read saw 3
+wrote $HOME/projects/raftkv/results/audit/m3/q-plain-leader-read.json

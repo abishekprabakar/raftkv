@@ -1,0 +1,11 @@
+--- FAIL: TestSimSchedules (0.08s)
+    sim_test.go:24: 2000 schedules, 404189 events, 3027 crashes, 276 partitions
+    sim_test.go:29: seed 1 (lossy): durable-promise at 100000us on node 3: RequestVote for term 1 with term 0, vote 0 on disk
+    sim_test.go:29: seed 2 (partition): durable-promise at 115226us on node 1: RequestVote for term 1 with term 0, vote 0 on disk
+    sim_test.go:29: seed 3 (crash): durable-promise at 92064us on node 1: RequestVote for term 1 with term 0, vote 0 on disk
+    sim_test.go:29: seed 4 (chaos): durable-promise at 125093us on node 3: RequestVote for term 1 with term 0, vote 0 on disk
+    sim_test.go:29: seed 5 (figure8): durable-promise at 102173us on node 2: RequestVote for term 1 with term 0, vote 0 on disk
+    sim_test.go:33: 1750 of 2000 schedules failed: [{Check:durable-promise Schedules:1750 FirstSeed:1}]
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft/sim	0.342s
+FAIL

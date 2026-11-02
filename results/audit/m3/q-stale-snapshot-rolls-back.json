@@ -1,0 +1,185 @@
+{
+  "generated_at": "2026-11-02T07:12:26Z",
+  "hardware": {
+    "collected_at": "2026-11-02T07:12:26Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1,
+  "properties_only": false,
+  "wall_seconds": 1.470166625,
+  "schedules": 2000,
+  "violations": 14,
+  "by_check": [
+    {
+      "check": "commit-monotonic",
+      "schedules": 11,
+      "first_seed": 32
+    },
+    {
+      "check": "panic",
+      "schedules": 3,
+      "first_seed": 711
+    }
+  ],
+  "schedules_by_profile": {
+    "calm": 250,
+    "chaos": 250,
+    "crash": 250,
+    "figure8": 250,
+    "lossy": 250,
+    "partition": 250,
+    "snapshot": 250,
+    "solo": 250
+  },
+  "totals": {
+    "events": 11286060,
+    "virtual_ms": 10973703,
+    "messages_sent": 4047477,
+    "messages_delivered": 3517842,
+    "messages_dropped": 161522,
+    "messages_blocked_by_partition": 171204,
+    "messages_to_crashed_nodes": 257732,
+    "messages_duplicated": 66377,
+    "messages_delayed_past_election_timeout": 15304,
+    "messages_reordered": 376332,
+    "partitions": 5900,
+    "one_way_cuts": 1126,
+    "crashes": 34415,
+    "crashes_between_events": 27913,
+    "crashes_during_save": 3340,
+    "crashes_after_save": 3162,
+    "restarts": 34415,
+    "commands_proposed": 681507,
+    "leaders_elected": 21694,
+    "entries_committed": 230086,
+    "writes_acknowledged": 185654,
+    "retried_writes_dropped": 115658,
+    "reads_served": 79521,
+    "reads_refused": 42573,
+    "log_compactions": 24407,
+    "snapshots_installed": 2090,
+    "power_loss_crashes": 17282
+  },
+  "failures": [
+    {
+      "seed": 32,
+      "profile": "calm",
+      "check": "commit-monotonic",
+      "at_us": 1771146,
+      "node": 3,
+      "detail": "commit index went from 405 to 404"
+    },
+    {
+      "seed": 104,
+      "profile": "calm",
+      "check": "commit-monotonic",
+      "at_us": 1545253,
+      "node": 4,
+      "detail": "commit index went from 461 to 460"
+    },
+    {
+      "seed": 496,
+      "profile": "calm",
+      "check": "commit-monotonic",
+      "at_us": 4776204,
+      "node": 1,
+      "detail": "commit index went from 689 to 688"
+    },
+    {
+      "seed": 711,
+      "profile": "snapshot",
+      "check": "panic",
+      "at_us": 2209069,
+      "node": 0,
+      "detail": "raft: index 5 outside log (6, 8]"
+    },
+    {
+      "seed": 751,
+      "profile": "snapshot",
+      "check": "commit-monotonic",
+      "at_us": 791162,
+      "node": 2,
+      "detail": "commit index went from 11 to 10"
+    },
+    {
+      "seed": 823,
+      "profile": "snapshot",
+      "check": "commit-monotonic",
+      "at_us": 2177639,
+      "node": 3,
+      "detail": "commit index went from 27 to 26"
+    },
+    {
+      "seed": 824,
+      "profile": "calm",
+      "check": "commit-monotonic",
+      "at_us": 632835,
+      "node": 3,
+      "detail": "commit index went from 62 to 61"
+    },
+    {
+      "seed": 833,
+      "profile": "lossy",
+      "check": "panic",
+      "at_us": 2874741,
+      "node": 0,
+      "detail": "raft: index 31 outside log (41, 50]"
+    },
+    {
+      "seed": 1104,
+      "profile": "calm",
+      "check": "commit-monotonic",
+      "at_us": 1194722,
+      "node": 1,
+      "detail": "commit index went from 209 to 208"
+    },
+    {
+      "seed": 1170,
+      "profile": "partition",
+      "check": "commit-monotonic",
+      "at_us": 484168,
+      "node": 4,
+      "detail": "commit index went from 54 to 52"
+    },
+    {
+      "seed": 1528,
+      "profile": "calm",
+      "check": "commit-monotonic",
+      "at_us": 2714049,
+      "node": 1,
+      "detail": "commit index went from 529 to 528"
+    },
+    {
+      "seed": 1609,
+      "profile": "lossy",
+      "check": "commit-monotonic",
+      "at_us": 2060313,
+      "node": 3,
+      "detail": "commit index went from 73 to 72"
+    },
+    {
+      "seed": 1761,
+      "profile": "lossy",
+      "check": "commit-monotonic",
+      "at_us": 2337896,
+      "node": 3,
+      "detail": "commit index went from 61 to 60"
+    },
+    {
+      "seed": 1817,
+      "profile": "lossy",
+      "check": "panic",
+      "at_us": 3299670,
+      "node": 0,
+      "detail": "raft: index 81 outside log (85, 87]"
+    }
+  ]
+}

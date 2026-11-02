@@ -1,0 +1,8 @@
+2000 schedules, 200 failed, 1.4s: 11218696 events, 4035349 sent, 160714 dropped, 65495 duplicated, 15166 long delays, 381270 reordered, 5737 partitions (1111 one-way), 34045 crashes (3287 during save, 3116 after save, 17076 power losses), 21542 leaders, 230367 entries committed
+  186492 writes acknowledged, 114232 retries dropped, 79987 reads served, 41858 reads refused, 24690 compactions, 1705 snapshots installed
+  kv-divergence             101 schedules, first at seed 4
+  kv-exactly-once            99 schedules, first at seed 12
+  seed 4 (chaos): kv-divergence at 4240000us on node 2: state machine differs from node 1 at index 58
+  seed 12 (chaos): kv-exactly-once at 5204364us on node 2: key k1 holds c3-1 twice
+  seed 18 (partition): kv-divergence at 3240000us on node 2: state machine differs from node 1 at index 80
+wrote $HOME/projects/raftkv/results/audit/m3/q-sessions-not-in-snapshot.json

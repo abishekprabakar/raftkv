@@ -1,0 +1,233 @@
+{
+  "generated_at": "2026-11-02T07:11:52Z",
+  "hardware": {
+    "collected_at": "2026-11-02T07:11:52Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1,
+  "properties_only": false,
+  "wall_seconds": 0.83195275,
+  "schedules": 2000,
+  "violations": 1000,
+  "by_check": [
+    {
+      "check": "leader-completeness",
+      "schedules": 999,
+      "first_seed": 2
+    },
+    {
+      "check": "state-machine-safety",
+      "schedules": 1,
+      "first_seed": 732
+    }
+  ],
+  "schedules_by_profile": {
+    "calm": 250,
+    "chaos": 250,
+    "crash": 250,
+    "figure8": 250,
+    "lossy": 250,
+    "partition": 250,
+    "snapshot": 250,
+    "solo": 250
+  },
+  "totals": {
+    "events": 5926479,
+    "virtual_ms": 6289946,
+    "messages_sent": 2458295,
+    "messages_delivered": 2229367,
+    "messages_dropped": 102192,
+    "messages_blocked_by_partition": 70986,
+    "messages_to_crashed_nodes": 99332,
+    "messages_duplicated": 52397,
+    "messages_delayed_past_election_timeout": 12013,
+    "messages_reordered": 251846,
+    "partitions": 2798,
+    "one_way_cuts": 498,
+    "crashes": 15309,
+    "crashes_between_events": 12036,
+    "crashes_during_save": 1724,
+    "crashes_after_save": 1549,
+    "restarts": 14837,
+    "commands_proposed": 285486,
+    "leaders_elected": 8497,
+    "entries_committed": 164644,
+    "writes_acknowledged": 149164,
+    "retried_writes_dropped": 25857,
+    "reads_served": 65847,
+    "reads_refused": 24410,
+    "log_compactions": 19427,
+    "snapshots_installed": 730,
+    "power_loss_crashes": 7721
+  },
+  "failures": [
+    {
+      "seed": 2,
+      "profile": "partition",
+      "check": "leader-completeness",
+      "at_us": 334965,
+      "node": 2,
+      "detail": "leader of term 3 lacks index 1, committed in term 1"
+    },
+    {
+      "seed": 4,
+      "profile": "chaos",
+      "check": "leader-completeness",
+      "at_us": 1338868,
+      "node": 1,
+      "detail": "leader of term 9 lacks index 7, committed in term 5"
+    },
+    {
+      "seed": 5,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 4271572,
+      "node": 4,
+      "detail": "leader of term 28 lacks index 30, committed in term 20"
+    },
+    {
+      "seed": 7,
+      "profile": "snapshot",
+      "check": "leader-completeness",
+      "at_us": 650146,
+      "node": 2,
+      "detail": "leader of term 3 lacks index 7, committed in term 1"
+    },
+    {
+      "seed": 10,
+      "profile": "partition",
+      "check": "leader-completeness",
+      "at_us": 1714141,
+      "node": 2,
+      "detail": "leader of term 9 lacks index 20, committed in term 2"
+    },
+    {
+      "seed": 13,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 871138,
+      "node": 4,
+      "detail": "leader of term 6 lacks index 11, committed in term 4"
+    },
+    {
+      "seed": 18,
+      "profile": "partition",
+      "check": "leader-completeness",
+      "at_us": 3018883,
+      "node": 5,
+      "detail": "leader of term 13 lacks index 58, committed in term 9"
+    },
+    {
+      "seed": 20,
+      "profile": "chaos",
+      "check": "leader-completeness",
+      "at_us": 3689824,
+      "node": 2,
+      "detail": "leader of term 23 lacks index 20, committed in term 20"
+    },
+    {
+      "seed": 21,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 669416,
+      "node": 2,
+      "detail": "leader of term 4 lacks index 4, committed in term 2"
+    },
+    {
+      "seed": 26,
+      "profile": "partition",
+      "check": "leader-completeness",
+      "at_us": 621525,
+      "node": 2,
+      "detail": "leader of term 2 lacks index 24, committed in term 1"
+    },
+    {
+      "seed": 27,
+      "profile": "crash",
+      "check": "leader-completeness",
+      "at_us": 1365579,
+      "node": 3,
+      "detail": "leader of term 4 lacks index 19, committed in term 3"
+    },
+    {
+      "seed": 29,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 2174560,
+      "node": 1,
+      "detail": "leader of term 13 lacks index 30, committed in term 11"
+    },
+    {
+      "seed": 31,
+      "profile": "snapshot",
+      "check": "leader-completeness",
+      "at_us": 3130131,
+      "node": 3,
+      "detail": "leader of term 7 lacks index 1, committed in term 1"
+    },
+    {
+      "seed": 34,
+      "profile": "partition",
+      "check": "leader-completeness",
+      "at_us": 384362,
+      "node": 3,
+      "detail": "leader of term 2 lacks index 3, committed in term 1"
+    },
+    {
+      "seed": 35,
+      "profile": "crash",
+      "check": "leader-completeness",
+      "at_us": 1257624,
+      "node": 3,
+      "detail": "leader of term 4 lacks index 6, committed in term 3"
+    },
+    {
+      "seed": 37,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 632407,
+      "node": 5,
+      "detail": "leader of term 4 lacks index 8, committed in term 3"
+    },
+    {
+      "seed": 39,
+      "profile": "snapshot",
+      "check": "leader-completeness",
+      "at_us": 2595438,
+      "node": 3,
+      "detail": "leader of term 11 lacks index 1, committed in term 1"
+    },
+    {
+      "seed": 42,
+      "profile": "partition",
+      "check": "leader-completeness",
+      "at_us": 5005889,
+      "node": 3,
+      "detail": "leader of term 15 lacks index 138, committed in term 10"
+    },
+    {
+      "seed": 44,
+      "profile": "chaos",
+      "check": "leader-completeness",
+      "at_us": 582638,
+      "node": 1,
+      "detail": "leader of term 4 lacks index 1, committed in term 1"
+    },
+    {
+      "seed": 45,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 1441524,
+      "node": 2,
+      "detail": "leader of term 10 lacks index 11, committed in term 6"
+    }
+  ]
+}

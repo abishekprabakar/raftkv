@@ -1,0 +1,5 @@
+--- FAIL: TestReadWaitsForCommitInCurrentTerm (0.00s)
+    read_test.go:43: got <nil>, want ErrNotReady before the no-op commits
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft	0.190s
+FAIL

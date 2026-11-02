@@ -1,0 +1,228 @@
+{
+  "generated_at": "2026-11-02T07:12:07Z",
+  "hardware": {
+    "collected_at": "2026-11-02T07:12:07Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1,
+  "properties_only": false,
+  "wall_seconds": 0.931218917,
+  "schedules": 2000,
+  "violations": 1344,
+  "by_check": [
+    {
+      "check": "kv-exactly-once",
+      "schedules": 1344,
+      "first_seed": 1
+    }
+  ],
+  "schedules_by_profile": {
+    "calm": 250,
+    "chaos": 250,
+    "crash": 250,
+    "figure8": 250,
+    "lossy": 250,
+    "partition": 250,
+    "snapshot": 250,
+    "solo": 250
+  },
+  "totals": {
+    "events": 7198933,
+    "virtual_ms": 7047803,
+    "messages_sent": 2540175,
+    "messages_delivered": 2248832,
+    "messages_dropped": 78780,
+    "messages_blocked_by_partition": 74918,
+    "messages_to_crashed_nodes": 156287,
+    "messages_duplicated": 28209,
+    "messages_delayed_past_election_timeout": 6783,
+    "messages_reordered": 243139,
+    "partitions": 3233,
+    "one_way_cuts": 594,
+    "crashes": 22309,
+    "crashes_between_events": 18304,
+    "crashes_during_save": 2062,
+    "crashes_after_save": 1943,
+    "restarts": 21861,
+    "commands_proposed": 472206,
+    "leaders_elected": 14693,
+    "entries_committed": 156275,
+    "writes_acknowledged": 130728,
+    "retried_writes_dropped": 0,
+    "reads_served": 56864,
+    "reads_refused": 28016,
+    "log_compactions": 16933,
+    "snapshots_installed": 684,
+    "power_loss_crashes": 11159
+  },
+  "failures": [
+    {
+      "seed": 1,
+      "profile": "lossy",
+      "check": "kv-exactly-once",
+      "at_us": 2858862,
+      "node": 1,
+      "detail": "key k1 holds c1-7 twice"
+    },
+    {
+      "seed": 2,
+      "profile": "partition",
+      "check": "kv-exactly-once",
+      "at_us": 671004,
+      "node": 1,
+      "detail": "key k0 holds c2-2 twice"
+    },
+    {
+      "seed": 3,
+      "profile": "crash",
+      "check": "kv-exactly-once",
+      "at_us": 2938004,
+      "node": 4,
+      "detail": "key k3 holds c1-3 twice"
+    },
+    {
+      "seed": 4,
+      "profile": "chaos",
+      "check": "kv-exactly-once",
+      "at_us": 2909592,
+      "node": 3,
+      "detail": "key k1 holds c2-4 twice"
+    },
+    {
+      "seed": 5,
+      "profile": "figure8",
+      "check": "kv-exactly-once",
+      "at_us": 15205781,
+      "node": 4,
+      "detail": "key k0 holds c2-1 twice"
+    },
+    {
+      "seed": 7,
+      "profile": "snapshot",
+      "check": "kv-exactly-once",
+      "at_us": 1244551,
+      "node": 2,
+      "detail": "key k0 holds c2-4 twice"
+    },
+    {
+      "seed": 9,
+      "profile": "lossy",
+      "check": "kv-exactly-once",
+      "at_us": 641172,
+      "node": 1,
+      "detail": "key k0 holds c4-5 twice"
+    },
+    {
+      "seed": 12,
+      "profile": "chaos",
+      "check": "kv-exactly-once",
+      "at_us": 5204364,
+      "node": 2,
+      "detail": "key k0 holds c1-1 twice"
+    },
+    {
+      "seed": 13,
+      "profile": "figure8",
+      "check": "kv-exactly-once",
+      "at_us": 1815958,
+      "node": 5,
+      "detail": "key k0 holds c3-1 twice"
+    },
+    {
+      "seed": 15,
+      "profile": "snapshot",
+      "check": "kv-exactly-once",
+      "at_us": 4235050,
+      "node": 2,
+      "detail": "key k0 holds c2-10 twice"
+    },
+    {
+      "seed": 17,
+      "profile": "lossy",
+      "check": "kv-exactly-once",
+      "at_us": 1662607,
+      "node": 3,
+      "detail": "key k1 holds c2-5 twice"
+    },
+    {
+      "seed": 18,
+      "profile": "partition",
+      "check": "kv-exactly-once",
+      "at_us": 734866,
+      "node": 1,
+      "detail": "key k0 holds c2-4 twice"
+    },
+    {
+      "seed": 20,
+      "profile": "chaos",
+      "check": "kv-exactly-once",
+      "at_us": 821933,
+      "node": 4,
+      "detail": "key k0 holds c1-2 twice"
+    },
+    {
+      "seed": 21,
+      "profile": "figure8",
+      "check": "kv-exactly-once",
+      "at_us": 755131,
+      "node": 4,
+      "detail": "key k0 holds c4-1 twice"
+    },
+    {
+      "seed": 25,
+      "profile": "lossy",
+      "check": "kv-exactly-once",
+      "at_us": 2301098,
+      "node": 1,
+      "detail": "key k0 holds c1-2 twice"
+    },
+    {
+      "seed": 26,
+      "profile": "partition",
+      "check": "kv-exactly-once",
+      "at_us": 511522,
+      "node": 1,
+      "detail": "key k0 holds c3-3 twice"
+    },
+    {
+      "seed": 27,
+      "profile": "crash",
+      "check": "kv-exactly-once",
+      "at_us": 2540260,
+      "node": 1,
+      "detail": "key k0 holds c1-8 twice"
+    },
+    {
+      "seed": 28,
+      "profile": "chaos",
+      "check": "kv-exactly-once",
+      "at_us": 254776,
+      "node": 2,
+      "detail": "key k0 holds c2-1 twice"
+    },
+    {
+      "seed": 29,
+      "profile": "figure8",
+      "check": "kv-exactly-once",
+      "at_us": 6459413,
+      "node": 5,
+      "detail": "key k2 holds c4-2 twice"
+    },
+    {
+      "seed": 33,
+      "profile": "lossy",
+      "check": "kv-exactly-once",
+      "at_us": 576452,
+      "node": 5,
+      "detail": "key k0 holds c4-1 twice"
+    }
+  ]
+}

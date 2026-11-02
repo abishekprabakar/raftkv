@@ -1,0 +1,11 @@
+--- FAIL: TestSimSchedules (1.52s)
+    sim_test.go:24: 2000 schedules, 11286060 events, 34415 crashes, 5900 partitions
+    sim_test.go:29: seed 32 (calm): commit-monotonic at 1771146us on node 3: commit index went from 405 to 404
+    sim_test.go:29: seed 104 (calm): commit-monotonic at 1545253us on node 4: commit index went from 461 to 460
+    sim_test.go:29: seed 496 (calm): commit-monotonic at 4776204us on node 1: commit index went from 689 to 688
+    sim_test.go:29: seed 711 (snapshot): panic at 2209069us on node 0: raft: index 5 outside log (6, 8]
+    sim_test.go:29: seed 751 (snapshot): commit-monotonic at 791162us on node 2: commit index went from 11 to 10
+    sim_test.go:33: 14 of 2000 schedules failed: [{Check:commit-monotonic Schedules:11 FirstSeed:32} {Check:panic Schedules:3 FirstSeed:711}]
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft/sim	1.711s
+FAIL

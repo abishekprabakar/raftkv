@@ -1,0 +1,7 @@
+2000 schedules, 278 failed, 1.2s: 10737154 events, 3857523 sent, 156664 dropped, 60499 duplicated, 14150 long delays, 370395 reordered, 5198 partitions (1087 one-way), 31862 crashes (3004 during save, 2831 after save, 15956 power losses), 20745 leaders, 222124 entries committed
+  180221 writes acknowledged, 112099 retries dropped, 77215 reads served, 38987 reads refused, 21605 compactions, 1062 snapshots installed
+  panic                     278 schedules, first at seed 3
+  seed 3 (crash): panic at 2046637us on node 0: raft: state machine at 5 is behind the snapshot at 10
+  seed 7 (snapshot): panic at 1124570us on node 0: raft: state machine at 14 is behind the snapshot at 18
+  seed 12 (chaos): panic at 3232411us on node 0: raft: state machine at 23 is behind the snapshot at 25
+wrote $HOME/projects/raftkv/results/audit/m3/q-compact-without-flush.json

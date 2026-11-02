@@ -1,0 +1,7 @@
+2000 schedules, 110 failed, 1.5s: 11140800 events, 4006954 sent, 160196 dropped, 64337 duplicated, 14947 long delays, 381106 reordered, 5637 partitions (1109 one-way), 33543 crashes (3228 during save, 3064 after save, 16836 power losses), 21382 leaders, 229629 entries committed
+  186089 writes acknowledged, 114466 retries dropped, 79778 reads served, 41673 reads refused, 24124 compactions, 1560 snapshots installed
+  panic                     110 schedules, first at seed 7
+  seed 7 (snapshot): panic at 3807653us on node 0: raft: state machine at 0 is behind the snapshot at 83
+  seed 91 (crash): panic at 1872487us on node 0: raft: state machine at 0 is behind the snapshot at 42
+  seed 95 (snapshot): panic at 3414153us on node 0: raft: state machine at 0 is behind the snapshot at 14
+wrote $HOME/projects/raftkv/results/audit/m3/q-restore-position-lost.json

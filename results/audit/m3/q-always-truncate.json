@@ -1,0 +1,248 @@
+{
+  "generated_at": "2026-11-02T07:11:46Z",
+  "hardware": {
+    "collected_at": "2026-11-02T07:11:46Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1,
+  "properties_only": false,
+  "wall_seconds": 0.222455458,
+  "schedules": 2000,
+  "violations": 1639,
+  "by_check": [
+    {
+      "check": "panic",
+      "schedules": 1502,
+      "first_seed": 1
+    },
+    {
+      "check": "commit-majority",
+      "schedules": 132,
+      "first_seed": 71
+    },
+    {
+      "check": "leader-completeness",
+      "schedules": 3,
+      "first_seed": 351
+    },
+    {
+      "check": "durable-promise",
+      "schedules": 1,
+      "first_seed": 1047
+    },
+    {
+      "check": "liveness",
+      "schedules": 1,
+      "first_seed": 876
+    }
+  ],
+  "schedules_by_profile": {
+    "calm": 250,
+    "chaos": 250,
+    "crash": 250,
+    "figure8": 250,
+    "lossy": 250,
+    "partition": 250,
+    "snapshot": 250,
+    "solo": 250
+  },
+  "totals": {
+    "events": 1437768,
+    "virtual_ms": 2788951,
+    "messages_sent": 394382,
+    "messages_delivered": 333401,
+    "messages_dropped": 15347,
+    "messages_blocked_by_partition": 25365,
+    "messages_to_crashed_nodes": 19028,
+    "messages_duplicated": 8091,
+    "messages_delayed_past_election_timeout": 1870,
+    "messages_reordered": 13809,
+    "partitions": 1368,
+    "one_way_cuts": 207,
+    "crashes": 6632,
+    "crashes_between_events": 5134,
+    "crashes_during_save": 802,
+    "crashes_after_save": 696,
+    "restarts": 6120,
+    "commands_proposed": 80849,
+    "leaders_elected": 4324,
+    "entries_committed": 28023,
+    "writes_acknowledged": 22053,
+    "retried_writes_dropped": 1155,
+    "reads_served": 10855,
+    "reads_refused": 15512,
+    "log_compactions": 2174,
+    "snapshots_installed": 141,
+    "power_loss_crashes": 3364
+  },
+  "failures": [
+    {
+      "seed": 1,
+      "profile": "lossy",
+      "check": "panic",
+      "at_us": 487100,
+      "node": 0,
+      "detail": "raft: node 3 truncating committed index 6 (commit 6)"
+    },
+    {
+      "seed": 2,
+      "profile": "partition",
+      "check": "panic",
+      "at_us": 428535,
+      "node": 0,
+      "detail": "raft: node 2 truncating committed index 2 (commit 2)"
+    },
+    {
+      "seed": 3,
+      "profile": "crash",
+      "check": "panic",
+      "at_us": 553816,
+      "node": 0,
+      "detail": "raft: node 4 truncating committed index 9 (commit 11)"
+    },
+    {
+      "seed": 4,
+      "profile": "chaos",
+      "check": "panic",
+      "at_us": 1666711,
+      "node": 0,
+      "detail": "raft: node 3 truncating committed index 1 (commit 2)"
+    },
+    {
+      "seed": 5,
+      "profile": "figure8",
+      "check": "panic",
+      "at_us": 689452,
+      "node": 0,
+      "detail": "raft: node 4 truncating committed index 4 (commit 4)"
+    },
+    {
+      "seed": 7,
+      "profile": "snapshot",
+      "check": "panic",
+      "at_us": 249674,
+      "node": 0,
+      "detail": "raft: node 3 truncating committed index 7 (commit 7)"
+    },
+    {
+      "seed": 8,
+      "profile": "calm",
+      "check": "panic",
+      "at_us": 203114,
+      "node": 0,
+      "detail": "raft: node 3 truncating committed index 4 (commit 4)"
+    },
+    {
+      "seed": 9,
+      "profile": "lossy",
+      "check": "panic",
+      "at_us": 186640,
+      "node": 0,
+      "detail": "raft: node 4 truncating committed index 3 (commit 3)"
+    },
+    {
+      "seed": 10,
+      "profile": "partition",
+      "check": "panic",
+      "at_us": 754500,
+      "node": 0,
+      "detail": "raft: node 2 truncating committed index 11 (commit 16)"
+    },
+    {
+      "seed": 11,
+      "profile": "crash",
+      "check": "panic",
+      "at_us": 800363,
+      "node": 0,
+      "detail": "raft: node 3 truncating committed index 5 (commit 5)"
+    },
+    {
+      "seed": 12,
+      "profile": "chaos",
+      "check": "panic",
+      "at_us": 1099666,
+      "node": 0,
+      "detail": "raft: node 1 truncating committed index 11 (commit 11)"
+    },
+    {
+      "seed": 13,
+      "profile": "figure8",
+      "check": "panic",
+      "at_us": 305776,
+      "node": 0,
+      "detail": "raft: node 5 truncating committed index 4 (commit 4)"
+    },
+    {
+      "seed": 15,
+      "profile": "snapshot",
+      "check": "panic",
+      "at_us": 157308,
+      "node": 0,
+      "detail": "raft: node 3 truncating committed index 1 (commit 1)"
+    },
+    {
+      "seed": 16,
+      "profile": "calm",
+      "check": "panic",
+      "at_us": 549041,
+      "node": 0,
+      "detail": "raft: node 1 truncating committed index 24 (commit 24)"
+    },
+    {
+      "seed": 17,
+      "profile": "lossy",
+      "check": "panic",
+      "at_us": 163538,
+      "node": 0,
+      "detail": "raft: node 2 truncating committed index 1 (commit 1)"
+    },
+    {
+      "seed": 18,
+      "profile": "partition",
+      "check": "panic",
+      "at_us": 200727,
+      "node": 0,
+      "detail": "raft: node 2 truncating committed index 3 (commit 3)"
+    },
+    {
+      "seed": 20,
+      "profile": "chaos",
+      "check": "panic",
+      "at_us": 175138,
+      "node": 0,
+      "detail": "raft: node 4 truncating committed index 1 (commit 1)"
+    },
+    {
+      "seed": 21,
+      "profile": "figure8",
+      "check": "panic",
+      "at_us": 141983,
+      "node": 0,
+      "detail": "raft: node 1 truncating committed index 1 (commit 1)"
+    },
+    {
+      "seed": 24,
+      "profile": "calm",
+      "check": "panic",
+      "at_us": 159095,
+      "node": 0,
+      "detail": "raft: node 3 truncating committed index 4 (commit 4)"
+    },
+    {
+      "seed": 25,
+      "profile": "lossy",
+      "check": "panic",
+      "at_us": 348034,
+      "node": 0,
+      "detail": "raft: node 2 truncating committed index 1 (commit 1)"
+    }
+  ]
+}

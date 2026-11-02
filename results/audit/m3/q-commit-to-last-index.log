@@ -1,0 +1,7 @@
+2000 schedules, 52 failed, 1.4s: 10969657 events, 3985224 sent, 158523 dropped, 66551 duplicated, 15302 long delays, 374075 reordered, 5862 partitions (1109 one-way), 33046 crashes (3272 during save, 3069 after save, 16571 power losses), 20611 leaders, 228777 entries committed
+  186666 writes acknowledged, 106590 retries dropped, 80054 reads served, 41922 reads refused, 25232 compactions, 1849 snapshots installed
+  commit-bound               52 schedules, first at seed 32
+  seed 32 (calm): commit-bound at 3620053us on node 3: commit index reached 815, but this message allowed 814
+  seed 82 (partition): commit-bound at 721870us on node 3: commit index reached 51, but this message allowed 50
+  seed 99 (crash): commit-bound at 2849939us on node 3: commit index reached 128, but this message allowed 127
+wrote $HOME/projects/raftkv/results/audit/m3/q-commit-to-last-index.json

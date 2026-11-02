@@ -1,0 +1,11 @@
+--- FAIL: TestSimSchedules (1.49s)
+    sim_test.go:24: 2000 schedules, 11578463 events, 34479 crashes, 5849 partitions
+    sim_test.go:29: seed 279 (snapshot): kv-linearizable at 4177801us on node 1: read of key k0 went backwards: 35 tokens after an earlier read saw 45
+    sim_test.go:29: seed 290 (partition): kv-linearizable at 531860us on node 1: read of key k3 went backwards: 0 tokens after an earlier read saw 2
+    sim_test.go:29: seed 407 (snapshot): kv-linearizable at 1298246us on node 3: read of key k0 went backwards: 2 tokens after an earlier read saw 3
+    sim_test.go:29: seed 586 (partition): kv-linearizable at 1976187us on node 4: read of key k0 went backwards: 46 tokens after an earlier read saw 70
+    sim_test.go:29: seed 722 (partition): kv-linearizable at 3961544us on node 4: read of key k0 went backwards: 73 tokens after an earlier read saw 77
+    sim_test.go:33: 16 of 2000 schedules failed: [{Check:kv-linearizable Schedules:16 FirstSeed:279}]
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft/sim	1.692s
+FAIL

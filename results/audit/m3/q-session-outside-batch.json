@@ -1,0 +1,233 @@
+{
+  "generated_at": "2026-11-02T07:12:15Z",
+  "hardware": {
+    "collected_at": "2026-11-02T07:12:15Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1,
+  "properties_only": false,
+  "wall_seconds": 1.363549,
+  "schedules": 2000,
+  "violations": 853,
+  "by_check": [
+    {
+      "check": "kv-exactly-once",
+      "schedules": 562,
+      "first_seed": 4
+    },
+    {
+      "check": "kv-divergence",
+      "schedules": 291,
+      "first_seed": 3
+    }
+  ],
+  "schedules_by_profile": {
+    "calm": 250,
+    "chaos": 250,
+    "crash": 250,
+    "figure8": 250,
+    "lossy": 250,
+    "partition": 250,
+    "snapshot": 250,
+    "solo": 250
+  },
+  "totals": {
+    "events": 10471412,
+    "virtual_ms": 9895098,
+    "messages_sent": 3804633,
+    "messages_delivered": 3319792,
+    "messages_dropped": 154791,
+    "messages_blocked_by_partition": 163176,
+    "messages_to_crashed_nodes": 224014,
+    "messages_duplicated": 64110,
+    "messages_delayed_past_election_timeout": 14640,
+    "messages_reordered": 362065,
+    "partitions": 5592,
+    "one_way_cuts": 1058,
+    "crashes": 29714,
+    "crashes_between_events": 24424,
+    "crashes_during_save": 2677,
+    "crashes_after_save": 2613,
+    "restarts": 29539,
+    "commands_proposed": 633670,
+    "leaders_elected": 19437,
+    "entries_committed": 216669,
+    "writes_acknowledged": 177206,
+    "retried_writes_dropped": 101404,
+    "reads_served": 76096,
+    "reads_refused": 38910,
+    "log_compactions": 24351,
+    "snapshots_installed": 1667,
+    "power_loss_crashes": 14907
+  },
+  "failures": [
+    {
+      "seed": 3,
+      "profile": "crash",
+      "check": "kv-divergence",
+      "at_us": 4240000,
+      "node": 2,
+      "detail": "state machine differs from node 1 at index 26"
+    },
+    {
+      "seed": 4,
+      "profile": "chaos",
+      "check": "kv-exactly-once",
+      "at_us": 2909592,
+      "node": 3,
+      "detail": "key k1 holds c1-2 twice"
+    },
+    {
+      "seed": 11,
+      "profile": "crash",
+      "check": "kv-exactly-once",
+      "at_us": 4205014,
+      "node": 1,
+      "detail": "key k1 holds c1-5 twice"
+    },
+    {
+      "seed": 13,
+      "profile": "figure8",
+      "check": "kv-exactly-once",
+      "at_us": 6977806,
+      "node": 5,
+      "detail": "key k0 holds c4-6 twice"
+    },
+    {
+      "seed": 14,
+      "profile": "solo",
+      "check": "kv-exactly-once",
+      "at_us": 710853,
+      "node": 1,
+      "detail": "key k0 holds c2-1 twice"
+    },
+    {
+      "seed": 15,
+      "profile": "snapshot",
+      "check": "kv-divergence",
+      "at_us": 6240000,
+      "node": 3,
+      "detail": "state machine differs from node 1 at index 39"
+    },
+    {
+      "seed": 20,
+      "profile": "chaos",
+      "check": "kv-divergence",
+      "at_us": 5240000,
+      "node": 2,
+      "detail": "state machine differs from node 1 at index 46"
+    },
+    {
+      "seed": 21,
+      "profile": "figure8",
+      "check": "kv-divergence",
+      "at_us": 10240000,
+      "node": 3,
+      "detail": "state machine differs from node 1 at index 69"
+    },
+    {
+      "seed": 22,
+      "profile": "solo",
+      "check": "kv-exactly-once",
+      "at_us": 3832654,
+      "node": 1,
+      "detail": "key k0 holds c2-2 twice"
+    },
+    {
+      "seed": 27,
+      "profile": "crash",
+      "check": "kv-exactly-once",
+      "at_us": 1612831,
+      "node": 2,
+      "detail": "key k1 holds c2-5 twice"
+    },
+    {
+      "seed": 28,
+      "profile": "chaos",
+      "check": "kv-exactly-once",
+      "at_us": 2204541,
+      "node": 3,
+      "detail": "key k1 holds c2-2 twice"
+    },
+    {
+      "seed": 29,
+      "profile": "figure8",
+      "check": "kv-exactly-once",
+      "at_us": 7828670,
+      "node": 3,
+      "detail": "key k3 holds c5-1 twice"
+    },
+    {
+      "seed": 31,
+      "profile": "snapshot",
+      "check": "kv-exactly-once",
+      "at_us": 4203987,
+      "node": 1,
+      "detail": "key k0 holds c1-1 twice"
+    },
+    {
+      "seed": 36,
+      "profile": "chaos",
+      "check": "kv-exactly-once",
+      "at_us": 4203561,
+      "node": 2,
+      "detail": "key k0 holds c2-3 twice"
+    },
+    {
+      "seed": 37,
+      "profile": "figure8",
+      "check": "kv-divergence",
+      "at_us": 6240000,
+      "node": 2,
+      "detail": "state machine differs from node 1 at index 78"
+    },
+    {
+      "seed": 38,
+      "profile": "solo",
+      "check": "kv-exactly-once",
+      "at_us": 2611439,
+      "node": 1,
+      "detail": "key k0 holds c1-1 twice"
+    },
+    {
+      "seed": 43,
+      "profile": "crash",
+      "check": "kv-exactly-once",
+      "at_us": 2206542,
+      "node": 3,
+      "detail": "key k0 holds c1-11 twice"
+    },
+    {
+      "seed": 44,
+      "profile": "chaos",
+      "check": "kv-divergence",
+      "at_us": 4240000,
+      "node": 4,
+      "detail": "state machine differs from node 1 at index 14"
+    },
+    {
+      "seed": 45,
+      "profile": "figure8",
+      "check": "kv-divergence",
+      "at_us": 12240000,
+      "node": 4,
+      "detail": "state machine differs from node 1 at index 117"
+    },
+    {
+      "seed": 46,
+      "profile": "solo",
+      "check": "kv-exactly-once",
+      "at_us": 3200000,
+      "node": 1,
+      "detail": "key k1 holds c3-3 twice"
+    }
+  ]
+}

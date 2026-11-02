@@ -1,0 +1,11 @@
+--- FAIL: TestSimSchedules (1.48s)
+    sim_test.go:24: 2000 schedules, 11322780 events, 34376 crashes, 5870 partitions
+    sim_test.go:29: seed 215 (snapshot): state-machine-safety at 1279562us on node 1: index 10 committed as term 3, but another node committed term 6
+    sim_test.go:29: seed 487 (snapshot): state-machine-safety at 1401424us on node 1: index 11 committed as term 4, but another node committed term 6
+    sim_test.go:29: seed 495 (snapshot): state-machine-safety at 1338690us on node 1: index 3 committed as term 1, but another node committed term 2
+    sim_test.go:29: seed 738 (partition): state-machine-safety at 1397466us on node 2: index 176 committed as term 5, but another node committed term 7
+    sim_test.go:29: seed 975 (snapshot): state-machine-safety at 5705091us on node 3: index 49 committed as term 18, but another node committed term 20
+    sim_test.go:33: 10 of 2000 schedules failed: [{Check:state-machine-safety Schedules:10 FirstSeed:215}]
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft/sim	1.674s
+FAIL

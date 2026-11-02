@@ -1,0 +1,228 @@
+{
+  "generated_at": "2026-11-02T07:12:32Z",
+  "hardware": {
+    "collected_at": "2026-11-02T07:12:32Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1,
+  "properties_only": false,
+  "wall_seconds": 1.469290834,
+  "schedules": 2000,
+  "violations": 28,
+  "by_check": [
+    {
+      "check": "kv-linearizable",
+      "schedules": 28,
+      "first_seed": 51
+    }
+  ],
+  "schedules_by_profile": {
+    "calm": 250,
+    "chaos": 250,
+    "crash": 250,
+    "figure8": 250,
+    "lossy": 250,
+    "partition": 250,
+    "snapshot": 250,
+    "solo": 250
+  },
+  "totals": {
+    "events": 11260691,
+    "virtual_ms": 10902811,
+    "messages_sent": 4057511,
+    "messages_delivered": 3529615,
+    "messages_dropped": 162453,
+    "messages_blocked_by_partition": 170685,
+    "messages_to_crashed_nodes": 256132,
+    "messages_duplicated": 66872,
+    "messages_delayed_past_election_timeout": 15278,
+    "messages_reordered": 384127,
+    "partitions": 5851,
+    "one_way_cuts": 1113,
+    "crashes": 33990,
+    "crashes_between_events": 27656,
+    "crashes_during_save": 3249,
+    "crashes_after_save": 3085,
+    "restarts": 33973,
+    "commands_proposed": 687989,
+    "leaders_elected": 21595,
+    "entries_committed": 231273,
+    "writes_acknowledged": 187318,
+    "retried_writes_dropped": 113207,
+    "reads_served": 80710,
+    "reads_refused": 33569,
+    "log_compactions": 25450,
+    "snapshots_installed": 1827,
+    "power_loss_crashes": 16993
+  },
+  "failures": [
+    {
+      "seed": 51,
+      "profile": "crash",
+      "check": "kv-linearizable",
+      "at_us": 2776287,
+      "node": 1,
+      "detail": "read of key k0 went backwards: 45 tokens after an earlier read saw 58"
+    },
+    {
+      "seed": 259,
+      "profile": "crash",
+      "check": "kv-linearizable",
+      "at_us": 1926784,
+      "node": 3,
+      "detail": "read of key k0 misses c1-1, acknowledged before the read began"
+    },
+    {
+      "seed": 386,
+      "profile": "partition",
+      "check": "kv-linearizable",
+      "at_us": 3773251,
+      "node": 2,
+      "detail": "read of key k2 misses c4-40, acknowledged before the read began"
+    },
+    {
+      "seed": 515,
+      "profile": "crash",
+      "check": "kv-linearizable",
+      "at_us": 2418801,
+      "node": 3,
+      "detail": "read of key k1 went backwards: 9 tokens after an earlier read saw 11"
+    },
+    {
+      "seed": 563,
+      "profile": "crash",
+      "check": "kv-linearizable",
+      "at_us": 5100415,
+      "node": 2,
+      "detail": "read of key k0 went backwards: 100 tokens after an earlier read saw 102"
+    },
+    {
+      "seed": 571,
+      "profile": "crash",
+      "check": "kv-linearizable",
+      "at_us": 1139150,
+      "node": 3,
+      "detail": "read of key k1 misses c3-5, acknowledged before the read began"
+    },
+    {
+      "seed": 583,
+      "profile": "snapshot",
+      "check": "kv-linearizable",
+      "at_us": 3422693,
+      "node": 2,
+      "detail": "read of key k1 misses c2-24, acknowledged before the read began"
+    },
+    {
+      "seed": 610,
+      "profile": "partition",
+      "check": "kv-linearizable",
+      "at_us": 3893295,
+      "node": 3,
+      "detail": "read of key k0 misses c2-42, acknowledged before the read began"
+    },
+    {
+      "seed": 620,
+      "profile": "chaos",
+      "check": "kv-linearizable",
+      "at_us": 2268005,
+      "node": 5,
+      "detail": "read of key k0 misses c5-5, acknowledged before the read began"
+    },
+    {
+      "seed": 653,
+      "profile": "figure8",
+      "check": "kv-linearizable",
+      "at_us": 5645139,
+      "node": 2,
+      "detail": "read of key k0 misses c3-12, acknowledged before the read began"
+    },
+    {
+      "seed": 723,
+      "profile": "crash",
+      "check": "kv-linearizable",
+      "at_us": 2388715,
+      "node": 1,
+      "detail": "read of key k0 misses c3-12, acknowledged before the read began"
+    },
+    {
+      "seed": 740,
+      "profile": "chaos",
+      "check": "kv-linearizable",
+      "at_us": 719696,
+      "node": 3,
+      "detail": "read of key k0 misses c4-3, acknowledged before the read began"
+    },
+    {
+      "seed": 827,
+      "profile": "crash",
+      "check": "kv-linearizable",
+      "at_us": 1572544,
+      "node": 3,
+      "detail": "read of key k0 misses c4-3, acknowledged before the read began"
+    },
+    {
+      "seed": 900,
+      "profile": "chaos",
+      "check": "kv-linearizable",
+      "at_us": 3304780,
+      "node": 5,
+      "detail": "read of key k0 went backwards: 51 tokens after an earlier read saw 57"
+    },
+    {
+      "seed": 1308,
+      "profile": "chaos",
+      "check": "kv-linearizable",
+      "at_us": 4689433,
+      "node": 2,
+      "detail": "read of key k1 misses c5-3, acknowledged before the read began"
+    },
+    {
+      "seed": 1490,
+      "profile": "partition",
+      "check": "kv-linearizable",
+      "at_us": 3564870,
+      "node": 1,
+      "detail": "read of key k1 went backwards: 42 tokens after an earlier read saw 43"
+    },
+    {
+      "seed": 1515,
+      "profile": "crash",
+      "check": "kv-linearizable",
+      "at_us": 3616352,
+      "node": 3,
+      "detail": "read of key k0 misses c1-6, acknowledged before the read began"
+    },
+    {
+      "seed": 1554,
+      "profile": "partition",
+      "check": "kv-linearizable",
+      "at_us": 1050233,
+      "node": 5,
+      "detail": "read of key k0 misses c2-18, acknowledged before the read began"
+    },
+    {
+      "seed": 1583,
+      "profile": "snapshot",
+      "check": "kv-linearizable",
+      "at_us": 4683904,
+      "node": 5,
+      "detail": "read of key k3 misses c2-18, acknowledged before the read began"
+    },
+    {
+      "seed": 1663,
+      "profile": "snapshot",
+      "check": "kv-linearizable",
+      "at_us": 1183678,
+      "node": 3,
+      "detail": "read of key k2 misses c1-1, acknowledged before the read began"
+    }
+  ]
+}

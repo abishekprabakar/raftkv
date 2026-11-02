@@ -4,6 +4,190 @@ One section per milestone, newest first: what was done, the ideas behind it, and
 the questions worth being able to answer about it. Every number comes from a real
 run. Criteria are in `docs/acceptance/`, and the runs are in `results/audit/`.
 
+## M3: the replicated KV store
+
+Criteria: `docs/acceptance/M3.md`. Results: `results/sim.json` and
+`results/audit/m3/`. Code: `internal/kv`, with additions to `internal/raft` and the
+engine.
+
+### What was built
+
+The storage engine and Raft are now one system. Clients send writes to the leader,
+committed writes go into the LSM engine, and reads go through ReadIndex. Retried
+writes apply exactly once, and Raft can discard its log once the engine holds the
+data, while a follower too far behind gets the whole state through InstallSnapshot.
+It still runs only in tests and the simulator. A real network comes in M4.
+
+### The ideas in plain language
+
+**Why a plain leader read is unsafe.** A leader only believes it leads. Picture
+three nodes: A leads and holds k=old. A gets cut off. B and C elect B, and B commits
+k=new and tells the client. Nobody told A, so A still calls itself leader. If the
+client now reads from A, it gets k=old, a value older than one it has already seen
+acknowledged. `TestPlainLeaderReadIsStale` builds exactly this and shows the stale
+value.
+
+**ReadIndex.** When a read arrives, the leader notes its commit index, then checks
+that a majority still answers to it, using messages sent after the read arrived. A
+newer leader would have needed a majority's votes, and those voters would no longer
+answer the old leader, so a majority answering proves there was no newer leader at
+the moment of the read. Then it serves the read from its state machine. That costs a
+round of messages but no disk write. One extra rule: a brand-new leader must first
+commit an entry in its own term, because until then it may not know everything that
+is committed. `TestReadIndexRefusesDeposedLeader` shows the cut-off leader refusing
+the read.
+
+**Exactly once.** A client that hears nothing can't know if its write happened. If
+it retries and the first try did happen, the write is applied twice. So every write
+carries a client ID and a sequence number, and the store remembers the highest
+number applied per client and drops repeats. Three details matter:
+
+- The session update goes in the same atomic batch as the write. If a crash could
+  separate them, the store could hold the write but forget it had seen it.
+- Sessions live in the store, so they're replicated, snapshotted and the same on
+  every node. A retry that reaches a new leader is still recognized.
+- An `Append` operation makes duplicates visible, which is how the simulator catches
+  them. A repeated `Put` of the same value looks harmless.
+
+**One fsync per write, not two.** The engine runs without its own fsync, because
+Raft's log already holds every entry durably. After a power cut, the store's
+recorded position says how far it got, and Raft replays the rest. That works only if
+a crash loses the newest writes and never one from the middle.
+
+**Snapshots without copying.** The engine's durable contents are the snapshot, so
+Raft keeps only a marker saying where its log now starts. Before cutting the log, the
+engine is flushed, because afterwards nothing could rebuild what it might lose. Bytes
+are built only for a follower that needs them. That follower restores before it
+saves the marker: if it crashes between the two, its state is ahead of its log and
+startup repairs that. The other order could leave a log claiming entries the state
+machine never received.
+
+### A real bug, found by reasoning
+
+The simulation found no bug in M3's Raft or KV code. Writing up the one-fsync design
+turned up one in the engine's WAL, which the simulator could not have found. Its
+in-memory backend promised exactly what the store needs, while the real WAL didn't
+keep that promise:
+
+- Rotating to a new WAL segment didn't fsync the old one. A power cut could keep the
+  new segment and lose the end of the old one, leaving a hole in the middle.
+- The M0-fixes rule, "a valid record after damage means corruption", is wrong when
+  nothing was fsynced, because the OS may write later pages first. A node could have
+  refused to restart after an ordinary power cut.
+
+The fix: fsync each finished segment in `NoSync` mode, and in that mode stop replay
+at the first damage. Three new tests pin it down. Lesson worth telling: a simulator
+checks the system against a model of its parts, so the model's promises have to be
+checked against the real parts too.
+
+### Results
+
+| Check | Result |
+|---|---|
+| Tests, normal and under the race detector | pass |
+| Third-party packages | none |
+| Scripted tests R1 to R5 | pass |
+| Seeds 1 to 10,000 | 0 failed |
+| Fresh seeds 2,000,001 to 2,010,000 | 0 failed |
+| 200 seeds on the real LSM engine | 0 failed |
+| Crash harness, seed 1, 500 trials | 500 passed, 0 failed |
+
+In the 10,000 schedules of `results/sim.json`:
+
+| What happened | Count |
+|---|---|
+| Writes acknowledged to clients | 974,920 |
+| Retried writes dropped by a session | 571,155 |
+| Reads served through ReadIndex | 414,376 |
+| Reads refused | 213,474 |
+| Log compactions | 118,667 |
+| Snapshots installed | 8,864 |
+| Power-loss crashes | 85,704 |
+
+### All 19 planted bugs
+
+Every one fails. The 17 that run in the simulator fail `TestSimSchedules`, and the
+other two fail their unit test. Counts are schedules failed out of 2,000:
+
+| Bug | Caught by |
+|---|---|
+| `plain-leader-read` | `kv-linearizable`, 16 |
+| `read-skips-term-check` | `TestReadWaitsForCommitInCurrentTerm`. In simulation, `kv-linearizable`, 28 |
+| `no-dedup` | `kv-exactly-once`, 1,344 |
+| `sessions-not-in-snapshot` | `kv-divergence` 101, `kv-exactly-once` 99 |
+| `session-outside-batch` | `kv-exactly-once` 562, `kv-divergence` 291 |
+| `compact-without-flush` | startup refuses, 278 |
+| `install-keeps-conflicting-log` | `state-machine-safety`, 10 |
+| `stale-snapshot-rolls-back` | `commit-monotonic` 11, startup refuses 3 |
+| `restore-position-lost` | startup refuses, 110 |
+| `save-before-restore` | `TestRestoreHappensBeforeSave`. In simulation, startup refuses, 7 |
+| The 9 Raft bugs from M2 | all fail again, as listed in the README |
+
+"Startup refuses" is the `panic` check: `NewNode` saw a state machine behind the
+snapshot, so those entries were gone, and it would not start. That is the node
+detecting the damage, and failing loudly is the right behavior. `plain-leader-read`
+failed only 16 times, because it needs a cut-off leader, a write on the other side
+and a read that lands on the stale node, all at once.
+
+### What this does not show
+
+- The read check is partial. It catches duplicates, phantoms, missed acknowledged
+  writes and time travel, but it is not a full linearizability check. M5 runs
+  Porcupine over whole histories.
+- The real-engine runs model a process kill only. Power cuts are modeled with the
+  in-memory backend, which is why the WAL bug had to be found by reasoning.
+- Sessions never expire, and a snapshot is built in memory and sent as one message.
+- No real network, no real clients and no performance numbers yet.
+
+### Questions and answers
+
+**Q: Why can't the leader just answer reads?**
+It might not be the leader any more. Tell the A, B, C story above. A cut-off leader
+has no way to know a newer one exists, so it has to check with a majority.
+
+**Q: How does ReadIndex differ from putting reads in the log?**
+Both are linearizable. A read in the log costs a disk write on a majority. ReadIndex
+costs one round of messages and no disk write. A lease-based read skips even the
+round trip, but it depends on bounded clock drift, which I didn't want to assume.
+
+**Q: Why must a new leader commit in its own term before serving reads?**
+Its log has every committed entry, but its commit index can be behind, because the
+old leader may have committed entries this one doesn't know are committed yet. Its
+no-op commits them all.
+
+**Q: How do you get exactly-once writes?**
+Client ID plus sequence number, a session table in the store, and the session update
+atomic with the write. Then explain why each part is needed, using the three planted
+bugs that break them: `no-dedup`, `session-outside-batch` and
+`sessions-not-in-snapshot`.
+
+**Q: Why doesn't the storage engine fsync?**
+Raft's log already made the entry durable before it could be applied. A second fsync
+would double the cost for nothing. What the engine must guarantee instead is that a
+crash loses only a suffix, so the recorded position is exact. Then tell the WAL bug
+story.
+
+**Q: How do snapshots work here?**
+The engine's state is the snapshot. Compaction flushes the engine, then cuts the log
+and writes one WAL record holding the full Raft state in a new segment, then deletes
+old segments newest first. A lagging follower gets the bytes in an InstallSnapshot
+message, restores, then saves.
+
+**Q: What if a follower receives an old snapshot late?**
+If the snapshot isn't past its commit index, it does nothing and just acknowledges.
+The planted bug `stale-snapshot-rolls-back` shows what happens otherwise: the commit
+index goes backwards.
+
+**Q: What is Figure 13 step 6?**
+If the follower's log already has the snapshot's last entry with the same term, the
+entries after it are still valid, so it keeps them. Otherwise the whole log goes.
+`install-keeps-conflicting-log` breaks step 7 and ends with two nodes applying
+different entries.
+
+**Q: What would you change for production?**
+Session expiry, a streamed and chunked snapshot, leases or follower reads for read
+throughput, batching many client writes into one Raft entry, and membership changes.
+
 ## M2: deterministic simulation
 
 Criteria: `docs/acceptance/M2.md`. Results: `results/sim.json` and
@@ -115,7 +299,10 @@ Two things to read carefully:
   tail removes it. For the second, a lower commit index does nothing, because
   `lastApplied` doesn't move back. The rules are still worth keeping.
 - **Figure 8 is hard to hit.** Even with a profile built for it, `count-old-terms`
-  failed only 1.5% of schedules. A subtle bug can survive many clean runs.
+  failed only 1.5% of schedules. A subtle bug can survive many clean runs. So
+  `TestFigure8` now replays the paper's exact history one message at a time. It
+  passed 100 of 100 runs on correct code and failed 100 of 100 with the bug, showing
+  two nodes applying different entries at index 2 (`results/audit/figure8/`).
 
 One prediction was wrong: `forget-voted-for` was caught by `durable-promise`, not
 `vote-once`, because the vote missing from disk is noticed when the reply leaves,

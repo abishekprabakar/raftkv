@@ -1,0 +1,3 @@
+10000 schedules, 0 failed, 5.9s: 56429849 events, 20434064 sent, 786354 dropped, 344347 duplicated, 80213 long delays, 1953101 reordered, 29017 partitions (5188 one-way), 170360 crashes (16344 during save, 16210 after save, 85124 power losses), 107417 leaders, 1181615 entries committed
+  961254 writes acknowledged, 570070 retries dropped, 407403 reads served, 214831 reads refused, 109813 compactions, 8509 snapshots installed
+wrote $HOME/projects/raftkv/results/audit/m3/sim-fresh.json

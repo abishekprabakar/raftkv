@@ -1,0 +1,233 @@
+{
+  "generated_at": "2026-11-02T07:12:11Z",
+  "hardware": {
+    "collected_at": "2026-11-02T07:12:11Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1,
+  "properties_only": false,
+  "wall_seconds": 1.423635667,
+  "schedules": 2000,
+  "violations": 200,
+  "by_check": [
+    {
+      "check": "kv-divergence",
+      "schedules": 101,
+      "first_seed": 4
+    },
+    {
+      "check": "kv-exactly-once",
+      "schedules": 99,
+      "first_seed": 12
+    }
+  ],
+  "schedules_by_profile": {
+    "calm": 250,
+    "chaos": 250,
+    "crash": 250,
+    "figure8": 250,
+    "lossy": 250,
+    "partition": 250,
+    "snapshot": 250,
+    "solo": 250
+  },
+  "totals": {
+    "events": 11218696,
+    "virtual_ms": 10837005,
+    "messages_sent": 4035349,
+    "messages_delivered": 3515509,
+    "messages_dropped": 160714,
+    "messages_blocked_by_partition": 164338,
+    "messages_to_crashed_nodes": 254563,
+    "messages_duplicated": 65495,
+    "messages_delayed_past_election_timeout": 15166,
+    "messages_reordered": 381270,
+    "partitions": 5737,
+    "one_way_cuts": 1111,
+    "crashes": 34045,
+    "crashes_between_events": 27642,
+    "crashes_during_save": 3287,
+    "crashes_after_save": 3116,
+    "restarts": 34009,
+    "commands_proposed": 680427,
+    "leaders_elected": 21542,
+    "entries_committed": 230367,
+    "writes_acknowledged": 186492,
+    "retried_writes_dropped": 114232,
+    "reads_served": 79987,
+    "reads_refused": 41858,
+    "log_compactions": 24690,
+    "snapshots_installed": 1705,
+    "power_loss_crashes": 17076
+  },
+  "failures": [
+    {
+      "seed": 4,
+      "profile": "chaos",
+      "check": "kv-divergence",
+      "at_us": 4240000,
+      "node": 2,
+      "detail": "state machine differs from node 1 at index 58"
+    },
+    {
+      "seed": 12,
+      "profile": "chaos",
+      "check": "kv-exactly-once",
+      "at_us": 5204364,
+      "node": 2,
+      "detail": "key k1 holds c3-1 twice"
+    },
+    {
+      "seed": 18,
+      "profile": "partition",
+      "check": "kv-divergence",
+      "at_us": 3240000,
+      "node": 2,
+      "detail": "state machine differs from node 1 at index 80"
+    },
+    {
+      "seed": 26,
+      "profile": "partition",
+      "check": "kv-exactly-once",
+      "at_us": 3204705,
+      "node": 2,
+      "detail": "key k0 holds c4-18 twice"
+    },
+    {
+      "seed": 71,
+      "profile": "snapshot",
+      "check": "kv-exactly-once",
+      "at_us": 4904033,
+      "node": 2,
+      "detail": "key k0 holds c4-12 twice"
+    },
+    {
+      "seed": 79,
+      "profile": "snapshot",
+      "check": "kv-divergence",
+      "at_us": 4240000,
+      "node": 2,
+      "detail": "state machine differs from node 1 at index 28"
+    },
+    {
+      "seed": 81,
+      "profile": "lossy",
+      "check": "kv-divergence",
+      "at_us": 6240000,
+      "node": 2,
+      "detail": "state machine differs from node 1 at index 179"
+    },
+    {
+      "seed": 87,
+      "profile": "snapshot",
+      "check": "kv-exactly-once",
+      "at_us": 5206046,
+      "node": 2,
+      "detail": "key k1 holds c5-9 twice"
+    },
+    {
+      "seed": 90,
+      "profile": "partition",
+      "check": "kv-exactly-once",
+      "at_us": 5204047,
+      "node": 3,
+      "detail": "key k1 holds c2-24 twice"
+    },
+    {
+      "seed": 99,
+      "profile": "crash",
+      "check": "kv-exactly-once",
+      "at_us": 1528565,
+      "node": 4,
+      "detail": "key k0 holds c5-4 twice"
+    },
+    {
+      "seed": 127,
+      "profile": "snapshot",
+      "check": "kv-exactly-once",
+      "at_us": 3677468,
+      "node": 2,
+      "detail": "key k3 holds c3-14 twice"
+    },
+    {
+      "seed": 131,
+      "profile": "crash",
+      "check": "kv-divergence",
+      "at_us": 6240000,
+      "node": 2,
+      "detail": "state machine differs from node 1 at index 239"
+    },
+    {
+      "seed": 143,
+      "profile": "snapshot",
+      "check": "kv-exactly-once",
+      "at_us": 6205761,
+      "node": 2,
+      "detail": "key k1 holds c2-20 twice"
+    },
+    {
+      "seed": 154,
+      "profile": "partition",
+      "check": "kv-divergence",
+      "at_us": 5240000,
+      "node": 2,
+      "detail": "state machine differs from node 1 at index 246"
+    },
+    {
+      "seed": 162,
+      "profile": "partition",
+      "check": "kv-exactly-once",
+      "at_us": 3175914,
+      "node": 3,
+      "detail": "key k1 holds c5-11 twice"
+    },
+    {
+      "seed": 191,
+      "profile": "snapshot",
+      "check": "kv-divergence",
+      "at_us": 2240000,
+      "node": 2,
+      "detail": "state machine differs from node 1 at index 39"
+    },
+    {
+      "seed": 194,
+      "profile": "partition",
+      "check": "kv-exactly-once",
+      "at_us": 3023611,
+      "node": 3,
+      "detail": "key k0 holds c3-38 twice"
+    },
+    {
+      "seed": 207,
+      "profile": "snapshot",
+      "check": "kv-exactly-once",
+      "at_us": 1137807,
+      "node": 2,
+      "detail": "key k0 holds c1-4 twice"
+    },
+    {
+      "seed": 210,
+      "profile": "partition",
+      "check": "kv-divergence",
+      "at_us": 7240000,
+      "node": 2,
+      "detail": "state machine differs from node 1 at index 319"
+    },
+    {
+      "seed": 215,
+      "profile": "snapshot",
+      "check": "kv-exactly-once",
+      "at_us": 1961193,
+      "node": 1,
+      "detail": "key k0 holds c4-1 twice"
+    }
+  ]
+}
