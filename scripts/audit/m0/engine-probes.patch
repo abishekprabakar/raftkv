@@ -1,0 +1,221 @@
+diff --git a/internal/storage/engine/audit_test.go b/internal/storage/engine/audit_test.go
+new file mode 100644
+index 0000000..8a96708
+--- /dev/null
++++ b/internal/storage/engine/audit_test.go
+@@ -0,0 +1,191 @@
++package engine
++
++import (
++	"errors"
++	"fmt"
++	"os"
++	"path/filepath"
++	"runtime"
++	"strconv"
++	"sync"
++	"sync/atomic"
++	"testing"
++	"time"
++
++	"github.com/abishekprabakar/raftkv/internal/storage/sstable"
++)
++
++// Every test here asserts the CORRECT behaviour, so a failure confirms a bug.
++
++// D5a: Get loads its snapshot before it captures the version. If a flush
++// installs between those two steps it may already have dropped the version
++// the snapshot needs. The hook makes that interleaving deterministic.
++func TestAuditGetSnapshotOrderingInjected(t *testing.T) {
++	db := mustOpen(t, t.TempDir(), smallOpts())
++	defer db.Close()
++	k := []byte("k")
++	db.Put(k, []byte("v1"))
++	db.Put(k, []byte("v2"))
++	auditHookAfterSnap = func() {
++		auditHookAfterSnap = nil
++		db.Put(k, []byte("v3"))
++		if err := db.Flush(); err != nil {
++			t.Error(err)
++		}
++	}
++	v, err := db.Get(k)
++	if err != nil {
++		t.Fatalf("key has existed the whole time, but Get returned %q, %v", v, err)
++	}
++	if string(v) != "v2" && string(v) != "v3" {
++		t.Fatalf("Get returned %q, want v2 or v3", v)
++	}
++}
++
++// D5b: the same bug with no injected pause. One writer counts up on a single
++// key. A reader records the last acknowledged count, then reads: linearizable
++// reads may never return less than that count. Runs only when
++// AUDIT_STRESS_SECONDS is set.
++func TestAuditGetStress(t *testing.T) {
++	secs, _ := strconv.Atoi(os.Getenv("AUDIT_STRESS_SECONDS"))
++	if secs == 0 {
++		t.Skip("AUDIT_STRESS_SECONDS not set")
++	}
++	defer runtime.GOMAXPROCS(runtime.GOMAXPROCS(2)) // oversubscribe so readers get preempted
++	opts := smallOpts()
++	opts.MemtableBytes = 4 << 10
++	db := mustOpen(t, t.TempDir(), opts)
++	defer db.Close()
++	k := []byte("k")
++	var acked atomic.Int64
++	if err := db.Put(k, []byte("0000000000000000")); err != nil {
++		t.Fatal(err)
++	}
++	stop := make(chan struct{})
++	var reads, notFound, stale atomic.Int64
++	var wg sync.WaitGroup
++	for r := 0; r < 16; r++ {
++		wg.Add(1)
++		go func() {
++			defer wg.Done()
++			for {
++				select {
++				case <-stop:
++					return
++				default:
++				}
++				lo := acked.Load()
++				v, err := db.Get(k)
++				reads.Add(1)
++				switch {
++				case errors.Is(err, ErrNotFound):
++					notFound.Add(1)
++				case err != nil:
++					t.Error(err)
++					return
++				default:
++					if got, _ := strconv.ParseInt(string(v), 10, 64); got < lo {
++						stale.Add(1)
++					}
++				}
++			}
++		}()
++	}
++	end := time.Now().Add(time.Duration(secs) * time.Second)
++	for i := int64(1); time.Now().Before(end); i++ {
++		if err := db.Put(k, []byte(fmt.Sprintf("%016d", i))); err != nil {
++			t.Fatal(err)
++		}
++		acked.Store(i)
++	}
++	close(stop)
++	wg.Wait()
++	s := db.Stats()
++	t.Logf("AUDIT reads=%d writes=%d flushes=%d not_found=%d stale=%d", reads.Load(), acked.Load(), s.Flushes, notFound.Load(), stale.Load())
++	if notFound.Load()+stale.Load() > 0 {
++		t.Fatalf("%d not-found and %d stale reads out of %d", notFound.Load(), stale.Load(), reads.Load())
++	}
++}
++
++// D6: an exhausted iterator should keep returning false.
++func TestAuditScanNextAfterEnd(t *testing.T) {
++	db := mustOpen(t, t.TempDir(), smallOpts())
++	defer db.Close()
++	it := db.Scan(nil, nil)
++	defer it.Close()
++	defer func() {
++		if r := recover(); r != nil {
++			t.Fatalf("second Next on an exhausted iterator panicked: %v", r)
++		}
++	}()
++	it.Next()
++	if it.Next() {
++		t.Fatal("empty database returned a key")
++	}
++}
++
++// D7: a value above the WAL's 64 MiB replay limit must be rejected up front,
++// not acknowledged and then discarded by recovery.
++func TestAuditOversizeValueNotLostAfterAck(t *testing.T) {
++	dir := t.TempDir()
++	opts := smallOpts()
++	opts.NoFlushOnClose = true
++	opts.MemtableBytes = 1 << 30
++	db := mustOpen(t, dir, opts)
++	if err := db.Put([]byte("big"), make([]byte, 65<<20)); err != nil {
++		db.Close()
++		return // rejected up front: correct
++	}
++	db.Close()
++	db = mustOpen(t, dir, smallOpts())
++	defer db.Close()
++	if _, err := db.Get([]byte("big")); err != nil {
++		t.Fatalf("Put returned nil, but after reopen Get returned %v", err)
++	}
++}
++
++// D8: the docs say the bloom filter uses k = 7 probes at 10 bits per key.
++func TestAuditBloomProbeCount(t *testing.T) {
++	f := sstable.BuildBloom([][]byte{[]byte("a")}, 10)
++	if f[0] != 7 {
++		t.Fatalf("docs say k = 7, code built k = %d", f[0])
++	}
++}
++
++// D9: a bit flip in the middle of the newest WAL segment is not a torn tail.
++// Acknowledged records after it must not disappear without an error.
++func TestAuditWALMidSegmentCorruptionIsReported(t *testing.T) {
++	dir := t.TempDir()
++	opts := smallOpts()
++	opts.NoFlushOnClose = true
++	opts.MemtableBytes = 1 << 30
++	db := mustOpen(t, dir, opts)
++	for i := 0; i < 100; i++ {
++		if err := db.Put([]byte(fmt.Sprintf("k%03d", i)), []byte("value")); err != nil {
++			t.Fatal(err)
++		}
++	}
++	db.Close()
++	segs, _ := filepath.Glob(filepath.Join(dir, "*.wal"))
++	var path string
++	for _, s := range segs {
++		if info, _ := os.Stat(s); info.Size() > 0 {
++			path = s
++		}
++	}
++	data, _ := os.ReadFile(path)
++	data[20] ^= 0x01 // inside the first of 100 records
++	os.WriteFile(path, data, 0o644)
++	db, err := Open(dir, smallOpts())
++	if err != nil {
++		return // refusing to open is correct
++	}
++	defer db.Close()
++	present := 0
++	it := db.Scan(nil, nil)
++	for it.Next() {
++		present++
++	}
++	it.Close()
++	t.Fatalf("Open returned no error with %d of 100 acknowledged keys left (WALTruncatedBytes=%d)", present, db.Stats().WALTruncatedBytes)
++}
+diff --git a/internal/storage/engine/db.go b/internal/storage/engine/db.go
+index 43e252c..e7c9363 100644
+--- a/internal/storage/engine/db.go
++++ b/internal/storage/engine/db.go
+@@ -50,6 +50,9 @@ type immTable struct {
+ 	segs   []uint64 // WAL segments that become garbage once flushed
+ }
+ 
++// auditHookAfterSnap lets an audit test run code between the two steps of Get.
++var auditHookAfterSnap func()
++
+ // DB is an LSM-tree key-value store.
+ type DB struct {
+ 	opts Options
+@@ -356,6 +359,9 @@ func (db *DB) makeRoomForWrite() error {
+ func (db *DB) Get(key []byte) ([]byte, error) {
+ 	db.counters.gets.Add(1)
+ 	snap := db.visible.Load()
++	if auditHookAfterSnap != nil {
++		auditHookAfterSnap()
++	}
+ 	db.mu.Lock()
+ 	if db.closed {
+ 		db.mu.Unlock()

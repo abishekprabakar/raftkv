@@ -1,0 +1,13 @@
+diff --git a/cmd/crashtest/main.go b/cmd/crashtest/main.go
+index 3b78f8d..e112183 100644
+--- a/cmd/crashtest/main.go
++++ b/cmd/crashtest/main.go
+@@ -56,7 +56,7 @@ var (
+ // Small sizes so flushes and compactions happen within a trial.
+ func dbOptions() engine.Options {
+ 	return engine.Options{
+-		SyncMode:            wal.GroupCommit,
++		SyncMode:            wal.NoSync, // AUDIT MUTANT: never fsync
+ 		MemtableBytes:       64 << 10,
+ 		BlockBytes:          1024,
+ 		L0CompactionTrigger: 2,

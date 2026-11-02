@@ -1,0 +1,32 @@
+diff --git a/cmd/crashtest/main.go b/cmd/crashtest/main.go
+index 3b78f8d..ae4a9a6 100644
+--- a/cmd/crashtest/main.go
++++ b/cmd/crashtest/main.go
+@@ -313,6 +313,16 @@ func runTrial(self string, rnd *rand.Rand, t int, streams []*streamState) trialR
+ 	for g, s := range streams {
+ 		starts[g] = strconv.Itoa(s.applied)
+ 	}
++	// AUDIT PROBE: how much WAL does the child's Open have to recover?
++	var walBytes int64
++	if segs, err := filepath.Glob(filepath.Join(*dir, "*.wal")); err == nil {
++		for _, seg := range segs {
++			if info, err := os.Stat(seg); err == nil {
++				walBytes += info.Size()
++			}
++		}
++	}
++	fmt.Fprintf(os.Stderr, "AUDIT trial=%d wal_bytes_before_child=%d\n", t, walBytes)
+ 	cmd := exec.Command(self, "-child", "-dir", *dir, "-seed", strconv.FormatUint(*seed, 10),
+ 		"-writers", strconv.Itoa(*writers), "-keys", strconv.Itoa(*keys), "-startops", strings.Join(starts, ","))
+ 	cmd.Stderr = os.Stderr
+@@ -339,6 +349,10 @@ func runTrial(self string, rnd *rand.Rand, t int, streams []*streamState) trialR
+ 				lastAck[g] = n
+ 			}
+ 		}
++		// AUDIT PROBE: did cmd.Wait close the pipe before the reader hit EOF?
++		if err := sc.Err(); err != nil {
++			fmt.Fprintf(os.Stderr, "AUDIT trial=%d reader_cut_off err=%v\n", t, err)
++		}
+ 	}()
+ 	delay := killDelay(rnd)
+ 	res.KillAfterMs = delay.Milliseconds()

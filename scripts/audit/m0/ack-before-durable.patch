@@ -1,0 +1,15 @@
+diff --git a/internal/storage/engine/db.go b/internal/storage/engine/db.go
+index 43e252c..fd784ac 100644
+--- a/internal/storage/engine/db.go
++++ b/internal/storage/engine/db.go
+@@ -302,9 +302,7 @@ func (db *DB) write(kind ikey.Kind, key, value []byte) error {
+ 	db.mem.Put(ikey.Encode(nil, key, seq, kind), append([]byte(nil), value...))
+ 	db.writeMu.Unlock()
+ 
+-	if err := fut.Wait(); err != nil {
+-		return err
+-	}
++	_ = fut // AUDIT MUTANT: acknowledge without waiting for the WAL syncer
+ 	// Every record with a lower sequence number sits earlier in the WAL and
+ 	// is therefore durable too, so advancing to seq is safe.
+ 	for {
