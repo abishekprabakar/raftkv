@@ -1,0 +1,903 @@
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+=== RUN   TestFigure8
+=== RUN   TestFigure8/d_overwrites_the_uncommitted_entry
+    figure8_test.go:239: step (c): S1 committed through index 2 by counting an entry from term 2
+    cluster_test.go:61: seed 1: node 5 applied {Index:2 Term:3 Kind:1 Data:[]} at index 2, another node applied {Index:2 Term:2 Kind:1 Data:[]}
+=== RUN   TestFigure8/e_commits_through_the_current_term
+    figure8_test.go:260: step (c): S1 committed through index 2 by counting an entry from term 2
+--- FAIL: TestFigure8 (0.00s)
+    --- FAIL: TestFigure8/d_overwrites_the_uncommitted_entry (0.00s)
+    --- FAIL: TestFigure8/e_commits_through_the_current_term (0.00s)
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft	0.214s
+FAIL

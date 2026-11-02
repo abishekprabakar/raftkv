@@ -1,0 +1,2 @@
+f1 exit=0 passed=100 failed=0
+f2 exit=1 passed=0 failed=100 runs_with_conflicting_apply_at_index_2=100
