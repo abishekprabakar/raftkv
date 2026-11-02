@@ -54,7 +54,10 @@ retry" rather than "failed".
 **A real network needs a few settings changed.** gRPC waits up to two minutes
 between reconnect attempts by default, which would leave a restarted node cut off,
 so that is capped at one second. A container that is killed never closes its TCP
-connections, so peers send keepalive pings every 2 seconds to notice.
+connections. Two things notice: gRPC pings an idle connection every 10 s, and on
+Linux a connection whose data goes unacknowledged for 2 s is closed. (I first wrote
+that pings went every 2 s. gRPC silently raises anything under 10 s to 10 s; M5
+found this while reading its logs.)
 
 **Why the CLI runs inside Docker's network.** Redirects carry addresses like
 `node3:7000`, the names Compose gives the containers. Those names only resolve

@@ -20,6 +20,7 @@ import (
 	"google.golang.org/grpc/backoff"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/status"
 
 	"github.com/abishekprabakar/raftkv/internal/pb"
@@ -95,18 +96,32 @@ func (c *Client) conn(addr string) (*grpc.ClientConn, error) {
 	if conn, ok := c.conns[addr]; ok {
 		return conn, nil
 	}
-	conn, err := grpc.NewClient(addr,
+	// "passthrough" looks the name up on every connection attempt rather than
+	// caching it for 30 s, so a node that comes back on a new address is found at
+	// once. See target in internal/server/peer.go for the longer story.
+	conn, err := grpc.NewClient("passthrough:///"+addr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithConnectParams(grpc.ConnectParams{
 			Backoff:           backoff.Config{BaseDelay: 50 * time.Millisecond, Multiplier: 1.6, Jitter: 0.2, MaxDelay: time.Second},
 			MinConnectTimeout: time.Second,
 		}),
+		// As between nodes: ping an idle connection every 10 s, and on Linux close
+		// one whose data goes unacknowledged for 2 s.
+		grpc.WithKeepaliveParams(keepalive.ClientParameters{Time: 10 * time.Second, Timeout: 2 * time.Second, PermitWithoutStream: true}),
 	)
 	if err != nil {
 		return nil, err
 	}
 	c.conns[addr] = conn
 	return conn, nil
+}
+
+// forget closes the connection to addr, so the next request dials a new one.
+func (c *Client) forget(addr string) {
+	if conn, ok := c.conns[addr]; ok {
+		conn.Close()
+		delete(c.conns, addr)
+	}
 }
 
 // learn returns addr's index in the address list, adding it if it's new.
@@ -151,6 +166,14 @@ func (c *Client) call(ctx context.Context, try attempt) error {
 		case err != nil:
 			why = fmt.Errorf("%s: %w", addr, err)
 			c.next = (c.next + 1) % len(c.addrs)
+			if status.Code(err) == codes.DeadlineExceeded && ctx.Err() == nil {
+				// The node didn't answer within the attempt. Its connection may be
+				// dead without anyone having noticed, since a node that is cut off
+				// never closes its connections, and gRPC would keep sending on it.
+				// M5 caught a client failing every request this way long after the
+				// network healed. Start a fresh connection next time.
+				c.forget(addr)
+			}
 		case notLeader.LeaderAddress == "" || notLeader.LeaderAddress == addr:
 			why = fmt.Errorf("%s: not the leader, and doesn't know who is", addr)
 			c.next = (c.next + 1) % len(c.addrs)

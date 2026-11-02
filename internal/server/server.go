@@ -142,7 +142,9 @@ func Start(cfg Config) (*Server, error) {
 	if err := s.open(); err != nil {
 		s.closeFiles()
 		for _, p := range s.peers {
-			p.conn.Close()
+			if p.conn != nil {
+				p.conn.Close()
+			}
 		}
 		return nil, err
 	}
@@ -203,8 +205,9 @@ func (s *Server) open() error {
 	}
 	s.grpc = grpc.NewServer(
 		grpc.MaxRecvMsgSize(maxMessageBytes), grpc.MaxSendMsgSize(maxMessageBytes),
-		// Peers ping every 2 s to notice a dead connection (see dialOptions). The
-		// default policy would reject pings that frequent and close the connection.
+		// Peers ping idle connections every 10 s (see dialOptions). The default
+		// policy rejects pings more often than every 5 minutes and closes the
+		// connection, so it has to allow them.
 		grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{MinTime: time.Second, PermitWithoutStream: true}),
 		grpc.WaitForHandlers(true),
 	)

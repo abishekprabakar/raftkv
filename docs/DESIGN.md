@@ -432,10 +432,24 @@ doubling up to 500 ms. Errors that mean "the outcome is unknown" are gRPC
 `(client_id, seq)`; the session table makes that safe. `InvalidArgument` is never
 retried.
 
+**Names are looked up on every dial.** Peers and clients dial with gRPC's
+`passthrough` scheme, which hands the host name to the dialer each time, instead of
+the default resolver, which caches an answer for up to 30 s. Containers change
+address when they restart or reconnect, and two can swap: M5 caught node2 and node3
+coming back on each other's addresses. A message that reaches the wrong node is
+refused, because every envelope names its receiver; the sender then drops that
+connection and dials again, since gRPC would otherwise keep reusing a connection
+that is healthy but leads to the wrong node. A client drops a connection after an
+attempt on it times out, for the same reason: a connection to a node that was cut
+off can be dead without anyone having noticed.
+
 **Timeouts that matter on a real network.** gRPC's default reconnect backoff grows
 to two minutes, which would keep a restarted node cut off, so it is capped at one
 second. A node killed outright never closes its TCP connections, so peers send
-keepalive pings every 2 s and the server allows them. One message can be up to 256
+keepalive pings on idle connections every 10 s, the least gRPC allows, and on Linux
+the 2 s keepalive timeout becomes `TCP_USER_TIMEOUT`, which closes a connection whose
+data goes unacknowledged for 2 s. (M4 said pings went every 2 s. That was wrong:
+gRPC silently raises any shorter interval to 10 s.) One message can be up to 256
 MiB, because a snapshot travels whole.
 
 **Docker Compose.** `compose.yaml` runs three nodes from one distroless image, each

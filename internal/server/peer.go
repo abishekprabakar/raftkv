@@ -2,14 +2,18 @@ package server
 
 import (
 	"context"
+	"errors"
+	"io"
 	"log/slog"
 	"sync/atomic"
 	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/backoff"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/keepalive"
+	"google.golang.org/grpc/status"
 
 	"github.com/abishekprabakar/raftkv/internal/pb"
 	"github.com/abishekprabakar/raftkv/internal/raft"
@@ -37,9 +41,13 @@ func dialOptions() []grpc.DialOption {
 			Backoff:           backoff.Config{BaseDelay: 50 * time.Millisecond, Multiplier: 1.6, Jitter: 0.2, MaxDelay: time.Second},
 			MinConnectTimeout: time.Second,
 		}),
-		// A peer killed outright never closes its TCP connection, and without pings
-		// a sender could wait on it for minutes. The server allows pings this often.
-		grpc.WithKeepaliveParams(keepalive.ClientParameters{Time: 2 * time.Second, Timeout: 2 * time.Second, PermitWithoutStream: true}),
+		// A peer killed or cut off never closes its TCP connection, so without help
+		// a sender could write into a dead connection for minutes. Two things find
+		// it. An idle connection is pinged every 10 s, which is the least gRPC
+		// allows: it silently raises anything lower to 10 s. And on Linux, gRPC
+		// turns the 2 s Timeout into TCP_USER_TIMEOUT, so a connection whose data
+		// goes unacknowledged for 2 s is closed, however recently it was pinged.
+		grpc.WithKeepaliveParams(keepalive.ClientParameters{Time: 10 * time.Second, Timeout: 2 * time.Second, PermitWithoutStream: true}),
 	}
 }
 
@@ -56,11 +64,21 @@ type peer struct {
 }
 
 func newPeer(id raft.NodeID, addr string, log *slog.Logger) (*peer, error) {
-	conn, err := grpc.NewClient(addr, dialOptions()...)
-	if err != nil {
-		return nil, err
-	}
-	return &peer{id: id, addr: addr, queue: make(chan *pb.Envelope, peerQueue), conn: conn, log: log}, nil
+	p := &peer{id: id, addr: addr, queue: make(chan *pb.Envelope, peerQueue), log: log}
+	return p, p.dial()
+}
+
+// target turns a host:port into a gRPC target that looks the host up again on
+// every connection attempt. gRPC's default resolver caches the answer and asks
+// again at most every 30 s. Containers get new addresses when they restart or
+// reconnect, and two can even swap: M5 saw node2 come back on node3's old address.
+// With a cached answer, a node would keep dialing the wrong place for up to 30 s.
+func target(addr string) string { return "passthrough:///" + addr }
+
+func (p *peer) dial() error {
+	conn, err := grpc.NewClient(target(p.addr), dialOptions()...)
+	p.conn = conn
+	return err
 }
 
 // send queues a message, or drops it if the queue is full. It never blocks.
@@ -81,13 +99,36 @@ func (p *peer) run(ctx context.Context) {
 	for ctx.Err() == nil {
 		stream, err := client.Stream(ctx)
 		if err == nil {
+			// Opening and losing a stream are logged, so a connection problem can
+			// be lined up with elections in the log. Failed attempts are not:
+			// while a peer is down there is one a second.
+			p.log.Info("stream to peer open", "peer", p.id)
 			pause = 50 * time.Millisecond
 			err = p.pump(ctx, stream)
+			if errors.Is(err, io.EOF) {
+				// Send only says the stream ended. The receiver's reason is here.
+				_, err = stream.CloseAndRecv()
+			}
+			if ctx.Err() == nil {
+				p.log.Info("stream to peer lost", "peer", p.id, "err", err)
+			}
+			if status.Code(err) == codes.FailedPrecondition {
+				// The connection reached a node that isn't this peer, because the
+				// address now belongs to someone else. The connection itself is
+				// healthy, so gRPC would keep reusing it. Drop it, and dial again,
+				// which looks the name up afresh.
+				p.conn.Close()
+				if err := p.dial(); err != nil {
+					p.log.Error("redialing peer", "peer", p.id, "err", err)
+					return
+				}
+				client = pb.NewRaftClient(p.conn)
+			}
 		}
 		if ctx.Err() != nil {
 			return
 		}
-		p.log.Debug("stream to peer ended", "peer", p.id, "addr", p.addr, "err", err)
+		p.log.Debug("could not open a stream to peer", "peer", p.id, "addr", p.addr, "err", err)
 		select {
 		case <-time.After(pause):
 		case <-ctx.Done():
