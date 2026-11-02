@@ -1,0 +1,40 @@
+diff --git a/internal/storage/engine/db.go b/internal/storage/engine/db.go
+index e7c9363..c91c533 100644
+--- a/internal/storage/engine/db.go
++++ b/internal/storage/engine/db.go
+@@ -358,7 +358,6 @@ func (db *DB) makeRoomForWrite() error {
+ // Get returns the value stored under key or ErrNotFound.
+ func (db *DB) Get(key []byte) ([]byte, error) {
+ 	db.counters.gets.Add(1)
+-	snap := db.visible.Load()
+ 	if auditHookAfterSnap != nil {
+ 		auditHookAfterSnap()
+ 	}
+@@ -371,6 +370,9 @@ func (db *DB) Get(key []byte) ([]byte, error) {
+ 	imm := db.imm
+ 	v := db.current
+ 	v.ref()
++	// Load the snapshot only after capturing the version: visible never goes
++	// backwards, so it is at least the snapshot any compaction used to build v.
++	snap := db.visible.Load()
+ 	db.mu.Unlock()
+ 	defer v.unref()
+ 
+diff --git a/internal/storage/engine/iterator.go b/internal/storage/engine/iterator.go
+index a5d9a52..819f917 100644
+--- a/internal/storage/engine/iterator.go
++++ b/internal/storage/engine/iterator.go
+@@ -222,12 +222,12 @@ type Iterator struct {
+ // begins at the first key; a nil end runs to the last key. Call Next to
+ // position it, and Close when done.
+ func (db *DB) Scan(start, end []byte) *Iterator {
+-	snap := db.visible.Load()
+ 	db.mu.Lock()
+ 	mem := db.mem
+ 	imm := db.imm
+ 	v := db.current
+ 	v.ref()
++	snap := db.visible.Load()
+ 	db.mu.Unlock()
+ 
+ 	children := []internalIter{memIter{mem.Iter()}}
