@@ -1,0 +1,292 @@
+{
+  "generated_at": "2026-10-19T17:50:33Z",
+  "quick_mode": false,
+  "hardware": {
+    "collected_at": "2026-10-19T17:50:33Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "workload": {
+    "amplification_keyspace": 500000,
+    "amplification_writes": 1000000,
+    "bloom_keys": 300000,
+    "bloom_lookups": 50000,
+    "clients": 8,
+    "engine_defaults": "memtable 4 MiB, block 4 KiB, bloom 10 bits/key, L0 trigger 4, L1 10 MiB x10 per level, 2 MiB files",
+    "group_commit_window_us": 100,
+    "key_bytes": 16,
+    "read_ops": 200000,
+    "recovery_wal_mb": 64,
+    "sync_mode_seconds_each": 8,
+    "value_bytes": 100,
+    "write_clients": 64,
+    "write_ops": 200000
+  },
+  "write": {
+    "clients": 64,
+    "sync_mode": "group_commit",
+    "latency": {
+      "ops": 200000,
+      "seconds": 16.075104833,
+      "ops_per_sec": 12441.598488952137,
+      "p50_us": 4030.459,
+      "p99_us": 9929.166,
+      "p999_us": 15066.333,
+      "max_us": 25892.208
+    },
+    "flushes": 7,
+    "compactions": 3,
+    "write_stalls": 0,
+    "wal_fsyncs": 4148,
+    "records_per_fsync": 48.216007714561236
+  },
+  "read": {
+    "clients": 8,
+    "keys_in_db": 432124,
+    "latency": {
+      "ops": 200000,
+      "seconds": 0.169572292,
+      "ops_per_sec": 1179437.9709156728,
+      "p50_us": 5.041,
+      "p99_us": 50.875,
+      "p999_us": 197.875,
+      "max_us": 1220.125
+    },
+    "level_files": [
+      0,
+      0,
+      27,
+      0,
+      0,
+      0,
+      0
+    ],
+    "block_reads": 200000,
+    "block_reads_per_get": 1,
+    "note": "random point reads of existing keys over the fully compacted amplification data set; it fits in the OS page cache, so this measures engine overhead rather than disk latency"
+  },
+  "sync_modes": [
+    {
+      "mode": "fsync_per_write",
+      "clients": 8,
+      "latency": {
+        "ops": 2460,
+        "seconds": 8.021924875,
+        "ops_per_sec": 306.65956591870975,
+        "p50_us": 24982.083,
+        "p99_us": 35186.666,
+        "p999_us": 40895.917,
+        "max_us": 41057.125
+      },
+      "fsyncs": 2460,
+      "records_per_fsync": 1,
+      "fsyncs_per_sec": 306.65956591870975
+    },
+    {
+      "mode": "group_commit",
+      "clients": 1,
+      "latency": {
+        "ops": 2548,
+        "seconds": 8.001174417,
+        "ops_per_sec": 318.45325038613015,
+        "p50_us": 3009.125,
+        "p99_us": 4136.958,
+        "p999_us": 7247.583,
+        "max_us": 8790.917
+      },
+      "fsyncs": 2548,
+      "records_per_fsync": 1,
+      "fsyncs_per_sec": 318.45325038613015
+    },
+    {
+      "mode": "group_commit",
+      "clients": 8,
+      "latency": {
+        "ops": 17095,
+        "seconds": 8.00294925,
+        "ops_per_sec": 2136.087517985947,
+        "p50_us": 3959.209,
+        "p99_us": 5029.709,
+        "p999_us": 9167.792,
+        "max_us": 10999.458
+      },
+      "fsyncs": 2140,
+      "records_per_fsync": 7.988317757009346,
+      "fsyncs_per_sec": 267.401420794965
+    },
+    {
+      "mode": "group_commit",
+      "clients": 64,
+      "latency": {
+        "ops": 124436,
+        "seconds": 8.004240333,
+        "ops_per_sec": 15546.25983517429,
+        "p50_us": 3993.25,
+        "p99_us": 8042.666,
+        "p999_us": 12063.209,
+        "max_us": 16935.833
+      },
+      "fsyncs": 1993,
+      "records_per_fsync": 62.43652784746613,
+      "fsyncs_per_sec": 248.99302333329874
+    },
+    {
+      "mode": "no_sync",
+      "clients": 8,
+      "latency": {
+        "ops": 2630019,
+        "seconds": 8.018569875,
+        "ops_per_sec": 327991.03094428044,
+        "p50_us": 8.25,
+        "p99_us": 81.167,
+        "p999_us": 3616.334,
+        "max_us": 16438.584
+      },
+      "fsyncs": 0,
+      "records_per_fsync": 0,
+      "fsyncs_per_sec": 0
+    }
+  ],
+  "bloom": {
+    "keys_in_db": 300000,
+    "bits_per_key": 10,
+    "with_bloom": {
+      "enabled": true,
+      "lookups": 50000,
+      "block_reads": 430,
+      "block_reads_per_lookup": 0.0086,
+      "bloom_checks": 49997,
+      "bloom_negatives": 49567,
+      "false_positive_rate": 0.008600516030961857,
+      "latency": {
+        "ops": 50000,
+        "seconds": 0.012648625,
+        "ops_per_sec": 3952998.843747838,
+        "p50_us": 0.583,
+        "p99_us": 31.542,
+        "p999_us": 74.209,
+        "max_us": 146.041
+      },
+      "level_files": [
+        3,
+        5,
+        9,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "without_bloom": {
+      "enabled": false,
+      "lookups": 50000,
+      "block_reads": 49999,
+      "block_reads_per_lookup": 0.99998,
+      "bloom_checks": 0,
+      "bloom_negatives": 0,
+      "false_positive_rate": 0,
+      "latency": {
+        "ops": 50000,
+        "seconds": 0.064104959,
+        "ops_per_sec": 779970.8599766829,
+        "p50_us": 4.417,
+        "p99_us": 151.875,
+        "p999_us": 345.541,
+        "max_us": 825.083
+      },
+      "level_files": [
+        3,
+        5,
+        9,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "disk_read_reduction_factor": 116.27674418604651
+  },
+  "amplification": {
+    "writes": 1000000,
+    "unique_keys": 432124,
+    "user_bytes_written": 116000000,
+    "live_user_bytes": 50126384,
+    "wal_bytes": 137000000,
+    "flush_bytes": 124767711,
+    "compaction_bytes_written": 373157342,
+    "compaction_bytes_read": 435520407,
+    "compactions": 53,
+    "trivial_moves": 10,
+    "write_amplification_total": 5.473491836206897,
+    "write_amplification_sst_only": 4.292457353448276,
+    "steady_state": {
+      "level_files": [
+        0,
+        4,
+        26,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level_bytes": [
+        0,
+        8533272,
+        53871374,
+        0,
+        0,
+        0,
+        0
+      ],
+      "sst_bytes": 62404646,
+      "space_amplification": 1.2449460946554614
+    },
+    "after_full_compaction": {
+      "level_files": [
+        0,
+        0,
+        27,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level_bytes": [
+        0,
+        0,
+        55436896,
+        0,
+        0,
+        0,
+        0
+      ],
+      "sst_bytes": 55436896,
+      "space_amplification": 1.1059424513844844
+    },
+    "sync_mode": "no_sync",
+    "note": "write amplification = bytes physically written (WAL + flushes + compaction output) / user bytes; space amplification = SSTable bytes on disk / live user bytes, measured when the background worker is idle and again after a full compaction"
+  },
+  "recovery": {
+    "wal_records": 578524,
+    "wal_bytes": 79257788,
+    "replay_ms": 106.802416,
+    "open_ms_including_flush": 181.442375,
+    "replay_mb_per_sec": 707.7191661167242,
+    "replay_records_per_sec": 5416768.849124162
+  },
+  "section_seconds": {
+    "amplification": 3.662649166,
+    "bloom": 1.582607125,
+    "read": 0.199293125,
+    "recovery": 0.914776916,
+    "sync_modes": 40.326480834,
+    "write": 16.12366575
+  }
+}

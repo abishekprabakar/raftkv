@@ -1,0 +1,269 @@
+// Command results renders results/*.json into results/RESULTS.md and refreshes
+// the results block in README.md. It is the only path by which a number
+// reaches the documentation.
+package main
+
+import (
+	"encoding/json"
+	"flag"
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+)
+
+var (
+	resultsDir = flag.String("results", "results", "directory holding *.json")
+	readme     = flag.String("readme", "README.md", "README to update between the results markers")
+)
+
+const (
+	startMarker = "<!-- results:start -->"
+	endMarker   = "<!-- results:end -->"
+)
+
+type doc map[string]any
+
+func load(path string) (doc, bool) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, false
+	}
+	var d doc
+	if err := json.Unmarshal(data, &d); err != nil {
+		fmt.Fprintf(os.Stderr, "%s: %v\n", path, err)
+		return nil, false
+	}
+	return d, true
+}
+
+// get walks a dotted path; array indexes are plain numbers.
+func (d doc) get(path string) any {
+	var cur any = map[string]any(d)
+	for _, part := range strings.Split(path, ".") {
+		switch c := cur.(type) {
+		case map[string]any:
+			cur = c[part]
+		case []any:
+			var i int
+			fmt.Sscanf(part, "%d", &i)
+			if i < 0 || i >= len(c) {
+				return nil
+			}
+			cur = c[i]
+		default:
+			return nil
+		}
+	}
+	return cur
+}
+
+func (d doc) num(path string) float64 {
+	if v, ok := d.get(path).(float64); ok {
+		return v
+	}
+	return 0
+}
+
+func (d doc) str(path string) string {
+	switch v := d.get(path).(type) {
+	case string:
+		return v
+	case nil:
+		return ""
+	default:
+		return fmt.Sprint(v)
+	}
+}
+
+func (d doc) ints(path string) string {
+	arr, ok := d.get(path).([]any)
+	if !ok {
+		return ""
+	}
+	parts := make([]string, len(arr))
+	for i, v := range arr {
+		parts[i] = fmt.Sprintf("%.0f", v)
+	}
+	return "[" + strings.Join(parts, " ") + "]"
+}
+
+func commas(v float64) string {
+	s := fmt.Sprintf("%.0f", v)
+	n := len(s)
+	if n <= 3 {
+		return s
+	}
+	var b strings.Builder
+	for i, c := range s {
+		if i > 0 && (n-i)%3 == 0 {
+			b.WriteByte(',')
+		}
+		b.WriteRune(c)
+	}
+	return b.String()
+}
+
+func mb(bytes float64) string { return fmt.Sprintf("%.1f MB", bytes/(1<<20)) }
+
+type row struct{ metric, value, source string }
+
+func table(w *strings.Builder, header []string, rows [][]string) {
+	w.WriteString("| " + strings.Join(header, " | ") + " |\n")
+	w.WriteString("|" + strings.Repeat("---|", len(header)) + "\n")
+	for _, r := range rows {
+		w.WriteString("| " + strings.Join(r, " | ") + " |\n")
+	}
+	w.WriteString("\n")
+}
+
+func hardware(w *strings.Builder, d doc) {
+	w.WriteString(fmt.Sprintf("Hardware: %s, %s cores, %.0f GB RAM, %s %s, filesystem %s, %s. Collected %s.\n\n",
+		d.str("hardware.cpu"), d.str("hardware.cores"), d.num("hardware.memory_bytes")/(1<<30),
+		d.str("hardware.os_version"), d.str("hardware.arch"), d.str("hardware.filesystem"), d.str("hardware.go_version"),
+		d.str("hardware.collected_at")))
+	if n := d.str("hardware.note"); n != "" {
+		w.WriteString("Note: " + n + "\n\n")
+	}
+}
+
+func storageSection(w *strings.Builder, d doc, full bool) {
+	w.WriteString("## Storage engine (`make bench-storage` -> `results/storage.json`)\n\n")
+	if full {
+		hardware(w, d)
+		w.WriteString(fmt.Sprintf("Workload: %s-byte keys, %s-byte values. Engine defaults: %s. Group commit window %s us.\n\n",
+			d.str("workload.key_bytes"), d.str("workload.value_bytes"), d.str("workload.engine_defaults"), d.str("workload.group_commit_window_us")))
+	}
+	rows := [][]string{
+		{"Durable write throughput (group commit, " + d.str("write.clients") + " clients)",
+			commas(d.num("write.latency.ops_per_sec")) + " ops/s", "write.latency.ops_per_sec"},
+		{"Durable write latency p50 / p99",
+			fmt.Sprintf("%.1f ms / %.1f ms", d.num("write.latency.p50_us")/1000, d.num("write.latency.p99_us")/1000), "write.latency.p50_us, p99_us"},
+		{"Records per fsync during the write run", fmt.Sprintf("%.1f", d.num("write.records_per_fsync")), "write.records_per_fsync"},
+		{"Point read throughput (" + d.str("read.clients") + " clients, " + commas(d.num("read.keys_in_db")) + " keys, levels " + d.ints("read.level_files") + ")",
+			commas(d.num("read.latency.ops_per_sec")) + " ops/s", "read.latency.ops_per_sec"},
+		{"Point read latency p50 / p99",
+			fmt.Sprintf("%.0f us / %.0f us", d.num("read.latency.p50_us"), d.num("read.latency.p99_us")), "read.latency.p50_us, p99_us"},
+	}
+	if full {
+		table(w, []string{"Metric", "Value", "JSON field"}, rows)
+	} else {
+		table(w, []string{"Metric", "Value", "Field in results/storage.json"}, rows)
+	}
+
+	w.WriteString("### fsync per write vs group commit (" + d.str("workload.sync_mode_seconds_each") + " s each)\n\n")
+	var sm [][]string
+	if arr, ok := d.get("sync_modes").([]any); ok {
+		for i := range arr {
+			p := fmt.Sprintf("sync_modes.%d.", i)
+			sm = append(sm, []string{
+				d.str(p + "mode"), d.str(p + "clients"),
+				commas(d.num(p + "latency.ops_per_sec")),
+				fmt.Sprintf("%.2f", d.num(p+"latency.p50_us")/1000),
+				fmt.Sprintf("%.2f", d.num(p+"latency.p99_us")/1000),
+				fmt.Sprintf("%.1f", d.num(p+"records_per_fsync")),
+				fmt.Sprintf("%.0f", d.num(p+"fsyncs_per_sec")),
+			})
+		}
+	}
+	table(w, []string{"Mode", "Clients", "ops/s", "p50 ms", "p99 ms", "records/fsync", "fsync/s"}, sm)
+
+	w.WriteString("### Bloom filters: lookups for missing keys (" + commas(d.num("bloom.keys_in_db")) + " keys in DB, " +
+		commas(d.num("bloom.with_bloom.lookups")) + " lookups, " + d.str("bloom.bits_per_key") + " bits/key)\n\n")
+	table(w, []string{"Filter", "Levels", "Block reads", "Block reads / lookup", "False positive rate", "p50 us", "p99 us", "ops/s"}, [][]string{
+		{"with bloom", d.ints("bloom.with_bloom.level_files"), commas(d.num("bloom.with_bloom.block_reads")),
+			fmt.Sprintf("%.3f", d.num("bloom.with_bloom.block_reads_per_lookup")), fmt.Sprintf("%.4f", d.num("bloom.with_bloom.false_positive_rate")),
+			fmt.Sprintf("%.0f", d.num("bloom.with_bloom.latency.p50_us")), fmt.Sprintf("%.0f", d.num("bloom.with_bloom.latency.p99_us")),
+			commas(d.num("bloom.with_bloom.latency.ops_per_sec"))},
+		{"without bloom", d.ints("bloom.without_bloom.level_files"), commas(d.num("bloom.without_bloom.block_reads")),
+			fmt.Sprintf("%.3f", d.num("bloom.without_bloom.block_reads_per_lookup")), "n/a",
+			fmt.Sprintf("%.0f", d.num("bloom.without_bloom.latency.p50_us")), fmt.Sprintf("%.0f", d.num("bloom.without_bloom.latency.p99_us")),
+			commas(d.num("bloom.without_bloom.latency.ops_per_sec"))},
+	})
+	w.WriteString(fmt.Sprintf("Bloom filters cut disk block reads for missing keys by %.1fx (`bloom.disk_read_reduction_factor`).\n\n", d.num("bloom.disk_read_reduction_factor")))
+
+	w.WriteString("### Write and space amplification (" + commas(d.num("amplification.writes")) + " writes over " +
+		commas(d.num("amplification.unique_keys")) + " unique keys, " + d.str("amplification.sync_mode") + ")\n\n")
+	table(w, []string{"Metric", "Value", "JSON field"}, [][]string{
+		{"User bytes written", mb(d.num("amplification.user_bytes_written")), "amplification.user_bytes_written"},
+		{"Live user bytes (unique keys)", mb(d.num("amplification.live_user_bytes")), "amplification.live_user_bytes"},
+		{"WAL bytes", mb(d.num("amplification.wal_bytes")), "amplification.wal_bytes"},
+		{"Flush bytes", mb(d.num("amplification.flush_bytes")), "amplification.flush_bytes"},
+		{"Compaction bytes written (" + d.str("amplification.compactions") + " compactions, " + d.str("amplification.trivial_moves") + " trivial moves)",
+			mb(d.num("amplification.compaction_bytes_written")), "amplification.compaction_bytes_written"},
+		{"Write amplification, total (WAL + flush + compaction)", fmt.Sprintf("%.2fx", d.num("amplification.write_amplification_total")), "amplification.write_amplification_total"},
+		{"Write amplification, SSTables only", fmt.Sprintf("%.2fx", d.num("amplification.write_amplification_sst_only")), "amplification.write_amplification_sst_only"},
+		{"Space amplification, steady state (levels " + d.ints("amplification.steady_state.level_files") + ")",
+			fmt.Sprintf("%.2fx", d.num("amplification.steady_state.space_amplification")), "amplification.steady_state.space_amplification"},
+		{"Space amplification after full compaction (levels " + d.ints("amplification.after_full_compaction.level_files") + ")",
+			fmt.Sprintf("%.2fx", d.num("amplification.after_full_compaction.space_amplification")), "amplification.after_full_compaction.space_amplification"},
+	})
+
+	w.WriteString("### WAL recovery\n\n")
+	table(w, []string{"Metric", "Value", "JSON field"}, [][]string{
+		{"WAL replayed", commas(d.num("recovery.wal_records")) + " records, " + mb(d.num("recovery.wal_bytes")), "recovery.wal_records, wal_bytes"},
+		{"Replay time (read + checksum + rebuild memtable)", fmt.Sprintf("%.0f ms", d.num("recovery.replay_ms")), "recovery.replay_ms"},
+		{"Replay rate", fmt.Sprintf("%.0f MB/s, %s records/s", d.num("recovery.replay_mb_per_sec"), commas(d.num("recovery.replay_records_per_sec"))), "recovery.replay_mb_per_sec"},
+		{"Open() including flush of recovered data to L0", fmt.Sprintf("%.0f ms", d.num("recovery.open_ms_including_flush")), "recovery.open_ms_including_flush"},
+	})
+}
+
+func crashSection(w *strings.Builder, d doc, full bool) {
+	w.WriteString("## Crash recovery harness (`make crash-test` -> `results/crash.json`)\n\n")
+	if full {
+		hardware(w, d)
+		w.WriteString(fmt.Sprintf("Each trial starts a child process with %s writer goroutines over %s keys each (memtable %s bytes, L0 trigger %s, %s), kills it with %s after a random delay (%s), reopens the directory and verifies acknowledged writes, prefix consistency per writer and every value checksum.\n\n",
+			d.str("config.writers"), d.str("config.keys_per_writer"), d.str("config.memtable_bytes"), d.str("config.l0_compaction_trigger"),
+			d.str("config.sync_mode"), d.str("config.kill_signal"), d.str("config.kill_delay_ms")))
+	}
+	table(w, []string{"Metric", "Value", "JSON field"}, [][]string{
+		{"Trials (SIGKILL at a random point)", commas(d.num("trials")), "trials"},
+		{"Passed / failed", commas(d.num("passed")) + " / " + commas(d.num("failed")), "passed, failed"},
+		{"Acknowledged writes verified present after recovery", commas(d.num("total_acked_ops")), "total_acked_ops"},
+		{"Stored values checksum-validated", commas(d.num("total_values_validated")), "total_values_validated"},
+		{"Trials with data already compacted below L0 at the kill", commas(d.num("trials_with_data_below_l0")), "trials_with_data_below_l0"},
+		{"Trials killed during startup/recovery (before first ack)", commas(d.num("trials_killed_before_first_ack")), "trials_killed_before_first_ack"},
+		{"Durable but unacknowledged writes seen (total / max per trial)", commas(d.num("total_unacked_durable_ops")) + " / " + commas(d.num("max_unacked_durable_ops")), "total_unacked_durable_ops, max_unacked_durable_ops"},
+		{"Torn WAL tails truncated", commas(d.num("trials_with_truncated_wal_tail")), "trials_with_truncated_wal_tail"},
+		{"Wall time", fmt.Sprintf("%.0f s", d.num("wall_seconds")), "wall_seconds"},
+	})
+}
+
+func main() {
+	flag.Parse()
+	storage, haveStorage := load(filepath.Join(*resultsDir, "storage.json"))
+	crash, haveCrash := load(filepath.Join(*resultsDir, "crash.json"))
+
+	var full, short strings.Builder
+	full.WriteString("# Measured results\n\nEvery number below is read from a JSON file produced by a tool in `cmd/`; regenerate this file with `make results`.\n\n")
+	short.WriteString(startMarker + "\n")
+	short.WriteString("_Generated from `results/*.json` by `go run ./cmd/results`; see [results/RESULTS.md](results/RESULTS.md) for hardware and methodology._\n\n")
+	if haveStorage {
+		storageSection(&full, storage, true)
+		storageSection(&short, storage, false)
+	}
+	if haveCrash {
+		crashSection(&full, crash, true)
+		crashSection(&short, crash, false)
+	}
+	short.WriteString(endMarker)
+
+	if err := os.WriteFile(filepath.Join(*resultsDir, "RESULTS.md"), []byte(full.String()), 0o644); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+	fmt.Println("wrote", filepath.Join(*resultsDir, "RESULTS.md"))
+
+	if data, err := os.ReadFile(*readme); err == nil {
+		s := string(data)
+		i, j := strings.Index(s, startMarker), strings.Index(s, endMarker)
+		if i >= 0 && j > i {
+			s = s[:i] + short.String() + s[j+len(endMarker):]
+			if err := os.WriteFile(*readme, []byte(s), 0o644); err != nil {
+				fmt.Fprintln(os.Stderr, err)
+				os.Exit(1)
+			}
+			fmt.Println("updated results block in", *readme)
+		}
+	}
+}

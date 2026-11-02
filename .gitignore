@@ -1,0 +1,6 @@
+/bin/
+/tmp/
+*.test
+*.out
+/results/tmp/
+.DS_Store
