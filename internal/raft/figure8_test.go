@@ -151,8 +151,9 @@ func (s *scripted) upToC() {
 		s.wantDisk("start", id, 1)
 	}
 
-	// (a) S1 leads term 2 and partially replicates index 2, to S2 only.
-	s.win(s1, s2, s3)
+	// (a) S1 leads term 2 and partially replicates index 2, to S2 only. Every server
+	// hears of term 2, so S5's next election is term 3, as in the figure.
+	s.win(s1, s2, s3, s4, s5)
 	s.deliver(s1, s2)
 	s.lose()
 	s.wantDisk("a", s1, 1, 2)
