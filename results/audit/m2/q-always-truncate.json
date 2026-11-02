@@ -1,0 +1,235 @@
+{
+  "generated_at": "2026-11-02T06:25:43Z",
+  "hardware": {
+    "collected_at": "2026-11-02T06:25:43Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1,
+  "properties_only": false,
+  "wall_seconds": 0.232639375,
+  "schedules": 2000,
+  "violations": 1701,
+  "by_check": [
+    {
+      "check": "panic",
+      "schedules": 1500,
+      "first_seed": 1
+    },
+    {
+      "check": "commit-majority",
+      "schedules": 184,
+      "first_seed": 38
+    },
+    {
+      "check": "liveness",
+      "schedules": 13,
+      "first_seed": 12
+    },
+    {
+      "check": "leader-completeness",
+      "schedules": 4,
+      "first_seed": 240
+    }
+  ],
+  "schedules_by_profile": {
+    "calm": 285,
+    "chaos": 286,
+    "crash": 286,
+    "figure8": 286,
+    "lossy": 286,
+    "partition": 286,
+    "solo": 285
+  },
+  "totals": {
+    "events": 963373,
+    "virtual_ms": 2197991,
+    "messages_sent": 289494,
+    "messages_delivered": 246958,
+    "messages_dropped": 8206,
+    "messages_blocked_by_partition": 5607,
+    "messages_to_crashed_nodes": 19064,
+    "messages_duplicated": 2697,
+    "messages_delayed_past_election_timeout": 793,
+    "messages_reordered": 11373,
+    "partitions": 548,
+    "one_way_cuts": 132,
+    "crashes": 6012,
+    "crashes_between_events": 4533,
+    "crashes_during_save": 697,
+    "crashes_after_save": 782,
+    "restarts": 5539,
+    "commands_proposed": 22027,
+    "leaders_elected": 4441,
+    "entries_committed": 19333
+  },
+  "failures": [
+    {
+      "seed": 1,
+      "profile": "lossy",
+      "check": "panic",
+      "at_us": 277770,
+      "node": 0,
+      "detail": "raft: node 1 truncating committed index 1 (commit 1)"
+    },
+    {
+      "seed": 2,
+      "profile": "partition",
+      "check": "panic",
+      "at_us": 234073,
+      "node": 0,
+      "detail": "raft: node 3 truncating committed index 8 (commit 8)"
+    },
+    {
+      "seed": 3,
+      "profile": "crash",
+      "check": "panic",
+      "at_us": 136858,
+      "node": 0,
+      "detail": "raft: node 4 truncating committed index 1 (commit 2)"
+    },
+    {
+      "seed": 4,
+      "profile": "chaos",
+      "check": "panic",
+      "at_us": 4193567,
+      "node": 0,
+      "detail": "raft: node 2 truncating committed index 9 (commit 72)"
+    },
+    {
+      "seed": 5,
+      "profile": "figure8",
+      "check": "panic",
+      "at_us": 435329,
+      "node": 0,
+      "detail": "raft: node 5 truncating committed index 4 (commit 4)"
+    },
+    {
+      "seed": 7,
+      "profile": "calm",
+      "check": "panic",
+      "at_us": 206864,
+      "node": 0,
+      "detail": "raft: node 3 truncating committed index 10 (commit 10)"
+    },
+    {
+      "seed": 8,
+      "profile": "lossy",
+      "check": "panic",
+      "at_us": 260527,
+      "node": 0,
+      "detail": "raft: node 3 truncating committed index 3 (commit 3)"
+    },
+    {
+      "seed": 9,
+      "profile": "partition",
+      "check": "panic",
+      "at_us": 131700,
+      "node": 0,
+      "detail": "raft: node 4 truncating committed index 1 (commit 1)"
+    },
+    {
+      "seed": 10,
+      "profile": "crash",
+      "check": "panic",
+      "at_us": 375791,
+      "node": 0,
+      "detail": "raft: node 1 truncating committed index 4 (commit 7)"
+    },
+    {
+      "seed": 11,
+      "profile": "chaos",
+      "check": "panic",
+      "at_us": 495334,
+      "node": 0,
+      "detail": "raft: node 5 truncating committed index 9 (commit 9)"
+    },
+    {
+      "seed": 12,
+      "profile": "figure8",
+      "check": "liveness",
+      "at_us": 17000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 follower term 114 commit 0 log 26] [2 follower term 114 commit 0 log 57] [3 follower term 114 commit 0 log 17] [4 leader term 114 commit 0 log 81] [5 follower term 114 commit 0 log 27] "
+    },
+    {
+      "seed": 14,
+      "profile": "calm",
+      "check": "panic",
+      "at_us": 198446,
+      "node": 0,
+      "detail": "raft: node 1 truncating committed index 7 (commit 7)"
+    },
+    {
+      "seed": 15,
+      "profile": "lossy",
+      "check": "panic",
+      "at_us": 187003,
+      "node": 0,
+      "detail": "raft: node 1 truncating committed index 1 (commit 1)"
+    },
+    {
+      "seed": 16,
+      "profile": "partition",
+      "check": "panic",
+      "at_us": 134305,
+      "node": 0,
+      "detail": "raft: node 1 truncating committed index 1 (commit 1)"
+    },
+    {
+      "seed": 17,
+      "profile": "crash",
+      "check": "panic",
+      "at_us": 176117,
+      "node": 0,
+      "detail": "raft: node 5 truncating committed index 11 (commit 11)"
+    },
+    {
+      "seed": 18,
+      "profile": "chaos",
+      "check": "panic",
+      "at_us": 311049,
+      "node": 0,
+      "detail": "raft: node 5 truncating committed index 1 (commit 1)"
+    },
+    {
+      "seed": 19,
+      "profile": "figure8",
+      "check": "panic",
+      "at_us": 164752,
+      "node": 0,
+      "detail": "raft: node 3 truncating committed index 1 (commit 1)"
+    },
+    {
+      "seed": 21,
+      "profile": "calm",
+      "check": "panic",
+      "at_us": 112617,
+      "node": 0,
+      "detail": "raft: node 1 truncating committed index 1 (commit 1)"
+    },
+    {
+      "seed": 22,
+      "profile": "lossy",
+      "check": "panic",
+      "at_us": 381965,
+      "node": 0,
+      "detail": "raft: node 3 truncating committed index 1 (commit 1)"
+    },
+    {
+      "seed": 23,
+      "profile": "partition",
+      "check": "panic",
+      "at_us": 144104,
+      "node": 0,
+      "detail": "raft: node 2 truncating committed index 2 (commit 2)"
+    }
+  ]
+}

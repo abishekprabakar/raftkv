@@ -1,0 +1,6 @@
+2000 schedules, 1792 failed, 0.3s: 2055926 events, 1031800 sent, 23199 dropped, 8576 duplicated, 2322 long delays, 104739 reordered, 1089 partitions (272 one-way), 6419 crashes (587 during save, 624 after save), 5015 leaders, 92211 entries committed
+  durable-apply            1792 schedules, first at seed 1
+  seed 1 (lossy): durable-apply at 273624us on node 1: applied index 1 of term 2 with term 0 on disk
+  seed 2 (partition): durable-apply at 514208us on node 1: applied index 1 of term 1 with term 0 on disk
+  seed 3 (crash): durable-apply at 503719us on node 1: applied index 41 of term 2 with term 0 on disk
+wrote $HOME/projects/raftkv/results/audit/m2/q-save-after-apply.json

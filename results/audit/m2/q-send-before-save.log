@@ -1,0 +1,6 @@
+2000 schedules, 1715 failed, 0.0s: 280566 events, 5394 sent, 342 dropped, 131 duplicated, 50 long delays, 0 reordered, 199 partitions (51 one-way), 3286 crashes (423 during save, 489 after save), 1547 leaders, 8649 entries committed
+  durable-promise          1715 schedules, first at seed 1
+  seed 1 (lossy): durable-promise at 100000us on node 3: RequestVote for term 1 with term 0, vote 0 on disk
+  seed 2 (partition): durable-promise at 112948us on node 1: RequestVote for term 1 with term 0, vote 0 on disk
+  seed 3 (crash): durable-promise at 92388us on node 1: RequestVote for term 1 with term 0, vote 0 on disk
+wrote $HOME/projects/raftkv/results/audit/m2/q-send-before-save.json

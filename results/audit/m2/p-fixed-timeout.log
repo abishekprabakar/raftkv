@@ -1,0 +1,11 @@
+--- FAIL: TestSimSchedules (0.96s)
+    sim_test.go:24: 2000 schedules, 9955102 events, 35457 crashes, 4892 partitions
+    sim_test.go:29: seed 1 (lossy): liveness at 10000000us on node 0: nothing applied for 5000ms of quiet: [1 candidate term 99 commit 0 log 0] [2 candidate term 99 commit 0 log 0] [3 candidate term 99 commit 0 log 0] 
+    sim_test.go:29: seed 11 (chaos): liveness at 9000000us on node 0: nothing applied for 5000ms of quiet: [1 candidate term 87 commit 0 log 0] [2 candidate term 87 commit 0 log 0] [3 candidate term 87 commit 0 log 0] [4 candidate term 87 commit 0 log 0] [5 candidate term 87 commit 0 log 0] 
+    sim_test.go:29: seed 15 (lossy): liveness at 8000000us on node 0: nothing applied for 5000ms of quiet: [1 candidate term 79 commit 0 log 0] [2 candidate term 79 commit 0 log 0] [3 candidate term 79 commit 0 log 0] 
+    sim_test.go:29: seed 16 (partition): liveness at 10000000us on node 0: nothing applied for 5000ms of quiet: [1 candidate term 99 commit 0 log 0] [2 candidate term 99 commit 0 log 0] [3 candidate term 99 commit 0 log 0] 
+    sim_test.go:29: seed 23 (partition): liveness at 7000000us on node 0: nothing applied for 5000ms of quiet: [1 candidate term 69 commit 0 log 0] [2 candidate term 69 commit 0 log 0] [3 candidate term 69 commit 0 log 0] [4 candidate term 69 commit 0 log 0] [5 candidate term 69 commit 0 log 0] 
+    sim_test.go:33: 392 of 2000 schedules failed: [{Check:liveness Schedules:392 FirstSeed:1}]
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft/sim	1.157s
+FAIL

@@ -1,0 +1,2 @@
+10000 schedules, 0 failed, 4.4s: 48365358 events, 25860195 sent, 1555594 dropped, 699782 duplicated, 158345 long delays, 4117498 reordered, 24501 partitions (6087 one-way), 187753 crashes (21298 during save, 21410 after save), 120822 leaders, 2150797 entries committed
+wrote $HOME/projects/raftkv/results/audit/m2/sim-fresh.json

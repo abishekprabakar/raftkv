@@ -1,0 +1,220 @@
+{
+  "generated_at": "2026-11-02T06:25:49Z",
+  "hardware": {
+    "collected_at": "2026-11-02T06:25:49Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1,
+  "properties_only": true,
+  "wall_seconds": 0.6000075,
+  "schedules": 2000,
+  "violations": 968,
+  "by_check": [
+    {
+      "check": "leader-completeness",
+      "schedules": 968,
+      "first_seed": 2
+    }
+  ],
+  "schedules_by_profile": {
+    "calm": 285,
+    "chaos": 286,
+    "crash": 286,
+    "figure8": 286,
+    "lossy": 286,
+    "partition": 286,
+    "solo": 285
+  },
+  "totals": {
+    "events": 5412826,
+    "virtual_ms": 5797343,
+    "messages_sent": 3176894,
+    "messages_delivered": 2886654,
+    "messages_dropped": 233825,
+    "messages_blocked_by_partition": 57657,
+    "messages_to_crashed_nodes": 101095,
+    "messages_duplicated": 114522,
+    "messages_delayed_past_election_timeout": 26337,
+    "messages_reordered": 520044,
+    "partitions": 2162,
+    "one_way_cuts": 535,
+    "crashes": 14422,
+    "crashes_between_events": 10602,
+    "crashes_during_save": 1898,
+    "crashes_after_save": 1922,
+    "restarts": 13975,
+    "commands_proposed": 313571,
+    "leaders_elected": 8394,
+    "entries_committed": 300186
+  },
+  "failures": [
+    {
+      "seed": 2,
+      "profile": "partition",
+      "check": "leader-completeness",
+      "at_us": 444201,
+      "node": 1,
+      "detail": "leader of term 3 has term 3 at index 1, but term 1 was committed there"
+    },
+    {
+      "seed": 3,
+      "profile": "crash",
+      "check": "leader-completeness",
+      "at_us": 3692972,
+      "node": 2,
+      "detail": "leader of term 10 has term 10 at index 275, but term 9 was committed there"
+    },
+    {
+      "seed": 5,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 1719158,
+      "node": 1,
+      "detail": "leader of term 13 has term 13 at index 12, but term 11 was committed there"
+    },
+    {
+      "seed": 9,
+      "profile": "partition",
+      "check": "leader-completeness",
+      "at_us": 519591,
+      "node": 5,
+      "detail": "leader of term 3 has term 3 at index 10, but term 1 was committed there"
+    },
+    {
+      "seed": 11,
+      "profile": "chaos",
+      "check": "leader-completeness",
+      "at_us": 1661502,
+      "node": 4,
+      "detail": "leader of term 11 has term 11 at index 1, but term 2 was committed there"
+    },
+    {
+      "seed": 12,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 1046955,
+      "node": 2,
+      "detail": "leader of term 7 has term 7 at index 4, but term 4 was committed there"
+    },
+    {
+      "seed": 16,
+      "profile": "partition",
+      "check": "leader-completeness",
+      "at_us": 1539602,
+      "node": 3,
+      "detail": "leader of term 9 has term 9 at index 30, but term 2 was committed there"
+    },
+    {
+      "seed": 17,
+      "profile": "crash",
+      "check": "leader-completeness",
+      "at_us": 2342894,
+      "node": 5,
+      "detail": "leader of term 10 has term 10 at index 167, but term 9 was committed there"
+    },
+    {
+      "seed": 19,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 1870106,
+      "node": 3,
+      "detail": "leader of term 10 has term 10 at index 18, but term 7 was committed there"
+    },
+    {
+      "seed": 23,
+      "profile": "partition",
+      "check": "leader-completeness",
+      "at_us": 1266341,
+      "node": 1,
+      "detail": "leader of term 8 has term 8 at index 69, but term 2 was committed there"
+    },
+    {
+      "seed": 26,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 4021238,
+      "node": 1,
+      "detail": "leader of term 28 has term 28 at index 53, but term 26 was committed there"
+    },
+    {
+      "seed": 30,
+      "profile": "partition",
+      "check": "leader-completeness",
+      "at_us": 487593,
+      "node": 1,
+      "detail": "leader of term 3 has term 3 at index 1, but term 1 was committed there"
+    },
+    {
+      "seed": 31,
+      "profile": "crash",
+      "check": "leader-completeness",
+      "at_us": 1901951,
+      "node": 3,
+      "detail": "leader of term 7 has term 7 at index 60, but term 6 was committed there"
+    },
+    {
+      "seed": 32,
+      "profile": "chaos",
+      "check": "leader-completeness",
+      "at_us": 3136262,
+      "node": 4,
+      "detail": "leader of term 15 has term 15 at index 26, but term 6 was committed there"
+    },
+    {
+      "seed": 33,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 877881,
+      "node": 4,
+      "detail": "leader of term 7 has term 7 at index 6, but term 6 was committed there"
+    },
+    {
+      "seed": 37,
+      "profile": "partition",
+      "check": "leader-completeness",
+      "at_us": 3585276,
+      "node": 3,
+      "detail": "leader of term 5 has term 5 at index 113, but term 4 was committed there"
+    },
+    {
+      "seed": 39,
+      "profile": "chaos",
+      "check": "leader-completeness",
+      "at_us": 1368946,
+      "node": 2,
+      "detail": "leader of term 5 has term 5 at index 2, but term 1 was committed there"
+    },
+    {
+      "seed": 40,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 3018986,
+      "node": 2,
+      "detail": "leader of term 19 has term 19 at index 57, but term 18 was committed there"
+    },
+    {
+      "seed": 44,
+      "profile": "partition",
+      "check": "leader-completeness",
+      "at_us": 1218372,
+      "node": 4,
+      "detail": "leader of term 2 has term 2 at index 30, but term 1 was committed there"
+    },
+    {
+      "seed": 45,
+      "profile": "crash",
+      "check": "leader-completeness",
+      "at_us": 1721857,
+      "node": 1,
+      "detail": "leader of term 5 has term 5 at index 22, but term 3 was committed there"
+    }
+  ]
+}

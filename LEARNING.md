@@ -4,6 +4,180 @@ One section per milestone, newest first: what was done, the ideas behind it, and
 the questions worth being able to answer about it. Every number comes from a real
 run. Criteria are in `docs/acceptance/`, and the runs are in `results/audit/`.
 
+## M2: deterministic simulation
+
+Criteria: `docs/acceptance/M2.md`. Results: `results/sim.json` and
+`results/audit/m2/`. Code: `internal/raft/sim`, `cmd/raftsim`.
+
+### What was built
+
+A simulator that runs real Raft nodes on a fake network with a fake clock. One
+seed decides every delay, drop, duplicate, reorder, partition, crash and timeout,
+so any failure replays exactly with `go run ./cmd/raftsim -first SEED -count 1
+-trace`.
+
+### The ideas in plain language
+
+**Why fake time.** Real-time tests are slow and flaky, and a failure can't be
+repeated. Here the clock is a number that jumps to the next event, so a schedule
+covering several virtual seconds takes a few milliseconds of CPU, and 10,000
+schedules take about 5 seconds on 10 cores.
+
+**Why crashes must land inside a call.** `Save` is synchronous, so a crash between
+events can never fall between a save and a send, and that is exactly where ordering
+bugs live. So the simulated disk can also crash a node during a save, losing the
+update, or just after it, before any message leaves.
+
+**Properties and monitors.** A property is a promise Raft makes, like "at most one
+leader per term". A monitor compares one step with one rule in Figure 2. Properties
+show real harm, and monitors catch a broken rule in a run where no harm happened
+to follow. Monitors can be switched off to ask whether a bug does visible damage.
+
+**History, not snapshots.** Checks compare against everything seen so far, not just
+the current state. A violation can't be hidden by a later overwrite.
+
+**Aimed faults.** Random faults almost never build a Figure 8 history, so one
+profile hunts leaders, crashing each one right after it accepts commands.
+Identical clocks are another aimed fault: they are the worst case for election
+timeouts, because only randomization can break the tie.
+
+### The real bug it found
+
+The simulation found one real bug in `internal/raft`, and it found no safety bug.
+
+**Message storm.** Nothing failed a check. The counters looked wrong: one 5-node
+schedule sent 1,967,759 messages. A leader answered every reply that left a
+follower behind with another send, and each such send starts a chain that lasts
+until the follower catches up. Every heartbeat, proposal and duplicate started
+another chain, so they piled up behind any slow follower. Real hardware would have
+been flooded.
+
+The fix: a leader sends again only when a reply taught it something new, and the
+next heartbeat recovers from any lost reply. The same seed then sent 38,187
+messages. The new regression tests fail with the fix removed.
+
+Lesson worth telling: every safety check passed through this bug. Reading the
+counters is what found it, because a passing test can still hide something absurd.
+
+Two other failures were my simulator's fault, not Raft's. A 30-second budget was
+too short for a long catch-up at chaos-level delays, and a planted bug could keep a
+cluster busy forever, so a schedule never ended. Delays now drop in the quiet phase,
+liveness means no node applied anything for 5 seconds, and the quiet phase has a
+60-second limit.
+
+### Results
+
+| Check | Result |
+|---|---|
+| Tests, normal and under the race detector | pass |
+| Same seed, same run (200 seeds) | identical |
+| Worker count changes results (seeds 1 to 200, 1 vs 8 workers) | no |
+| Seeds 1 to 10,000 | 0 failed |
+| Fresh seeds 1,000,001 to 1,010,000 | 0 failed |
+
+Faults in the 10,000 schedules of `results/sim.json`, all above the committed
+minimums:
+
+| Fault | Count |
+|---|---|
+| Messages dropped | 1,466,865 |
+| Messages duplicated | 660,947 |
+| Messages delayed past an election timeout | 154,145 |
+| Messages reordered | 3,980,989 |
+| Partitions (one-way among them) | 24,717 (6,342) |
+| Crash-restarts | 187,307 |
+| Crashes during a save | 21,047 |
+| Crashes after a save, before sending | 20,850 |
+
+### All 9 planted bugs, at cluster level
+
+In M1 only 2 of these made a cluster test fail. Now all 9 do. Counts are schedules
+failed out of 2,000, and the check is the one that fired first.
+
+| Bug | All checks | Properties only, monitors off |
+|---|---|---|
+| `send-before-save` | 1,715: `durable-promise` | 108: `leader-completeness` 60, `liveness` 48 |
+| `forget-voted-for` | 1,715: `durable-promise` | 11: `election-safety` 8, `log-matching` 3 |
+| `count-old-terms` | 30: `leader-completeness` | 30: `leader-completeness` |
+| `always-truncate` | 1,701: `panic` 1,500, plus 3 other checks | 1,700: `panic` 1,664, plus 2 others |
+| `commit-to-last-index` | 59: `commit-bound` | **0** |
+| `no-up-to-date-check` | 968: `leader-completeness` | 968: `leader-completeness` |
+| `commit-can-decrease` | 841: `commit-monotonic` | **0** |
+| `fixed-timeout` | 392: `liveness` | 392: `liveness` |
+| `save-after-apply` | 1,792: `durable-apply` | 170: `state-machine-safety` |
+
+Two things to read carefully:
+
+- **Two bugs caused no visible harm.** `commit-to-last-index` and
+  `commit-can-decrease` broke no property in any schedule, so only monitors caught
+  them. For the first, I predicted this from the code: a leader's `nextIndex` never
+  drops below where a follower diverges, so any accepted message reaching a stale
+  tail removes it. For the second, a lower commit index does nothing, because
+  `lastApplied` doesn't move back. The rules are still worth keeping.
+- **Figure 8 is hard to hit.** Even with a profile built for it, `count-old-terms`
+  failed only 1.5% of schedules. A subtle bug can survive many clean runs.
+
+One prediction was wrong: `forget-voted-for` was caught by `durable-promise`, not
+`vote-once`, because the vote missing from disk is noticed when the reply leaves,
+before any second vote happens.
+
+### What this does not show
+
+- It doesn't prove Raft correct. 20,000 clean schedules are evidence, not a proof.
+- The simulated disk is honest about every completed `Save`, so this says nothing
+  about real fsync behavior. `FileStorage` is not in the simulation.
+- Every `Save` is all-or-nothing here. The WAL checksum gives that on real disks,
+  but only unit tests cover it.
+- Clocks drift by only 10%, messages are never corrupted, and membership is fixed.
+- There is no client history yet, so this doesn't show linearizability. M5 does.
+
+### Questions and answers
+
+**Q: Why simulate instead of testing on real machines?**
+Speed and replay. Each seed fixes everything, so a one-in-a-million interleaving
+becomes a one-line command to reproduce. Real clusters still matter, because a
+simulator can only test the failures its author thought of, which is why M5 and M7
+exist.
+
+**Q: How do you know the simulator is deterministic?**
+I run 200 seeds twice and compare a hash of every event and every node's state. I
+also compare 1 worker against 8. The code has no goroutines inside a schedule and no
+map iteration that affects order, and all randomness comes from one seeded
+generator.
+
+**Q: How do you know it can catch bugs?**
+I planted 9 and all 9 fail. Separately, each safety property has a unit test
+feeding it the exact evidence that should trip it, so a broken check can't look
+like a healthy protocol.
+
+**Q: Why crash inside a Save?**
+With a synchronous save, a crash between events can never separate a save from its
+send, so `send-before-save` would be invisible to the properties.
+
+**Q: What real bug did it find?**
+Tell the message storm story: the symptom in the counters, the piled-up chains, the
+rule that fixed it, and the seed's message count before and after.
+
+**Q: Why did none of the safety checks catch the storm?**
+It was never unsafe, only wasteful. That's a limit of safety checks, so I added a
+message-rate bound as a test.
+
+**Q: What is the difference between a monitor and a property?**
+A property is observable harm. A monitor is a rule broken at one step. Two of my
+planted bugs broke rules without causing harm in any schedule, so only monitors saw
+them.
+
+**Q: How do you check Log Matching cheaply?**
+Each disk keeps a running hash of its log. I store the hash for every (index, term)
+ever written. If any copy of that pair has a different hash, the logs before it
+differ. That costs O(1) per entry instead of comparing whole logs.
+
+**Q: How does the simulator make Figure 8 happen?**
+It crashes each leader right after it accepts commands, on five nodes, with few
+entries per message, so uncommitted entries end up scattered across logs from
+different terms. That's the shape Figure 8 needs, and it still hits only 1.5% of
+schedules with that bug planted.
+
 ## M1: the Raft core
 
 Criteria: `docs/acceptance/M1.md`. Results: `results/audit/m1/`. Code:

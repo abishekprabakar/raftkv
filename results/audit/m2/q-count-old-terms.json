@@ -1,0 +1,220 @@
+{
+  "generated_at": "2026-11-02T06:25:40Z",
+  "hardware": {
+    "collected_at": "2026-11-02T06:25:40Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1,
+  "properties_only": false,
+  "wall_seconds": 1.097592458,
+  "schedules": 2000,
+  "violations": 30,
+  "by_check": [
+    {
+      "check": "leader-completeness",
+      "schedules": 30,
+      "first_seed": 187
+    }
+  ],
+  "schedules_by_profile": {
+    "calm": 285,
+    "chaos": 286,
+    "crash": 286,
+    "figure8": 286,
+    "lossy": 286,
+    "partition": 286,
+    "solo": 285
+  },
+  "totals": {
+    "events": 9359493,
+    "virtual_ms": 10045319,
+    "messages_sent": 5009685,
+    "messages_delivered": 4374238,
+    "messages_dropped": 302780,
+    "messages_blocked_by_partition": 164190,
+    "messages_to_crashed_nodes": 286103,
+    "messages_duplicated": 127249,
+    "messages_delayed_past_election_timeout": 30191,
+    "messages_reordered": 769815,
+    "partitions": 4927,
+    "one_way_cuts": 1267,
+    "crashes": 36142,
+    "crashes_between_events": 28072,
+    "crashes_during_save": 4145,
+    "crashes_after_save": 3925,
+    "restarts": 36135,
+    "commands_proposed": 454286,
+    "leaders_elected": 22975,
+    "entries_committed": 420140
+  },
+  "failures": [
+    {
+      "seed": 187,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 8418540,
+      "node": 2,
+      "detail": "leader of term 68 has term 44 at index 45, but term 46 was committed there"
+    },
+    {
+      "seed": 264,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 6386705,
+      "node": 1,
+      "detail": "leader of term 60 has term 42 at index 42, but term 43 was committed there"
+    },
+    {
+      "seed": 341,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 9276653,
+      "node": 2,
+      "detail": "leader of term 80 has term 64 at index 39, but term 70 was committed there"
+    },
+    {
+      "seed": 355,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 8275139,
+      "node": 2,
+      "detail": "leader of term 83 has term 53 at index 89, but term 57 was committed there"
+    },
+    {
+      "seed": 369,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 9981904,
+      "node": 4,
+      "detail": "leader of term 92 has term 67 at index 90, but term 57 was committed there"
+    },
+    {
+      "seed": 404,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 2599640,
+      "node": 5,
+      "detail": "leader of term 27 has term 2 at index 2, but term 1 was committed there"
+    },
+    {
+      "seed": 607,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 2807706,
+      "node": 1,
+      "detail": "leader of term 26 has term 15 at index 10, but term 12 was committed there"
+    },
+    {
+      "seed": 614,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 3629561,
+      "node": 2,
+      "detail": "leader of term 31 has term 21 at index 38, but term 14 was committed there"
+    },
+    {
+      "seed": 663,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 7085523,
+      "node": 2,
+      "detail": "leader of term 70 has term 53 at index 42, but term 55 was committed there"
+    },
+    {
+      "seed": 712,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 2534920,
+      "node": 4,
+      "detail": "leader of term 28 has term 11 at index 8, but term 16 was committed there"
+    },
+    {
+      "seed": 985,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 4548520,
+      "node": 2,
+      "detail": "leader of term 44 has term 13 at index 18, but term 17 was committed there"
+    },
+    {
+      "seed": 999,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 12465154,
+      "node": 5,
+      "detail": "leader of term 142 has term 26 at index 32, but term 29 was committed there"
+    },
+    {
+      "seed": 1006,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 10119979,
+      "node": 5,
+      "detail": "leader of term 83 has term 67 at index 49, but term 64 was committed there"
+    },
+    {
+      "seed": 1048,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 10546172,
+      "node": 2,
+      "detail": "leader of term 91 has term 64 at index 49, but term 65 was committed there"
+    },
+    {
+      "seed": 1153,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 5070614,
+      "node": 4,
+      "detail": "leader of term 47 has term 35 at index 34, but term 30 was committed there"
+    },
+    {
+      "seed": 1223,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 3646669,
+      "node": 1,
+      "detail": "leader of term 33 has term 22 at index 18, but term 25 was committed there"
+    },
+    {
+      "seed": 1244,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 7341841,
+      "node": 5,
+      "detail": "leader of term 70 has term 46 at index 31, but term 49 was committed there"
+    },
+    {
+      "seed": 1251,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 8343755,
+      "node": 5,
+      "detail": "leader of term 73 has term 39 at index 53, but term 46 was committed there"
+    },
+    {
+      "seed": 1262,
+      "profile": "partition",
+      "check": "leader-completeness",
+      "at_us": 2013043,
+      "node": 2,
+      "detail": "leader of term 14 has term 8 at index 87, but term 1 was committed there"
+    },
+    {
+      "seed": 1286,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 10559491,
+      "node": 2,
+      "detail": "leader of term 98 has term 33 at index 30, but term 39 was committed there"
+    }
+  ]
+}

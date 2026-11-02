@@ -1,0 +1,7 @@
+2000 schedules, 11 failed, 1.0s: 9467602 events, 5049359 sent, 304717 dropped, 127217 duplicated, 30287 long delays, 772820 reordered, 4892 partitions (1260 one-way), 36890 crashes (4164 during save, 3982 after save), 23654 leaders, 420191 entries committed
+  election-safety             8 schedules, first at seed 151
+  log-matching                3 schedules, first at seed 165
+  seed 151 (chaos): election-safety at 701230us on node 1: nodes 2 and 1 both led term 2
+  seed 165 (chaos): log-matching at 5908103us on node 3: index 79 term 24 has a different log before it than another copy
+  seed 682 (crash): log-matching at 1447536us on node 2: index 24 term 5 has a different log before it than another copy
+wrote $HOME/projects/raftkv/results/audit/m2/r-forget-voted-for.json

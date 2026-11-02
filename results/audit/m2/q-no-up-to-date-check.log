@@ -1,0 +1,6 @@
+2000 schedules, 968 failed, 0.6s: 5412826 events, 3176894 sent, 233825 dropped, 114522 duplicated, 26337 long delays, 520044 reordered, 2162 partitions (535 one-way), 14422 crashes (1898 during save, 1922 after save), 8394 leaders, 300186 entries committed
+  leader-completeness       968 schedules, first at seed 2
+  seed 2 (partition): leader-completeness at 444201us on node 1: leader of term 3 has term 3 at index 1, but term 1 was committed there
+  seed 3 (crash): leader-completeness at 3692972us on node 2: leader of term 10 has term 10 at index 275, but term 9 was committed there
+  seed 5 (figure8): leader-completeness at 1719158us on node 1: leader of term 13 has term 13 at index 12, but term 11 was committed there
+wrote $HOME/projects/raftkv/results/audit/m2/q-no-up-to-date-check.json

@@ -1,0 +1,11 @@
+--- FAIL: TestSimSchedules (0.11s)
+    sim_test.go:24: 2000 schedules, 963373 events, 6012 crashes, 548 partitions
+    sim_test.go:29: seed 1 (lossy): panic at 277770us on node 0: raft: node 1 truncating committed index 1 (commit 1)
+    sim_test.go:29: seed 2 (partition): panic at 234073us on node 0: raft: node 3 truncating committed index 8 (commit 8)
+    sim_test.go:29: seed 3 (crash): panic at 136858us on node 0: raft: node 4 truncating committed index 1 (commit 2)
+    sim_test.go:29: seed 4 (chaos): panic at 4193567us on node 0: raft: node 2 truncating committed index 9 (commit 72)
+    sim_test.go:29: seed 5 (figure8): panic at 435329us on node 0: raft: node 5 truncating committed index 4 (commit 4)
+    sim_test.go:33: 1701 of 2000 schedules failed: [{Check:panic Schedules:1500 FirstSeed:1} {Check:commit-majority Schedules:184 FirstSeed:38} {Check:liveness Schedules:13 FirstSeed:12} {Check:leader-completeness Schedules:4 FirstSeed:240}]
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft/sim	0.275s
+FAIL

@@ -1,0 +1,220 @@
+{
+  "generated_at": "2026-11-02T06:25:59Z",
+  "hardware": {
+    "collected_at": "2026-11-02T06:25:59Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1,
+  "properties_only": true,
+  "wall_seconds": 1.107055125,
+  "schedules": 2000,
+  "violations": 170,
+  "by_check": [
+    {
+      "check": "state-machine-safety",
+      "schedules": 170,
+      "first_seed": 13
+    }
+  ],
+  "schedules_by_profile": {
+    "calm": 285,
+    "chaos": 286,
+    "crash": 286,
+    "figure8": 286,
+    "lossy": 286,
+    "partition": 286,
+    "solo": 285
+  },
+  "totals": {
+    "events": 9417186,
+    "virtual_ms": 9814662,
+    "messages_sent": 5057118,
+    "messages_delivered": 4411922,
+    "messages_dropped": 304761,
+    "messages_blocked_by_partition": 164190,
+    "messages_to_crashed_nodes": 293957,
+    "messages_duplicated": 127249,
+    "messages_delayed_past_election_timeout": 30191,
+    "messages_reordered": 773727,
+    "partitions": 4927,
+    "one_way_cuts": 1267,
+    "crashes": 35974,
+    "crashes_between_events": 28207,
+    "crashes_during_save": 3969,
+    "crashes_after_save": 3798,
+    "restarts": 35955,
+    "commands_proposed": 452709,
+    "leaders_elected": 23086,
+    "entries_committed": 417532
+  },
+  "failures": [
+    {
+      "seed": 13,
+      "profile": "solo",
+      "check": "state-machine-safety",
+      "at_us": 1377979,
+      "node": 1,
+      "detail": "index 8 applied as term 3, but another apply had term 2"
+    },
+    {
+      "seed": 27,
+      "profile": "solo",
+      "check": "state-machine-safety",
+      "at_us": 626740,
+      "node": 1,
+      "detail": "index 9 applied as term 2, but another apply had term 1"
+    },
+    {
+      "seed": 34,
+      "profile": "solo",
+      "check": "state-machine-safety",
+      "at_us": 2482162,
+      "node": 1,
+      "detail": "index 19 applied as term 5, but another apply had term 4"
+    },
+    {
+      "seed": 41,
+      "profile": "solo",
+      "check": "state-machine-safety",
+      "at_us": 854298,
+      "node": 1,
+      "detail": "index 6 applied as term 3, but another apply had term 2"
+    },
+    {
+      "seed": 62,
+      "profile": "solo",
+      "check": "state-machine-safety",
+      "at_us": 386653,
+      "node": 1,
+      "detail": "index 2 applied as term 2, but another apply had term 1"
+    },
+    {
+      "seed": 76,
+      "profile": "solo",
+      "check": "state-machine-safety",
+      "at_us": 2893703,
+      "node": 1,
+      "detail": "index 28 applied as term 5, but another apply had term 4"
+    },
+    {
+      "seed": 83,
+      "profile": "solo",
+      "check": "state-machine-safety",
+      "at_us": 625024,
+      "node": 1,
+      "detail": "index 6 applied as term 2, but another apply had term 1"
+    },
+    {
+      "seed": 104,
+      "profile": "solo",
+      "check": "state-machine-safety",
+      "at_us": 5086731,
+      "node": 1,
+      "detail": "index 5 applied as term 3, but another apply had term 2"
+    },
+    {
+      "seed": 111,
+      "profile": "solo",
+      "check": "state-machine-safety",
+      "at_us": 1258252,
+      "node": 1,
+      "detail": "index 18 applied as term 3, but another apply had term 2"
+    },
+    {
+      "seed": 125,
+      "profile": "solo",
+      "check": "state-machine-safety",
+      "at_us": 826369,
+      "node": 1,
+      "detail": "index 2 applied as term 2, but another apply had term 1"
+    },
+    {
+      "seed": 132,
+      "profile": "solo",
+      "check": "state-machine-safety",
+      "at_us": 825120,
+      "node": 1,
+      "detail": "index 22 applied as term 3, but another apply had term 2"
+    },
+    {
+      "seed": 139,
+      "profile": "solo",
+      "check": "state-machine-safety",
+      "at_us": 1857234,
+      "node": 1,
+      "detail": "index 14 applied as term 3, but another apply had term 2"
+    },
+    {
+      "seed": 146,
+      "profile": "solo",
+      "check": "state-machine-safety",
+      "at_us": 5133142,
+      "node": 1,
+      "detail": "index 22 applied as term 5, but another apply had term 4"
+    },
+    {
+      "seed": 153,
+      "profile": "solo",
+      "check": "state-machine-safety",
+      "at_us": 3342415,
+      "node": 1,
+      "detail": "index 10 applied as term 5, but another apply had term 4"
+    },
+    {
+      "seed": 160,
+      "profile": "solo",
+      "check": "state-machine-safety",
+      "at_us": 4154928,
+      "node": 1,
+      "detail": "index 27 applied as term 9, but another apply had term 8"
+    },
+    {
+      "seed": 174,
+      "profile": "solo",
+      "check": "state-machine-safety",
+      "at_us": 572982,
+      "node": 1,
+      "detail": "index 2 applied as term 2, but another apply had term 1"
+    },
+    {
+      "seed": 181,
+      "profile": "solo",
+      "check": "state-machine-safety",
+      "at_us": 2211098,
+      "node": 1,
+      "detail": "index 22 applied as term 5, but another apply had term 4"
+    },
+    {
+      "seed": 188,
+      "profile": "solo",
+      "check": "state-machine-safety",
+      "at_us": 1022971,
+      "node": 1,
+      "detail": "index 2 applied as term 2, but another apply had term 1"
+    },
+    {
+      "seed": 195,
+      "profile": "solo",
+      "check": "state-machine-safety",
+      "at_us": 860534,
+      "node": 1,
+      "detail": "index 6 applied as term 2, but another apply had term 1"
+    },
+    {
+      "seed": 209,
+      "profile": "solo",
+      "check": "state-machine-safety",
+      "at_us": 1267422,
+      "node": 1,
+      "detail": "index 6 applied as term 2, but another apply had term 1"
+    }
+  ]
+}

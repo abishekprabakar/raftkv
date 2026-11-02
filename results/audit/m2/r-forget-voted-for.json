@@ -1,0 +1,153 @@
+{
+  "generated_at": "2026-11-02T06:25:37Z",
+  "hardware": {
+    "collected_at": "2026-11-02T06:25:37Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1,
+  "properties_only": true,
+  "wall_seconds": 1.03717625,
+  "schedules": 2000,
+  "violations": 11,
+  "by_check": [
+    {
+      "check": "election-safety",
+      "schedules": 8,
+      "first_seed": 151
+    },
+    {
+      "check": "log-matching",
+      "schedules": 3,
+      "first_seed": 165
+    }
+  ],
+  "schedules_by_profile": {
+    "calm": 285,
+    "chaos": 286,
+    "crash": 286,
+    "figure8": 286,
+    "lossy": 286,
+    "partition": 286,
+    "solo": 285
+  },
+  "totals": {
+    "events": 9467602,
+    "virtual_ms": 10159567,
+    "messages_sent": 5049359,
+    "messages_delivered": 4404936,
+    "messages_dropped": 304717,
+    "messages_blocked_by_partition": 163959,
+    "messages_to_crashed_nodes": 293391,
+    "messages_duplicated": 127217,
+    "messages_delayed_past_election_timeout": 30287,
+    "messages_reordered": 772820,
+    "partitions": 4892,
+    "one_way_cuts": 1260,
+    "crashes": 36890,
+    "crashes_between_events": 28744,
+    "crashes_during_save": 4164,
+    "crashes_after_save": 3982,
+    "restarts": 36884,
+    "commands_proposed": 455485,
+    "leaders_elected": 23654,
+    "entries_committed": 420191
+  },
+  "failures": [
+    {
+      "seed": 151,
+      "profile": "chaos",
+      "check": "election-safety",
+      "at_us": 701230,
+      "node": 1,
+      "detail": "nodes 2 and 1 both led term 2"
+    },
+    {
+      "seed": 165,
+      "profile": "chaos",
+      "check": "log-matching",
+      "at_us": 5908103,
+      "node": 3,
+      "detail": "index 79 term 24 has a different log before it than another copy"
+    },
+    {
+      "seed": 682,
+      "profile": "crash",
+      "check": "log-matching",
+      "at_us": 1447536,
+      "node": 2,
+      "detail": "index 24 term 5 has a different log before it than another copy"
+    },
+    {
+      "seed": 836,
+      "profile": "crash",
+      "check": "election-safety",
+      "at_us": 3681997,
+      "node": 3,
+      "detail": "nodes 2 and 3 both led term 14"
+    },
+    {
+      "seed": 1060,
+      "profile": "crash",
+      "check": "election-safety",
+      "at_us": 3107700,
+      "node": 1,
+      "detail": "nodes 2 and 1 both led term 16"
+    },
+    {
+      "seed": 1067,
+      "profile": "crash",
+      "check": "election-safety",
+      "at_us": 3347427,
+      "node": 3,
+      "detail": "nodes 2 and 3 both led term 9"
+    },
+    {
+      "seed": 1110,
+      "profile": "chaos",
+      "check": "election-safety",
+      "at_us": 3007809,
+      "node": 2,
+      "detail": "nodes 3 and 2 both led term 18"
+    },
+    {
+      "seed": 1257,
+      "profile": "chaos",
+      "check": "election-safety",
+      "at_us": 4004786,
+      "node": 1,
+      "detail": "nodes 2 and 1 both led term 19"
+    },
+    {
+      "seed": 1719,
+      "profile": "chaos",
+      "check": "election-safety",
+      "at_us": 1519063,
+      "node": 3,
+      "detail": "nodes 1 and 3 both led term 5"
+    },
+    {
+      "seed": 1809,
+      "profile": "crash",
+      "check": "log-matching",
+      "at_us": 2406755,
+      "node": 2,
+      "detail": "index 99 term 12 has a different log before it than another copy"
+    },
+    {
+      "seed": 1838,
+      "profile": "chaos",
+      "check": "election-safety",
+      "at_us": 2340425,
+      "node": 2,
+      "detail": "nodes 3 and 2 both led term 11"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+--- FAIL: TestSimSchedules (1.03s)
+    sim_test.go:24: 2000 schedules, 9359493 events, 36142 crashes, 4927 partitions
+    sim_test.go:29: seed 187 (figure8): leader-completeness at 8418540us on node 2: leader of term 68 has term 44 at index 45, but term 46 was committed there
+    sim_test.go:29: seed 264 (figure8): leader-completeness at 6386705us on node 1: leader of term 60 has term 42 at index 42, but term 43 was committed there
+    sim_test.go:29: seed 341 (figure8): leader-completeness at 9276653us on node 2: leader of term 80 has term 64 at index 39, but term 70 was committed there
+    sim_test.go:29: seed 355 (figure8): leader-completeness at 8275139us on node 2: leader of term 83 has term 53 at index 89, but term 57 was committed there
+    sim_test.go:29: seed 369 (figure8): leader-completeness at 9981904us on node 4: leader of term 92 has term 67 at index 90, but term 57 was committed there
+    sim_test.go:33: 30 of 2000 schedules failed: [{Check:leader-completeness Schedules:30 FirstSeed:187}]
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft/sim	1.224s
+FAIL

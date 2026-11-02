@@ -1,0 +1,225 @@
+{
+  "generated_at": "2026-11-02T06:25:35Z",
+  "hardware": {
+    "collected_at": "2026-11-02T06:25:35Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1,
+  "properties_only": true,
+  "wall_seconds": 1.159701291,
+  "schedules": 2000,
+  "violations": 108,
+  "by_check": [
+    {
+      "check": "leader-completeness",
+      "schedules": 60,
+      "first_seed": 52
+    },
+    {
+      "check": "liveness",
+      "schedules": 48,
+      "first_seed": 129
+    }
+  ],
+  "schedules_by_profile": {
+    "calm": 285,
+    "chaos": 286,
+    "crash": 286,
+    "figure8": 286,
+    "lossy": 286,
+    "partition": 286,
+    "solo": 285
+  },
+  "totals": {
+    "events": 11725239,
+    "virtual_ms": 12719345,
+    "messages_sent": 5996088,
+    "messages_delivered": 5346226,
+    "messages_dropped": 305216,
+    "messages_blocked_by_partition": 165732,
+    "messages_to_crashed_nodes": 296256,
+    "messages_duplicated": 126832,
+    "messages_delayed_past_election_timeout": 30188,
+    "messages_reordered": 766587,
+    "partitions": 4783,
+    "one_way_cuts": 1169,
+    "crashes": 36093,
+    "crashes_between_events": 28291,
+    "crashes_during_save": 3925,
+    "crashes_after_save": 3877,
+    "restarts": 36069,
+    "commands_proposed": 453321,
+    "leaders_elected": 23418,
+    "entries_committed": 419709
+  },
+  "failures": [
+    {
+      "seed": 52,
+      "profile": "crash",
+      "check": "leader-completeness",
+      "at_us": 1246227,
+      "node": 1,
+      "detail": "leader of term 3 has term 3 at index 91, but term 2 was committed there"
+    },
+    {
+      "seed": 115,
+      "profile": "crash",
+      "check": "leader-completeness",
+      "at_us": 4280499,
+      "node": 2,
+      "detail": "leader of term 16 has term 16 at index 159, but term 15 was committed there"
+    },
+    {
+      "seed": 122,
+      "profile": "crash",
+      "check": "leader-completeness",
+      "at_us": 3967783,
+      "node": 2,
+      "detail": "leader of term 11 has term 11 at index 87, but term 10 was committed there"
+    },
+    {
+      "seed": 129,
+      "profile": "crash",
+      "check": "liveness",
+      "at_us": 66000000,
+      "node": 0,
+      "detail": "not every node caught up in 60000ms of quiet: [1 leader term 25 commit 244 log 244] [2 follower term 25 commit 244 log 244] [3 follower term 25 commit 244 log 244] [4 follower term 25 commit 244 log 244] [5 follower term 25 commit 0 log 92] "
+    },
+    {
+      "seed": 150,
+      "profile": "crash",
+      "check": "leader-completeness",
+      "at_us": 1685403,
+      "node": 1,
+      "detail": "leader of term 5 has term 5 at index 20, but term 3 was committed there"
+    },
+    {
+      "seed": 178,
+      "profile": "crash",
+      "check": "leader-completeness",
+      "at_us": 1691943,
+      "node": 1,
+      "detail": "leader of term 7 has term 7 at index 36, but term 5 was committed there"
+    },
+    {
+      "seed": 199,
+      "profile": "crash",
+      "check": "liveness",
+      "at_us": 62000000,
+      "node": 0,
+      "detail": "not every node caught up in 60000ms of quiet: [1 leader term 5 commit 152 log 152] [2 follower term 5 commit 152 log 152] [3 follower term 5 commit 152 log 152] [4 follower term 5 commit 152 log 152] [5 follower term 5 commit 0 log 83] "
+    },
+    {
+      "seed": 222,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 6515840,
+      "node": 2,
+      "detail": "leader of term 52 has term 52 at index 80, but term 50 was committed there"
+    },
+    {
+      "seed": 227,
+      "profile": "crash",
+      "check": "liveness",
+      "at_us": 65000000,
+      "node": 0,
+      "detail": "not every node caught up in 60000ms of quiet: [1 follower term 20 commit 434 log 434] [2 follower term 20 commit 434 log 434] [3 follower term 20 commit 0 log 357] [4 leader term 20 commit 434 log 434] [5 follower term 20 commit 434 log 434] "
+    },
+    {
+      "seed": 255,
+      "profile": "crash",
+      "check": "liveness",
+      "at_us": 63000000,
+      "node": 0,
+      "detail": "not every node caught up in 60000ms of quiet: [1 follower term 12 commit 144 log 144] [2 follower term 12 commit 144 log 144] [3 follower term 12 commit 144 log 144] [4 leader term 12 commit 144 log 144] [5 follower term 12 commit 0 log 62] "
+    },
+    {
+      "seed": 269,
+      "profile": "crash",
+      "check": "liveness",
+      "at_us": 63000000,
+      "node": 0,
+      "detail": "not every node caught up in 60000ms of quiet: [1 follower term 11 commit 143 log 143] [2 follower term 11 commit 0 log 57] [3 leader term 11 commit 143 log 143] "
+    },
+    {
+      "seed": 297,
+      "profile": "crash",
+      "check": "leader-completeness",
+      "at_us": 1342693,
+      "node": 1,
+      "detail": "leader of term 6 has term 6 at index 46, but term 3 was committed there"
+    },
+    {
+      "seed": 318,
+      "profile": "crash",
+      "check": "liveness",
+      "at_us": 66000000,
+      "node": 0,
+      "detail": "not every node caught up in 60000ms of quiet: [1 follower term 38 commit 0 log 182] [2 follower term 38 commit 300 log 300] [3 follower term 38 commit 0 log 197] [4 leader term 38 commit 300 log 300] [5 follower term 38 commit 300 log 300] "
+    },
+    {
+      "seed": 325,
+      "profile": "crash",
+      "check": "liveness",
+      "at_us": 66000000,
+      "node": 0,
+      "detail": "not every node caught up in 60000ms of quiet: [1 follower term 19 commit 591 log 591] [2 follower term 19 commit 591 log 591] [3 follower term 19 commit 0 log 493] [4 follower term 19 commit 591 log 591] [5 leader term 19 commit 591 log 591] "
+    },
+    {
+      "seed": 340,
+      "profile": "chaos",
+      "check": "liveness",
+      "at_us": 64000000,
+      "node": 0,
+      "detail": "not every node caught up in 60000ms of quiet: [1 follower term 22 commit 447 log 447] [2 follower term 22 commit 447 log 447] [3 follower term 22 commit 447 log 447] [4 leader term 22 commit 447 log 447] [5 follower term 22 commit 0 log 371] "
+    },
+    {
+      "seed": 346,
+      "profile": "crash",
+      "check": "leader-completeness",
+      "at_us": 5525161,
+      "node": 1,
+      "detail": "leader of term 13 has term 13 at index 243, but term 8 was committed there"
+    },
+    {
+      "seed": 353,
+      "profile": "crash",
+      "check": "leader-completeness",
+      "at_us": 2131249,
+      "node": 2,
+      "detail": "leader of term 12 has term 12 at index 42, but term 10 was committed there"
+    },
+    {
+      "seed": 369,
+      "profile": "figure8",
+      "check": "leader-completeness",
+      "at_us": 8125547,
+      "node": 1,
+      "detail": "leader of term 79 has term 65 at index 87, but term 73 was committed there"
+    },
+    {
+      "seed": 409,
+      "profile": "crash",
+      "check": "leader-completeness",
+      "at_us": 3045954,
+      "node": 3,
+      "detail": "leader of term 13 has term 13 at index 129, but term 11 was committed there"
+    },
+    {
+      "seed": 431,
+      "profile": "chaos",
+      "check": "leader-completeness",
+      "at_us": 2081079,
+      "node": 1,
+      "detail": "leader of term 10 has term 10 at index 47, but term 8 was committed there"
+    }
+  ]
+}

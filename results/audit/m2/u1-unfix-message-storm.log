@@ -1,0 +1,14 @@
+=== RUN   TestRepeatedReplySendsNothing
+    node_test.go:686: a repeated reply sent 1 messages
+--- FAIL: TestRepeatedReplySendsNothing (0.00s)
+=== RUN   TestRepeatedRejectionSendsNothing
+    node_test.go:702: a repeated rejection sent 1 messages
+--- FAIL: TestRepeatedRejectionSendsNothing (0.00s)
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft	0.337s
+=== RUN   TestNoMessageStorm
+    sim_test.go:275: seed 900000004 (lossy): 2374834 messages in 8780ms, limit 70240
+--- FAIL: TestNoMessageStorm (24.37s)
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft/sim	24.564s
+FAIL

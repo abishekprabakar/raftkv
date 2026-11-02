@@ -1,0 +1,220 @@
+{
+  "generated_at": "2026-11-02T06:25:46Z",
+  "hardware": {
+    "collected_at": "2026-11-02T06:25:46Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1,
+  "properties_only": false,
+  "wall_seconds": 1.06389775,
+  "schedules": 2000,
+  "violations": 59,
+  "by_check": [
+    {
+      "check": "commit-bound",
+      "schedules": 59,
+      "first_seed": 33
+    }
+  ],
+  "schedules_by_profile": {
+    "calm": 285,
+    "chaos": 286,
+    "crash": 286,
+    "figure8": 286,
+    "lossy": 286,
+    "partition": 286,
+    "solo": 285
+  },
+  "totals": {
+    "events": 9180043,
+    "virtual_ms": 9856944,
+    "messages_sent": 4934498,
+    "messages_delivered": 4314595,
+    "messages_dropped": 300274,
+    "messages_blocked_by_partition": 162553,
+    "messages_to_crashed_nodes": 273557,
+    "messages_duplicated": 126569,
+    "messages_delayed_past_election_timeout": 29895,
+    "messages_reordered": 757243,
+    "partitions": 4861,
+    "one_way_cuts": 1253,
+    "crashes": 34877,
+    "crashes_between_events": 27074,
+    "crashes_during_save": 3989,
+    "crashes_after_save": 3814,
+    "restarts": 34850,
+    "commands_proposed": 449110,
+    "leaders_elected": 22166,
+    "entries_committed": 416576
+  },
+  "failures": [
+    {
+      "seed": 33,
+      "profile": "figure8",
+      "check": "commit-bound",
+      "at_us": 1777040,
+      "node": 5,
+      "detail": "commit index reached 12, but this message allowed 11"
+    },
+    {
+      "seed": 54,
+      "profile": "figure8",
+      "check": "commit-bound",
+      "at_us": 1982678,
+      "node": 5,
+      "detail": "commit index reached 15, but this message allowed 14"
+    },
+    {
+      "seed": 66,
+      "profile": "crash",
+      "check": "commit-bound",
+      "at_us": 515879,
+      "node": 4,
+      "detail": "commit index reached 4, but this message allowed 2"
+    },
+    {
+      "seed": 75,
+      "profile": "figure8",
+      "check": "commit-bound",
+      "at_us": 3429051,
+      "node": 2,
+      "detail": "commit index reached 24, but this message allowed 23"
+    },
+    {
+      "seed": 110,
+      "profile": "figure8",
+      "check": "commit-bound",
+      "at_us": 3235942,
+      "node": 1,
+      "detail": "commit index reached 21, but this message allowed 20"
+    },
+    {
+      "seed": 152,
+      "profile": "figure8",
+      "check": "commit-bound",
+      "at_us": 5441841,
+      "node": 4,
+      "detail": "commit index reached 33, but this message allowed 32"
+    },
+    {
+      "seed": 200,
+      "profile": "chaos",
+      "check": "commit-bound",
+      "at_us": 2049801,
+      "node": 3,
+      "detail": "commit index reached 39, but this message allowed 36"
+    },
+    {
+      "seed": 229,
+      "profile": "figure8",
+      "check": "commit-bound",
+      "at_us": 2939275,
+      "node": 1,
+      "detail": "commit index reached 57, but this message allowed 56"
+    },
+    {
+      "seed": 243,
+      "profile": "figure8",
+      "check": "commit-bound",
+      "at_us": 5753870,
+      "node": 1,
+      "detail": "commit index reached 71, but this message allowed 70"
+    },
+    {
+      "seed": 249,
+      "profile": "chaos",
+      "check": "commit-bound",
+      "at_us": 1135352,
+      "node": 3,
+      "detail": "commit index reached 84, but this message allowed 80"
+    },
+    {
+      "seed": 263,
+      "profile": "chaos",
+      "check": "commit-bound",
+      "at_us": 1783932,
+      "node": 2,
+      "detail": "commit index reached 7, but this message allowed 6"
+    },
+    {
+      "seed": 306,
+      "profile": "figure8",
+      "check": "commit-bound",
+      "at_us": 10139919,
+      "node": 4,
+      "detail": "commit index reached 186, but this message allowed 185"
+    },
+    {
+      "seed": 318,
+      "profile": "crash",
+      "check": "commit-bound",
+      "at_us": 357900,
+      "node": 2,
+      "detail": "commit index reached 6, but this message allowed 5"
+    },
+    {
+      "seed": 334,
+      "profile": "figure8",
+      "check": "commit-bound",
+      "at_us": 9533900,
+      "node": 2,
+      "detail": "commit index reached 81, but this message allowed 80"
+    },
+    {
+      "seed": 340,
+      "profile": "chaos",
+      "check": "commit-bound",
+      "at_us": 3140077,
+      "node": 5,
+      "detail": "commit index reached 531, but this message allowed 525"
+    },
+    {
+      "seed": 341,
+      "profile": "figure8",
+      "check": "commit-bound",
+      "at_us": 1317408,
+      "node": 3,
+      "detail": "commit index reached 8, but this message allowed 7"
+    },
+    {
+      "seed": 346,
+      "profile": "crash",
+      "check": "commit-bound",
+      "at_us": 2808668,
+      "node": 1,
+      "detail": "commit index reached 127, but this message allowed 125"
+    },
+    {
+      "seed": 354,
+      "profile": "chaos",
+      "check": "commit-bound",
+      "at_us": 1120877,
+      "node": 5,
+      "detail": "commit index reached 147, but this message allowed 146"
+    },
+    {
+      "seed": 362,
+      "profile": "figure8",
+      "check": "commit-bound",
+      "at_us": 1284758,
+      "node": 5,
+      "detail": "commit index reached 11, but this message allowed 10"
+    },
+    {
+      "seed": 424,
+      "profile": "chaos",
+      "check": "commit-bound",
+      "at_us": 1670190,
+      "node": 3,
+      "detail": "commit index reached 14, but this message allowed 11"
+    }
+  ]
+}

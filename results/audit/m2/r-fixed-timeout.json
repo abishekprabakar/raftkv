@@ -1,0 +1,220 @@
+{
+  "generated_at": "2026-11-02T06:25:57Z",
+  "hardware": {
+    "collected_at": "2026-11-02T06:25:57Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1,
+  "properties_only": true,
+  "wall_seconds": 1.320474542,
+  "schedules": 2000,
+  "violations": 392,
+  "by_check": [
+    {
+      "check": "liveness",
+      "schedules": 392,
+      "first_seed": 1
+    }
+  ],
+  "schedules_by_profile": {
+    "calm": 285,
+    "chaos": 286,
+    "crash": 286,
+    "figure8": 286,
+    "lossy": 286,
+    "partition": 286,
+    "solo": 285
+  },
+  "totals": {
+    "events": 9955102,
+    "virtual_ms": 12036920,
+    "messages_sent": 4612303,
+    "messages_delivered": 4033968,
+    "messages_dropped": 230223,
+    "messages_blocked_by_partition": 141303,
+    "messages_to_crashed_nodes": 285721,
+    "messages_duplicated": 85539,
+    "messages_delayed_past_election_timeout": 20813,
+    "messages_reordered": 517189,
+    "partitions": 4892,
+    "one_way_cuts": 1185,
+    "crashes": 35457,
+    "crashes_between_events": 27114,
+    "crashes_during_save": 4180,
+    "crashes_after_save": 4163,
+    "restarts": 35457,
+    "commands_proposed": 295937,
+    "leaders_elected": 21887,
+    "entries_committed": 270507
+  },
+  "failures": [
+    {
+      "seed": 1,
+      "profile": "lossy",
+      "check": "liveness",
+      "at_us": 10000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 candidate term 99 commit 0 log 0] [2 candidate term 99 commit 0 log 0] [3 candidate term 99 commit 0 log 0] "
+    },
+    {
+      "seed": 11,
+      "profile": "chaos",
+      "check": "liveness",
+      "at_us": 9000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 candidate term 87 commit 0 log 0] [2 candidate term 87 commit 0 log 0] [3 candidate term 87 commit 0 log 0] [4 candidate term 87 commit 0 log 0] [5 candidate term 87 commit 0 log 0] "
+    },
+    {
+      "seed": 15,
+      "profile": "lossy",
+      "check": "liveness",
+      "at_us": 8000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 candidate term 79 commit 0 log 0] [2 candidate term 79 commit 0 log 0] [3 candidate term 79 commit 0 log 0] "
+    },
+    {
+      "seed": 16,
+      "profile": "partition",
+      "check": "liveness",
+      "at_us": 10000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 candidate term 99 commit 0 log 0] [2 candidate term 99 commit 0 log 0] [3 candidate term 99 commit 0 log 0] "
+    },
+    {
+      "seed": 23,
+      "profile": "partition",
+      "check": "liveness",
+      "at_us": 7000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 candidate term 69 commit 0 log 0] [2 candidate term 69 commit 0 log 0] [3 candidate term 69 commit 0 log 0] [4 candidate term 69 commit 0 log 0] [5 candidate term 69 commit 0 log 0] "
+    },
+    {
+      "seed": 29,
+      "profile": "lossy",
+      "check": "liveness",
+      "at_us": 11000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 candidate term 109 commit 0 log 0] [2 candidate term 109 commit 0 log 0] [3 candidate term 109 commit 0 log 0] "
+    },
+    {
+      "seed": 49,
+      "profile": "calm",
+      "check": "liveness",
+      "at_us": 7000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 candidate term 69 commit 0 log 0] [2 candidate term 69 commit 0 log 0] [3 candidate term 69 commit 0 log 0] [4 candidate term 69 commit 0 log 0] [5 candidate term 69 commit 0 log 0] "
+    },
+    {
+      "seed": 50,
+      "profile": "lossy",
+      "check": "liveness",
+      "at_us": 9000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 candidate term 89 commit 0 log 0] [2 candidate term 89 commit 0 log 0] [3 candidate term 89 commit 0 log 0] "
+    },
+    {
+      "seed": 51,
+      "profile": "partition",
+      "check": "liveness",
+      "at_us": 7000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 candidate term 69 commit 0 log 0] [2 candidate term 69 commit 0 log 0] [3 candidate term 69 commit 0 log 0] [4 candidate term 69 commit 0 log 0] [5 candidate term 69 commit 0 log 0] "
+    },
+    {
+      "seed": 57,
+      "profile": "lossy",
+      "check": "liveness",
+      "at_us": 8000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 candidate term 79 commit 0 log 0] [2 candidate term 79 commit 0 log 0] [3 candidate term 79 commit 0 log 0] "
+    },
+    {
+      "seed": 60,
+      "profile": "chaos",
+      "check": "liveness",
+      "at_us": 8000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 candidate term 79 commit 0 log 0] [2 candidate term 79 commit 0 log 0] [3 candidate term 79 commit 0 log 0] [4 candidate term 79 commit 0 log 0] [5 candidate term 79 commit 0 log 0] "
+    },
+    {
+      "seed": 70,
+      "profile": "calm",
+      "check": "liveness",
+      "at_us": 7000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 candidate term 69 commit 0 log 0] [2 candidate term 69 commit 0 log 0] [3 candidate term 69 commit 0 log 0] "
+    },
+    {
+      "seed": 71,
+      "profile": "lossy",
+      "check": "liveness",
+      "at_us": 7000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 candidate term 69 commit 0 log 0] [2 candidate term 69 commit 0 log 0] [3 candidate term 69 commit 0 log 0] "
+    },
+    {
+      "seed": 77,
+      "profile": "calm",
+      "check": "liveness",
+      "at_us": 8000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 candidate term 79 commit 0 log 0] [2 candidate term 79 commit 0 log 0] [3 candidate term 79 commit 0 log 0] [4 candidate term 79 commit 0 log 0] [5 candidate term 79 commit 0 log 0] "
+    },
+    {
+      "seed": 79,
+      "profile": "partition",
+      "check": "liveness",
+      "at_us": 9000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 candidate term 89 commit 0 log 0] [2 candidate term 89 commit 0 log 0] [3 candidate term 89 commit 0 log 0] [4 candidate term 89 commit 0 log 0] [5 candidate term 89 commit 0 log 0] "
+    },
+    {
+      "seed": 84,
+      "profile": "calm",
+      "check": "liveness",
+      "at_us": 11000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 candidate term 109 commit 0 log 0] [2 candidate term 109 commit 0 log 0] [3 candidate term 109 commit 0 log 0] "
+    },
+    {
+      "seed": 87,
+      "profile": "crash",
+      "check": "liveness",
+      "at_us": 9000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 candidate term 89 commit 0 log 0] [2 candidate term 89 commit 0 log 0] [3 candidate term 89 commit 0 log 0] [4 candidate term 89 commit 0 log 0] [5 candidate term 89 commit 0 log 0] "
+    },
+    {
+      "seed": 92,
+      "profile": "lossy",
+      "check": "liveness",
+      "at_us": 10000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 candidate term 99 commit 0 log 0] [2 candidate term 99 commit 0 log 0] [3 candidate term 99 commit 0 log 0] [4 candidate term 99 commit 0 log 0] [5 candidate term 99 commit 0 log 0] "
+    },
+    {
+      "seed": 98,
+      "profile": "calm",
+      "check": "liveness",
+      "at_us": 10000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 candidate term 99 commit 0 log 0] [2 candidate term 99 commit 0 log 0] [3 candidate term 99 commit 0 log 0] "
+    },
+    {
+      "seed": 106,
+      "profile": "lossy",
+      "check": "liveness",
+      "at_us": 8000000,
+      "node": 0,
+      "detail": "nothing applied for 5000ms of quiet: [1 candidate term 79 commit 0 log 0] [2 candidate term 79 commit 0 log 0] [3 candidate term 79 commit 0 log 0] [4 candidate term 79 commit 0 log 0] [5 candidate term 79 commit 0 log 0] "
+    }
+  ]
+}

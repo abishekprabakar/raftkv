@@ -84,3 +84,40 @@ SIGKILL leaves the OS page cache intact, so this harness cannot detect a missing
 | Torn tails seen truncated by the final Open (a recovery child truncates the rest) | 43 | trials_with_truncated_wal_tail |
 | Wall time | 214 s | wall_seconds |
 
+## Raft simulation (`make sim` -> `results/sim.json`)
+
+Hardware: Apple M5, 10 cores, 16 GB RAM, macOS 26.5.1 arm64, filesystem apfs, go1.27.2. Collected 2026-11-02T06:25:29Z.
+
+Note: On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware.
+
+Each schedule runs real Raft nodes on a simulated network with a virtual clock, so one seed fixes the whole run and any failure replays exactly. After the faults stop, every schedule must elect a leader and bring every node up to date. The simulator stands in for the disk and models a crash during a save, so this says nothing about real fsync behavior.
+
+| Metric | Value | JSON field |
+|---|---|---|
+| Schedules (first seed 1) | 10,000 | schedules |
+| Schedules that failed a check | 0 | violations |
+| Messages sent | 25,368,286 | totals.messages_sent |
+| Messages dropped | 1,466,865 | totals.messages_dropped |
+| Messages duplicated | 660,947 | totals.messages_duplicated |
+| Messages delayed past an election timeout | 154,145 | totals.messages_delayed_past_election_timeout |
+| Messages reordered | 3,980,989 | totals.messages_reordered |
+| Partitions (one-way cuts among them) | 24,717 (6,342) | totals.partitions, one_way_cuts |
+| Crash-restarts (during a save / after a save, before sending) | 187,307 (21,047 / 20,850) | totals.crashes, crashes_during_save, crashes_after_save |
+| Leaders elected | 120,088 | totals.leaders_elected |
+| Entries committed | 2,118,886 | totals.entries_committed |
+| Wall time | 5 s | wall_seconds |
+
+### Planted bugs: which check caught each one (schedules failed, out of 2,000)
+
+| Bug | All checks | Properties only, monitors off |
+|---|---|---|
+| send-before-save | durable-promise (1,715) | leader-completeness (60), liveness (48) |
+| forget-voted-for | durable-promise (1,715) | election-safety (8), log-matching (3) |
+| count-old-terms | leader-completeness (30) | leader-completeness (30) |
+| always-truncate | panic (1,500), commit-majority (184), liveness (13), leader-completeness (4) | panic (1,664), liveness (28), leader-completeness (8) |
+| commit-to-last-index | commit-bound (59) | none |
+| no-up-to-date-check | leader-completeness (968) | leader-completeness (968) |
+| commit-can-decrease | commit-monotonic (841) | none |
+| fixed-timeout | liveness (392) | liveness (392) |
+| save-after-apply | durable-apply (1,792) | state-machine-safety (170) |
+

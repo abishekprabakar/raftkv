@@ -1,0 +1,6 @@
+2000 schedules, 392 failed, 1.3s: 9955102 events, 4612303 sent, 230223 dropped, 85539 duplicated, 20813 long delays, 517189 reordered, 4892 partitions (1185 one-way), 35457 crashes (4180 during save, 4163 after save), 21887 leaders, 270507 entries committed
+  liveness                  392 schedules, first at seed 1
+  seed 1 (lossy): liveness at 10000000us on node 0: nothing applied for 5000ms of quiet: [1 candidate term 99 commit 0 log 0] [2 candidate term 99 commit 0 log 0] [3 candidate term 99 commit 0 log 0] 
+  seed 11 (chaos): liveness at 9000000us on node 0: nothing applied for 5000ms of quiet: [1 candidate term 87 commit 0 log 0] [2 candidate term 87 commit 0 log 0] [3 candidate term 87 commit 0 log 0] [4 candidate term 87 commit 0 log 0] [5 candidate term 87 commit 0 log 0] 
+  seed 15 (lossy): liveness at 8000000us on node 0: nothing applied for 5000ms of quiet: [1 candidate term 79 commit 0 log 0] [2 candidate term 79 commit 0 log 0] [3 candidate term 79 commit 0 log 0] 
+wrote $HOME/projects/raftkv/results/audit/m2/r-fixed-timeout.json

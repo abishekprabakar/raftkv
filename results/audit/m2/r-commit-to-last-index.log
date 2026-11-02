@@ -1,0 +1,2 @@
+2000 schedules, 0 failed, 1.1s: 9484022 events, 5057118 sent, 304761 dropped, 127249 duplicated, 30191 long delays, 773727 reordered, 4927 partitions (1267 one-way), 36938 crashes (4182 during save, 3984 after save), 23639 leaders, 421501 entries committed
+wrote $HOME/projects/raftkv/results/audit/m2/r-commit-to-last-index.json

@@ -1,0 +1,7 @@
+2000 schedules, 108 failed, 1.2s: 11725239 events, 5996088 sent, 305216 dropped, 126832 duplicated, 30188 long delays, 766587 reordered, 4783 partitions (1169 one-way), 36093 crashes (3925 during save, 3877 after save), 23418 leaders, 419709 entries committed
+  leader-completeness        60 schedules, first at seed 52
+  liveness                   48 schedules, first at seed 129
+  seed 52 (crash): leader-completeness at 1246227us on node 1: leader of term 3 has term 3 at index 91, but term 2 was committed there
+  seed 115 (crash): leader-completeness at 4280499us on node 2: leader of term 16 has term 16 at index 159, but term 15 was committed there
+  seed 122 (crash): leader-completeness at 3967783us on node 2: leader of term 11 has term 11 at index 87, but term 10 was committed there
+wrote $HOME/projects/raftkv/results/audit/m2/r-send-before-save.json

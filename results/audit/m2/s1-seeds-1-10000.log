@@ -1,0 +1,2 @@
+10000 schedules, 0 failed, 4.9s: 47634661 events, 25368286 sent, 1466865 dropped, 660947 duplicated, 154145 long delays, 3980989 reordered, 24717 partitions (6342 one-way), 187307 crashes (21047 during save, 20850 after save), 120088 leaders, 2118886 entries committed
+wrote $HOME/projects/raftkv/results/sim.json

@@ -1,0 +1,6 @@
+2000 schedules, 170 failed, 1.1s: 9417186 events, 5057118 sent, 304761 dropped, 127249 duplicated, 30191 long delays, 773727 reordered, 4927 partitions (1267 one-way), 35974 crashes (3969 during save, 3798 after save), 23086 leaders, 417532 entries committed
+  state-machine-safety      170 schedules, first at seed 13
+  seed 13 (solo): state-machine-safety at 1377979us on node 1: index 8 applied as term 3, but another apply had term 2
+  seed 27 (solo): state-machine-safety at 626740us on node 1: index 9 applied as term 2, but another apply had term 1
+  seed 34 (solo): state-machine-safety at 2482162us on node 1: index 19 applied as term 5, but another apply had term 4
+wrote $HOME/projects/raftkv/results/audit/m2/r-save-after-apply.json

@@ -1,0 +1,52 @@
+{
+  "generated_at": "2026-11-02T06:25:33Z",
+  "hardware": {
+    "collected_at": "2026-11-02T06:25:33Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1000001,
+  "properties_only": false,
+  "wall_seconds": 4.36979925,
+  "schedules": 10000,
+  "violations": 0,
+  "by_check": [],
+  "schedules_by_profile": {
+    "calm": 1428,
+    "chaos": 1429,
+    "crash": 1429,
+    "figure8": 1429,
+    "lossy": 1428,
+    "partition": 1429,
+    "solo": 1428
+  },
+  "totals": {
+    "events": 48365358,
+    "virtual_ms": 51409120,
+    "messages_sent": 25860195,
+    "messages_delivered": 22628266,
+    "messages_dropped": 1555594,
+    "messages_blocked_by_partition": 832244,
+    "messages_to_crashed_nodes": 1495889,
+    "messages_duplicated": 699782,
+    "messages_delayed_past_election_timeout": 158345,
+    "messages_reordered": 4117498,
+    "partitions": 24501,
+    "one_way_cuts": 6087,
+    "crashes": 187753,
+    "crashes_between_events": 145045,
+    "crashes_during_save": 21298,
+    "crashes_after_save": 21410,
+    "restarts": 187753,
+    "commands_proposed": 2334436,
+    "leaders_elected": 120822,
+    "entries_committed": 2150797
+  }
+}

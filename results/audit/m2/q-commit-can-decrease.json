@@ -1,0 +1,220 @@
+{
+  "generated_at": "2026-11-02T06:25:52Z",
+  "hardware": {
+    "collected_at": "2026-11-02T06:25:52Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "first_seed": 1,
+  "properties_only": false,
+  "wall_seconds": 0.694981292,
+  "schedules": 2000,
+  "violations": 841,
+  "by_check": [
+    {
+      "check": "commit-monotonic",
+      "schedules": 841,
+      "first_seed": 2
+    }
+  ],
+  "schedules_by_profile": {
+    "calm": 285,
+    "chaos": 286,
+    "crash": 286,
+    "figure8": 286,
+    "lossy": 286,
+    "partition": 286,
+    "solo": 285
+  },
+  "totals": {
+    "events": 5705360,
+    "virtual_ms": 6806062,
+    "messages_sent": 2920967,
+    "messages_delivered": 2559231,
+    "messages_dropped": 176075,
+    "messages_blocked_by_partition": 82463,
+    "messages_to_crashed_nodes": 168512,
+    "messages_duplicated": 80140,
+    "messages_delayed_past_election_timeout": 18842,
+    "messages_reordered": 410779,
+    "partitions": 3111,
+    "one_way_cuts": 788,
+    "crashes": 22724,
+    "crashes_between_events": 17572,
+    "crashes_during_save": 2556,
+    "crashes_after_save": 2596,
+    "restarts": 22443,
+    "commands_proposed": 282673,
+    "leaders_elected": 14255,
+    "entries_committed": 265917
+  },
+  "failures": [
+    {
+      "seed": 2,
+      "profile": "partition",
+      "check": "commit-monotonic",
+      "at_us": 544118,
+      "node": 1,
+      "detail": "commit index went from 4 to 3"
+    },
+    {
+      "seed": 3,
+      "profile": "crash",
+      "check": "commit-monotonic",
+      "at_us": 937531,
+      "node": 5,
+      "detail": "commit index went from 63 to 56"
+    },
+    {
+      "seed": 5,
+      "profile": "figure8",
+      "check": "commit-monotonic",
+      "at_us": 4113562,
+      "node": 5,
+      "detail": "commit index went from 27 to 26"
+    },
+    {
+      "seed": 9,
+      "profile": "partition",
+      "check": "commit-monotonic",
+      "at_us": 1172993,
+      "node": 5,
+      "detail": "commit index went from 11 to 10"
+    },
+    {
+      "seed": 11,
+      "profile": "chaos",
+      "check": "commit-monotonic",
+      "at_us": 1862696,
+      "node": 4,
+      "detail": "commit index went from 6 to 5"
+    },
+    {
+      "seed": 12,
+      "profile": "figure8",
+      "check": "commit-monotonic",
+      "at_us": 12123692,
+      "node": 2,
+      "detail": "commit index went from 30 to 29"
+    },
+    {
+      "seed": 16,
+      "profile": "partition",
+      "check": "commit-monotonic",
+      "at_us": 552141,
+      "node": 1,
+      "detail": "commit index went from 25 to 24"
+    },
+    {
+      "seed": 19,
+      "profile": "figure8",
+      "check": "commit-monotonic",
+      "at_us": 968400,
+      "node": 5,
+      "detail": "commit index went from 8 to 7"
+    },
+    {
+      "seed": 21,
+      "profile": "calm",
+      "check": "commit-monotonic",
+      "at_us": 221890,
+      "node": 3,
+      "detail": "commit index went from 20 to 19"
+    },
+    {
+      "seed": 22,
+      "profile": "lossy",
+      "check": "commit-monotonic",
+      "at_us": 1020790,
+      "node": 3,
+      "detail": "commit index went from 30 to 29"
+    },
+    {
+      "seed": 23,
+      "profile": "partition",
+      "check": "commit-monotonic",
+      "at_us": 606090,
+      "node": 4,
+      "detail": "commit index went from 49 to 41"
+    },
+    {
+      "seed": 24,
+      "profile": "crash",
+      "check": "commit-monotonic",
+      "at_us": 1886537,
+      "node": 4,
+      "detail": "commit index went from 56 to 48"
+    },
+    {
+      "seed": 25,
+      "profile": "chaos",
+      "check": "commit-monotonic",
+      "at_us": 2327009,
+      "node": 3,
+      "detail": "commit index went from 15 to 13"
+    },
+    {
+      "seed": 26,
+      "profile": "figure8",
+      "check": "commit-monotonic",
+      "at_us": 6099090,
+      "node": 4,
+      "detail": "commit index went from 91 to 90"
+    },
+    {
+      "seed": 30,
+      "profile": "partition",
+      "check": "commit-monotonic",
+      "at_us": 535849,
+      "node": 1,
+      "detail": "commit index went from 3 to 2"
+    },
+    {
+      "seed": 31,
+      "profile": "crash",
+      "check": "commit-monotonic",
+      "at_us": 1494735,
+      "node": 1,
+      "detail": "commit index went from 36 to 35"
+    },
+    {
+      "seed": 33,
+      "profile": "figure8",
+      "check": "commit-monotonic",
+      "at_us": 7857022,
+      "node": 2,
+      "detail": "commit index went from 55 to 54"
+    },
+    {
+      "seed": 36,
+      "profile": "lossy",
+      "check": "commit-monotonic",
+      "at_us": 905695,
+      "node": 2,
+      "detail": "commit index went from 37 to 36"
+    },
+    {
+      "seed": 37,
+      "profile": "partition",
+      "check": "commit-monotonic",
+      "at_us": 1111912,
+      "node": 3,
+      "detail": "commit index went from 23 to 21"
+    },
+    {
+      "seed": 38,
+      "profile": "crash",
+      "check": "commit-monotonic",
+      "at_us": 1039508,
+      "node": 5,
+      "detail": "commit index went from 163 to 153"
+    }
+  ]
+}

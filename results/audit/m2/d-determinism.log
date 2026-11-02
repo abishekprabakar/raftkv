@@ -1,0 +1,8 @@
+=== RUN   TestSameSeedSameRun
+--- PASS: TestSameSeedSameRun (0.53s)
+=== RUN   TestWorkerCountDoesNotChangeResults
+--- PASS: TestWorkerCountDoesNotChangeResults (0.33s)
+=== RUN   TestOptionsDoNotChangeTheRun
+--- PASS: TestOptionsDoNotChangeTheRun (0.18s)
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/raft/sim	1.197s

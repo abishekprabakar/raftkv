@@ -1,0 +1,6 @@
+2000 schedules, 59 failed, 1.1s: 9180043 events, 4934498 sent, 300274 dropped, 126569 duplicated, 29895 long delays, 757243 reordered, 4861 partitions (1253 one-way), 34877 crashes (3989 during save, 3814 after save), 22166 leaders, 416576 entries committed
+  commit-bound               59 schedules, first at seed 33
+  seed 33 (figure8): commit-bound at 1777040us on node 5: commit index reached 12, but this message allowed 11
+  seed 54 (figure8): commit-bound at 1982678us on node 5: commit index reached 15, but this message allowed 14
+  seed 66 (crash): commit-bound at 515879us on node 4: commit index reached 4, but this message allowed 2
+wrote $HOME/projects/raftkv/results/audit/m2/q-commit-to-last-index.json
