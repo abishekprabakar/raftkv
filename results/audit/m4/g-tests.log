@@ -1,0 +1,16 @@
+=== RUN   TestMessagesRoundTrip
+--- PASS: TestMessagesRoundTrip (0.00s)
+=== RUN   TestClusterOverGRPC
+=== RUN   TestClusterOverGRPC/3_nodes
+=== RUN   TestClusterOverGRPC/5_nodes
+--- PASS: TestClusterOverGRPC (0.82s)
+    --- PASS: TestClusterOverGRPC/3_nodes (0.37s)
+    --- PASS: TestClusterOverGRPC/5_nodes (0.45s)
+=== RUN   TestClientFollowsRedirect
+--- PASS: TestClientFollowsRedirect (0.32s)
+=== RUN   TestWritesContinueAfterLeaderStops
+--- PASS: TestWritesContinueAfterLeaderStops (2.77s)
+=== RUN   TestRetriedWriteAppliesOnce
+--- PASS: TestRetriedWriteAppliesOnce (0.31s)
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/server	4.427s

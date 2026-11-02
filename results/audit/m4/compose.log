@@ -1,0 +1,296 @@
+ Image raftkv:dev Building 
+ Image raftkv:dev Building 
+ Image raftkv:dev Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.39kB done
+#1 DONE 0.0s
+
+#2 [node3 internal] load build definition from Dockerfile
+#2 DONE 0.0s
+
+#2 [node3 internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.06kB done
+#2 DONE 0.0s
+
+#3 [node1 internal] load metadata for gcr.io/distroless/static-debian13:nonroot
+#3 DONE 0.0s
+
+#4 [node2 internal] load metadata for docker.io/library/golang:1.27.2-alpine
+#4 DONE 0.0s
+
+#5 [node3 internal] load .dockerignore
+#5 transferring context: 148B done
+#5 DONE 0.0s
+
+#6 [node2 stage-1 1/3] FROM gcr.io/distroless/static-debian13:nonroot@sha256:25ac8f0c3b2334a9eb05452266bd4697864a8c8ef0ef71e5e6480d7f92868329
+#6 resolve gcr.io/distroless/static-debian13:nonroot@sha256:25ac8f0c3b2334a9eb05452266bd4697864a8c8ef0ef71e5e6480d7f92868329 done
+#6 DONE 0.0s
+
+#7 [node2 build 1/7] FROM docker.io/library/golang:1.27.2-alpine@sha256:f92b6ef800e499660581efdabdf25d9d817a9d124eaf900924f0504e7e27e12d
+#7 resolve docker.io/library/golang:1.27.2-alpine@sha256:f92b6ef800e499660581efdabdf25d9d817a9d124eaf900924f0504e7e27e12d done
+#7 DONE 0.0s
+
+#8 [node3 internal] load build context
+#8 transferring context: 4.26kB done
+#8 DONE 0.0s
+
+#9 [node2 build 6/7] COPY internal ./internal
+#9 CACHED
+
+#10 [node2 build 4/7] RUN go mod download
+#10 CACHED
+
+#11 [node2 build 2/7] WORKDIR /src
+#11 CACHED
+
+#12 [node2 build 5/7] COPY cmd ./cmd
+#12 CACHED
+
+#13 [node2 stage-1 2/3] COPY --from=build /out/raftkvd /out/raftkv /usr/local/bin/
+#13 CACHED
+
+#14 [node2 build 7/7] RUN CGO_ENABLED=0 go build -trimpath -o /out/raftkvd ./cmd/raftkvd  && CGO_ENABLED=0 go build -trimpath -o /out/raftkv ./cmd/raftkv  && mkdir /out/data
+#14 CACHED
+
+#15 [node2 build 3/7] COPY go.mod go.sum ./
+#15 CACHED
+
+#16 [node2 stage-1 3/3] COPY --from=build --chown=65532:65532 /out/data /data
+#16 CACHED
+
+#11 [node1 build 2/7] WORKDIR /src
+#11 CACHED
+
+#12 [node1 build 5/7] COPY cmd ./cmd
+#12 CACHED
+
+#15 [node1 build 3/7] COPY go.mod go.sum ./
+#15 CACHED
+
+#14 [node1 build 7/7] RUN CGO_ENABLED=0 go build -trimpath -o /out/raftkvd ./cmd/raftkvd  && CGO_ENABLED=0 go build -trimpath -o /out/raftkv ./cmd/raftkv  && mkdir /out/data
+#14 CACHED
+
+#9 [node1 build 6/7] COPY internal ./internal
+#9 CACHED
+
+#10 [node1 build 4/7] RUN go mod download
+#10 CACHED
+
+#13 [node1 stage-1 2/3] COPY --from=build /out/raftkvd /out/raftkv /usr/local/bin/
+#13 CACHED
+
+#17 [node1] exporting to image
+#17 exporting layers done
+#17 exporting manifest sha256:9189b96cd80ffe0e4d179c14869ec56c4ef0c2205d2c2faeb2b806d1d623a44e done
+#17 exporting config sha256:9ca61534d99c36469c08e60f994acea2549323ee61bc94798b2bf9629ab511be done
+#17 exporting attestation manifest sha256:123690d1d629d939c25477e2e61f67269b171b4c2166844ff57b30656f193132 0.0s done
+#17 exporting manifest list sha256:980c0d377f31a6dc39bde261d9fb920c84a599c7876656b42bb4d335fe708996 0.0s done
+#17 naming to docker.io/library/raftkv:dev done
+#17 unpacking to docker.io/library/raftkv:dev done
+#17 DONE 0.1s
+
+#18 [node2] exporting to image
+#18 exporting layers done
+#18 exporting manifest sha256:356e146a581bea7774c81fbec2d594e6117b6a97777e355e9fb7a4a9dda9bf00 done
+#18 exporting config sha256:7c38912370f0e6b129ac2f143625daddd1ecca1d1488c23ab2034f1a900521b3 done
+#18 exporting attestation manifest sha256:93863e748f0c3d7bdd205fbfbf8149690b0cfdb7ee9af054ba3ff3d2ef0b9fab 0.0s done
+#18 exporting manifest list sha256:d85c402e203efbc8375da997bb31efe857270bb279a10c0c0dff0aca849d491e 0.0s done
+#18 naming to docker.io/library/raftkv:dev done
+#18 unpacking to docker.io/library/raftkv:dev 0.0s done
+#18 DONE 0.1s
+
+#19 [node3] exporting to image
+#19 exporting layers done
+#19 exporting manifest sha256:232ca661615d30a4056ff432d17950910240caf9ef3cbff2a2bc6e320f2a7152 done
+#19 exporting config sha256:0745eaacac2b96b9b17ad9179e0c846bbee41bf5c5bcf4058216494bf12565fd done
+#19 exporting attestation manifest sha256:59956fab5f3353b2b75e9425539c6308112a74f041e9e39dfd77c0411c4c4525 0.0s done
+#19 exporting manifest list sha256:0704d102a516b4b77cf307228a6486c092b4453ceead2ed00ebdd323d7e6c770 0.0s done
+#19 naming to docker.io/library/raftkv:dev done
+#19 unpacking to docker.io/library/raftkv:dev 0.0s done
+#19 DONE 0.1s
+
+#20 [node3] resolving provenance for metadata file
+#20 DONE 0.0s
+
+#21 [node2] resolving provenance for metadata file
+#21 DONE 0.0s
+
+#22 [node1] resolving provenance for metadata file
+#22 DONE 0.0s
+ Image raftkv:dev Built 
+ Image raftkv:dev Built 
+ Image raftkv:dev Built 
+ Network raftkv_default Creating 
+ Volume raftkv_node1-data Creating 
+ Volume raftkv_node3-data Creating 
+ Network raftkv_default Creating 
+ Volume raftkv_node1-data Creating 
+ Volume raftkv_node3-data Creating 
+ Volume raftkv_node2-data Creating 
+ Volume raftkv_node2-data Creating 
+ Volume raftkv_node1-data Created 
+ Volume raftkv_node1-data Created 
+ Volume raftkv_node3-data Created 
+ Volume raftkv_node3-data Created 
+ Volume raftkv_node2-data Created 
+ Volume raftkv_node2-data Created 
+ Network raftkv_default Created 
+ Network raftkv_default Created 
+ Container raftkv-node3-1 Creating 
+ Container raftkv-node2-1 Creating 
+ Container raftkv-node1-1 Creating 
+ Container raftkv-node2-1 Created 
+ Container raftkv-node1-1 Created 
+ Container raftkv-node3-1 Created 
+ Container raftkv-node2-1 Starting 
+ Container raftkv-node1-1 Starting 
+ Container raftkv-node3-1 Starting 
+ Container raftkv-node2-1 Started 
+ Container raftkv-node1-1 Started 
+ Container raftkv-node3-1 Started 
+ Container raftkv-node2-1 Waiting 
+ Container raftkv-node3-1 Waiting 
+ Container raftkv-node1-1 Waiting 
+ Container raftkv-node2-1 Healthy 
+ Container raftkv-node1-1 Healthy 
+ Container raftkv-node3-1 Healthy 
+ Container raftkv-cli-run-a1c1efa75093 Creating 
+ Container raftkv-cli-run-a1c1efa75093 Created 
+raftkv: put done in 6ms after 0 redirects
+ Container raftkv-cli-run-4accc1850420 Creating 
+ Container raftkv-cli-run-4accc1850420 Created 
+raftkv: node2:7000 is not the leader: redirected to node 1 at node1:7000
+raftkv: put done in 8ms after 1 redirects
+ Container raftkv-cli-run-62d3c012fc2c Creating 
+ Container raftkv-cli-run-62d3c012fc2c Created 
+raftkv: node3:7000 is not the leader: redirected to node 1 at node1:7000
+raftkv: put done in 9ms after 1 redirects
+ Container raftkv-cli-run-c00593350132 Creating 
+ Container raftkv-cli-run-c00593350132 Created 
+ Container raftkv-cli-run-7ed95f31e38a Creating 
+ Container raftkv-cli-run-7ed95f31e38a Created 
+ Container raftkv-cli-run-04b1ec300324 Creating 
+ Container raftkv-cli-run-04b1ec300324 Created 
+ Container raftkv-cli-run-957568ac7335 Creating 
+ Container raftkv-cli-run-957568ac7335 Created 
+ Container raftkv-cli-run-09fcdf77798a Creating 
+ Container raftkv-cli-run-09fcdf77798a Created 
+ Container raftkv-cli-run-0a66ace56ac6 Creating 
+ Container raftkv-cli-run-0a66ace56ac6 Created 
+ Container raftkv-cli-run-59147b457812 Creating 
+ Container raftkv-cli-run-59147b457812 Created 
+ Container raftkv-cli-run-a0e5264da543 Creating 
+ Container raftkv-cli-run-a0e5264da543 Created 
+ Container raftkv-cli-run-f15650bc690e Creating 
+ Container raftkv-cli-run-f15650bc690e Created 
+ Container raftkv-node1-1 Killing 
+ Container raftkv-node1-1 Killed 
+raftkv: node2:7000 is not the leader: redirected to node 1 at node1:7000
+raftkv: node1:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 20ms
+raftkv: node2:7000 is not the leader: redirected to node 1 at node1:7000
+raftkv: node1:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 40ms
+raftkv: node2:7000 is not the leader: redirected to node 1 at node1:7000
+raftkv: node1:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 80ms
+raftkv: node2:7000 is not the leader: redirected to node 1 at node1:7000
+raftkv: node1:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 160ms
+raftkv: node2:7000 is not the leader: redirected to node 1 at node1:7000
+raftkv: node1:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 320ms
+raftkv: node2:7000 is not the leader: redirected to node 3 at node3:7000
+raftkv: put done in 646ms after 6 redirects
+raftkv: no answer from node1:7000
+ Container raftkv-node1-1 Starting 
+ Container raftkv-node1-1 Started 
+ Container raftkv-node3-1 Killing 
+ Container raftkv-node3-1 Killed 
+raftkv: node1:7000 is not the leader: redirected to node 3 at node3:7000
+raftkv: node3:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 20ms
+raftkv: node1:7000 is not the leader: redirected to node 3 at node3:7000
+raftkv: node3:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 40ms
+raftkv: node1:7000 is not the leader: redirected to node 3 at node3:7000
+raftkv: node3:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 80ms
+raftkv: node1:7000 is not the leader: redirected to node 3 at node3:7000
+raftkv: node3:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 160ms
+raftkv: node1:7000 is not the leader: redirected to node 3 at node3:7000
+raftkv: node3:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 320ms
+raftkv: node1:7000 is not the leader: redirected to node 3 at node3:7000
+raftkv: node3:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 500ms
+raftkv: node1:7000: not the leader, and doesn't know who is; retrying in 500ms
+raftkv: node3:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 500ms
+raftkv: node1:7000 is not the leader: redirected to node 2 at node2:7000
+raftkv: put done in 2.146s after 7 redirects
+raftkv: no answer from node3:7000
+ Container raftkv-node3-1 Starting 
+ Container raftkv-node3-1 Started 
+ Container raftkv-node2-1 Killing 
+ Container raftkv-node2-1 Killed 
+raftkv: node3:7000 is not the leader: redirected to node 2 at node2:7000
+raftkv: node2:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 20ms
+raftkv: node3:7000 is not the leader: redirected to node 2 at node2:7000
+raftkv: node2:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 40ms
+raftkv: node3:7000 is not the leader: redirected to node 2 at node2:7000
+raftkv: node2:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 80ms
+raftkv: node3:7000 is not the leader: redirected to node 2 at node2:7000
+raftkv: node2:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 160ms
+raftkv: node3:7000 is not the leader: redirected to node 2 at node2:7000
+raftkv: node2:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 320ms
+raftkv: put done in 639ms after 5 redirects
+raftkv: no answer from node2:7000
+ Container raftkv-node2-1 Starting 
+ Container raftkv-node2-1 Started 
+ Container raftkv-node3-1 Killing 
+ Container raftkv-node3-1 Killed 
+raftkv: node1:7000 is not the leader: redirected to node 3 at node3:7000
+raftkv: node3:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 20ms
+raftkv: node1:7000 is not the leader: redirected to node 3 at node3:7000
+raftkv: node3:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 40ms
+raftkv: node1:7000 is not the leader: redirected to node 3 at node3:7000
+raftkv: node3:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 80ms
+raftkv: node1:7000 is not the leader: redirected to node 3 at node3:7000
+raftkv: node3:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 160ms
+raftkv: node1:7000 is not the leader: redirected to node 3 at node3:7000
+raftkv: node3:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 320ms
+raftkv: node1:7000: not the leader, and doesn't know who is; retrying in 500ms
+raftkv: node3:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 500ms
+raftkv: node1:7000 is not the leader: redirected to node 2 at node2:7000
+raftkv: put done in 1.659s after 6 redirects
+raftkv: no answer from node3:7000
+ Container raftkv-node3-1 Starting 
+ Container raftkv-node3-1 Started 
+ Container raftkv-node2-1 Killing 
+ Container raftkv-node2-1 Killed 
+raftkv: node3:7000 is not the leader: redirected to node 2 at node2:7000
+raftkv: node2:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 20ms
+raftkv: node3:7000 is not the leader: redirected to node 2 at node2:7000
+raftkv: node2:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 40ms
+raftkv: node3:7000 is not the leader: redirected to node 2 at node2:7000
+raftkv: node2:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 80ms
+raftkv: node3:7000 is not the leader: redirected to node 2 at node2:7000
+raftkv: node2:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 160ms
+raftkv: node3:7000 is not the leader: redirected to node 2 at node2:7000
+raftkv: node2:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 320ms
+raftkv: node3:7000 is not the leader: redirected to node 2 at node2:7000
+raftkv: node2:7000: rpc error: code = Unavailable desc = name resolver error: produced zero addresses; retrying in 500ms
+raftkv: put done in 1.139s after 6 redirects
+raftkv: no answer from node2:7000
+ Container raftkv-node2-1 Starting 
+ Container raftkv-node2-1 Started 
+ Container raftkv-node2-1 Stopping 
+ Container raftkv-node3-1 Stopping 
+ Container raftkv-node1-1 Stopping 
+ Container raftkv-node3-1 Stopped 
+ Container raftkv-node3-1 Removing 
+ Container raftkv-node2-1 Stopped 
+ Container raftkv-node2-1 Removing 
+ Container raftkv-node3-1 Removed 
+ Container raftkv-node2-1 Removed 
+ Container raftkv-node1-1 Stopped 
+ Container raftkv-node1-1 Removing 
+ Container raftkv-node1-1 Removed 
+ Volume raftkv_node3-data Removing 
+ Volume raftkv_node2-data Removing 
+ Volume raftkv_node1-data Removing 
+ Network raftkv_default Removing 
+ Volume raftkv_node1-data Removed 
+ Volume raftkv_node2-data Removed 
+ Volume raftkv_node3-data Removed 
+ Network raftkv_default Removed 

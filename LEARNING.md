@@ -4,6 +4,158 @@ One section per milestone, newest first: what was done, the ideas behind it, and
 the questions worth being able to answer about it. Every number comes from a real
 run. Criteria are in `docs/acceptance/`, and the runs are in `results/audit/`.
 
+## M4: a real network
+
+Criteria: `docs/acceptance/M4.md`. Results: `results/audit/m4/`. Code:
+`internal/server`, `internal/client`, `internal/pb`, `cmd/raftkvd`, `cmd/raftkv`,
+`Dockerfile` and `compose.yaml`.
+
+### What was built
+
+The nodes are now real processes that talk to each other over gRPC, with their Raft
+logs and stores on disk. `docker compose up -d --build --wait` starts three of them.
+A CLI client can be pointed at any node: a node that isn't the leader tells it where
+the leader is, and it goes there. Kill the leader's container and the other two
+elect a new one, and writes carry on.
+
+### The ideas in plain language
+
+**One goroutine owns Raft.** The Raft node and the store were written to be called
+one thing at a time, which is what made the simulator deterministic. A real server
+has many things happening at once: a clock, messages from peers, many clients. So
+one goroutine, the loop, owns the node, and everything else sends it work through
+channels. A client's request becomes a small function the loop runs, and the answer
+comes back on a channel when Raft calls back. No locks were added to the Raft code,
+so the code that runs here is the same code the simulator checked.
+
+**Never wait on the network inside Raft.** When Raft sends a message, it goes into
+that peer's queue, and a separate goroutine per peer writes the queue to a gRPC
+stream. If a peer is slow or dead, its queue fills up and new messages to it are
+dropped. That sounds bad, but Raft already assumes messages get lost: the next
+heartbeat or retry replaces them. Blocking instead would let one dead peer freeze
+the whole node.
+
+**Replies are just messages.** In the paper, RequestVote and AppendEntries are RPCs
+with replies. My Raft core treats a reply as a separate one-way message, because a
+real network can lose or delay either half. So the gRPC service has one method, a
+stream of envelopes, and a reply travels back on the other node's own stream.
+
+**Redirects.** Only the leader takes writes and serves reads. Any other node answers
+"not the leader: node 3 at node3:7000", from the fixed member list, and the client
+goes there. If nobody knows the leader (an election is going on), or a node can't
+be reached, the client tries the next address it knows, pausing a little longer
+each time.
+
+**Retrying a write is safe.** A client whose write timed out can't tell whether it
+happened. It retries with the same client ID and sequence number, and the session
+table from M3 drops the repeat. That's why a timeout is reported as "outcome unknown,
+retry" rather than "failed".
+
+**A real network needs a few settings changed.** gRPC waits up to two minutes
+between reconnect attempts by default, which would leave a restarted node cut off,
+so that is capped at one second. A container that is killed never closes its TCP
+connections, so peers send keepalive pings every 2 seconds to notice.
+
+**Why the CLI runs inside Docker's network.** Redirects carry addresses like
+`node3:7000`, the names Compose gives the containers. Those names only resolve
+inside the Compose network, so the CLI runs there too, with
+`docker compose run --rm cli ...`.
+
+### Results
+
+All from one run of `scripts/audit/m4/run.sh` on the committed code
+(`results/audit/m4/`).
+
+| Check | Result |
+|---|---|
+| T1 to T4: format, vet, tests, race detector | pass |
+| T5: third-party packages in the Raft, KV and storage core | none |
+| T6: modules linked into the binaries | only gRPC, protobuf and their `golang.org/x` and `genproto` dependencies |
+| G1 to G5: tests over real gRPC and real files | all pass |
+| D1: `docker compose up -d --build --wait` | exit 0; all three nodes named the same leader 0.1 s later |
+| D2: a put through each node, using only that node's address | 3 of 3 succeeded; the two sent to followers each followed one redirect to the leader |
+| D2: each key read through each node | 9 of 9 correct |
+| D3: kill the leader, 5 rounds | 5 of 5 passed all four checks |
+| D4: `docker compose down -v` | exit 0 |
+
+The five kills:
+
+| Round | Killed | New leader | Term | Kill to first write (s) |
+|---|---|---|---|---|
+| 1 | node1 | node3 | 2 to 3 | 0.74 |
+| 2 | node3 | node2 | 3 to 5 | 2.23 |
+| 3 | node2 | node3 | 5 to 6 | 0.72 |
+| 4 | node3 | node2 | 6 to 8 | 1.75 |
+| 5 | node2 | node3 | 8 to 9 | 1.23 |
+
+The time includes the CLI noticing the dead leader and retrying, so it's what a
+client sees. With election timeouts of 0.5 to 1 s, one election is the floor. Twice
+the term went up by two, meaning a second election. The node logs show why in round
+4: both survivors stood in term 7 and split the vote. In round 2 the first candidate,
+node1, which had been restarted in round 1, didn't win term 4, and I haven't worked
+out why yet. Neither affects correctness, but both affect failover time, so M6
+should look at them. Five rounds is a smoke test, not a measurement.
+
+Before the acceptance run, I ran the Docker steps once during development, into a
+scratch directory. They passed then too, and none of those numbers are reported.
+
+### What this does not show
+
+- Only kills were tested in Docker. Network partitions, slow links and clock jumps on
+  real processes are M5's fault schedules.
+- Five kills are a smoke test, not a failover benchmark. M6 measures that over at
+  least 30 trials.
+- Linearizability of real runs isn't checked yet. M5 runs Porcupine over recorded
+  histories.
+- No TLS or authentication, and no membership changes.
+- Each CLI command is a new client, so it adds a session that never expires. Fine
+  for a demo; a real deployment would need session expiry.
+- No pre-vote or check-quorum. A leader cut off from the others still accepts writes
+  that can never commit, and clients wait out a 2 s attempt timeout before moving on.
+
+### Questions and answers
+
+**Q: Why one goroutine instead of a mutex around the Raft node?**
+A mutex would work, but every handler would then touch Raft state directly, and
+callbacks from Raft would run while some handler holds the lock. With one goroutine,
+Raft runs exactly as in the simulator: one input at a time, in a single order. The
+handlers only queue work and wait for answers.
+
+**Q: A peer is down. What happens to messages for it?**
+They queue, up to 1,024, and then new ones are dropped. Raft is built for lost
+messages: the leader resends on the next heartbeat. Blocking would stall the node,
+and an unbounded queue would grow without limit while the peer is down.
+
+**Q: Why a client stream instead of a unary RPC per message?**
+A stream keeps one HTTP/2 stream open, so each message costs a frame, not a new
+call. And Raft's messages are one-way, so a request-response shape doesn't match
+them anyway.
+
+**Q: How does the client find the leader, and what if the leader it's sent to is
+dead?**
+It follows the address in the NotLeader answer. If that node can't be reached, the
+client tries the next address it knows after a short pause. Within an election
+timeout the survivors elect a new leader, and the next redirect points there.
+
+**Q: The client's write timed out. Is it safe to retry?**
+Yes, because it retries with the same client ID and sequence number. If the first
+try committed, the session table drops the second. Without sessions, a retried
+append would apply twice.
+
+**Q: What does protobuf buy you here?**
+A schema both sides agree on, compact binary encoding, and safe evolution: fields
+are identified by number, so a new field can be added without breaking old nodes. A
+test checks every field of every Raft message survives the round trip, and fails if
+a field is added to a message but not to the encoding.
+
+**Q: Why `docker compose kill` rather than `stop`?**
+`kill` sends SIGKILL: no shutdown code runs and nothing is flushed. That's the
+realistic failure, and it tests that the node really recovers from its files.
+
+**Q: Why a distroless image?**
+It holds only the two static binaries, no shell or package manager, so there's
+little to attack or patch, and it runs as a non-root user.
+
 ## M3: the replicated KV store
 
 Criteria: `docs/acceptance/M3.md`. Results: `results/sim.json` and

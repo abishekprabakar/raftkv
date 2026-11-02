@@ -1,0 +1,51 @@
+node3-1  | time=2026-11-02T21:01:58.695Z level=INFO msg=started node=3 listen=[::]:7000 peers=3
+node3-1  | time=2026-11-02T21:01:59.519Z level=INFO msg="raft state" node=3 role=candidate term=1 leader=0
+node3-1  | time=2026-11-02T21:02:00.282Z level=INFO msg="raft state" node=3 role=follower term=2 leader=0
+node3-1  | time=2026-11-02T21:02:00.284Z level=INFO msg="raft state" node=3 role=follower term=2 leader=1
+node3-1  | time=2026-11-02T21:02:08.099Z level=INFO msg="raft state" node=3 role=candidate term=3 leader=0
+node3-1  | time=2026-11-02T21:02:08.102Z level=INFO msg="raft state" node=3 role=leader term=3 leader=3
+node3-1  | time=2026-11-02T21:02:12.639Z level=INFO msg=started node=3 listen=[::]:7000 peers=3
+node3-1  | time=2026-11-02T21:02:13.361Z level=INFO msg="raft state" node=3 role=candidate term=4 leader=0
+node3-1  | time=2026-11-02T21:02:13.363Z level=INFO msg="raft state" node=3 role=follower term=5 leader=0
+node3-1  | time=2026-11-02T21:02:13.558Z level=INFO msg="raft state" node=3 role=follower term=5 leader=2
+node3-1  | time=2026-11-02T21:02:14.624Z level=INFO msg="raft state" node=3 role=candidate term=6 leader=0
+node3-1  | time=2026-11-02T21:02:14.626Z level=INFO msg="raft state" node=3 role=leader term=6 leader=3
+node3-1  | time=2026-11-02T21:02:19.165Z level=INFO msg=started node=3 listen=[::]:7000 peers=3
+node3-1  | time=2026-11-02T21:02:19.857Z level=INFO msg="raft state" node=3 role=candidate term=7 leader=0
+node3-1  | time=2026-11-02T21:02:19.920Z level=INFO msg="raft state" node=3 role=follower term=8 leader=0
+node3-1  | time=2026-11-02T21:02:20.048Z level=INFO msg="raft state" node=3 role=follower term=8 leader=2
+node3-1  | time=2026-11-02T21:02:21.428Z level=INFO msg="raft state" node=3 role=candidate term=9 leader=0
+node3-1  | time=2026-11-02T21:02:21.429Z level=INFO msg="raft state" node=3 role=leader term=9 leader=3
+node2-1  | time=2026-11-02T21:01:58.575Z level=INFO msg=started node=2 listen=[::]:7000 peers=3
+node2-1  | time=2026-11-02T21:01:59.400Z level=INFO msg="raft state" node=2 role=candidate term=1 leader=0
+node2-1  | time=2026-11-02T21:02:00.282Z level=INFO msg="raft state" node=2 role=follower term=2 leader=0
+node2-1  | time=2026-11-02T21:02:00.284Z level=INFO msg="raft state" node=2 role=follower term=2 leader=1
+node2-1  | time=2026-11-02T21:02:08.101Z level=INFO msg="raft state" node=2 role=follower term=3 leader=0
+node2-1  | time=2026-11-02T21:02:08.104Z level=INFO msg="raft state" node=2 role=follower term=3 leader=3
+node2-1  | time=2026-11-02T21:02:10.500Z level=INFO msg="raft state" node=2 role=follower term=4 leader=0
+node2-1  | time=2026-11-02T21:02:11.001Z level=INFO msg="raft state" node=2 role=candidate term=5 leader=0
+node2-1  | time=2026-11-02T21:02:11.003Z level=INFO msg="raft state" node=2 role=leader term=5 leader=2
+node2-1  | time=2026-11-02T21:02:15.647Z level=INFO msg=started node=2 listen=[::]:7000 peers=3
+node2-1  | time=2026-11-02T21:02:15.779Z level=INFO msg="raft state" node=2 role=follower term=6 leader=3
+node2-1  | time=2026-11-02T21:02:17.489Z level=INFO msg="raft state" node=2 role=candidate term=7 leader=0
+node2-1  | time=2026-11-02T21:02:18.009Z level=INFO msg="raft state" node=2 role=candidate term=8 leader=0
+node2-1  | time=2026-11-02T21:02:18.014Z level=INFO msg="raft state" node=2 role=leader term=8 leader=2
+node2-1  | time=2026-11-02T21:02:22.696Z level=INFO msg=started node=2 listen=[::]:7000 peers=3
+node2-1  | time=2026-11-02T21:02:23.481Z level=INFO msg="raft state" node=2 role=candidate term=9 leader=0
+node2-1  | time=2026-11-02T21:02:23.984Z level=INFO msg="raft state" node=2 role=follower term=9 leader=3
+node1-1  | time=2026-11-02T21:01:58.636Z level=INFO msg=started node=1 listen=[::]:7000 peers=3
+node1-1  | time=2026-11-02T21:01:59.510Z level=INFO msg="raft state" node=1 role=candidate term=1 leader=0
+node1-1  | time=2026-11-02T21:02:00.280Z level=INFO msg="raft state" node=1 role=candidate term=2 leader=0
+node1-1  | time=2026-11-02T21:02:00.283Z level=INFO msg="raft state" node=1 role=leader term=2 leader=1
+node1-1  | time=2026-11-02T21:02:08.896Z level=INFO msg=started node=1 listen=[::]:7000 peers=3
+node1-1  | time=2026-11-02T21:02:09.253Z level=INFO msg="raft state" node=1 role=follower term=3 leader=3
+node1-1  | time=2026-11-02T21:02:10.499Z level=INFO msg="raft state" node=1 role=candidate term=4 leader=0
+node1-1  | time=2026-11-02T21:02:11.002Z level=INFO msg="raft state" node=1 role=follower term=5 leader=0
+node1-1  | time=2026-11-02T21:02:11.005Z level=INFO msg="raft state" node=1 role=follower term=5 leader=2
+node1-1  | time=2026-11-02T21:02:14.625Z level=INFO msg="raft state" node=1 role=follower term=6 leader=0
+node1-1  | time=2026-11-02T21:02:14.627Z level=INFO msg="raft state" node=1 role=follower term=6 leader=3
+node1-1  | time=2026-11-02T21:02:17.359Z level=INFO msg="raft state" node=1 role=candidate term=7 leader=0
+node1-1  | time=2026-11-02T21:02:18.011Z level=INFO msg="raft state" node=1 role=follower term=8 leader=0
+node1-1  | time=2026-11-02T21:02:18.016Z level=INFO msg="raft state" node=1 role=follower term=8 leader=2
+node1-1  | time=2026-11-02T21:02:21.429Z level=INFO msg="raft state" node=1 role=follower term=9 leader=0
+node1-1  | time=2026-11-02T21:02:21.430Z level=INFO msg="raft state" node=1 role=follower term=9 leader=3

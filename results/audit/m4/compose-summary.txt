@@ -1,0 +1,19 @@
+d1 pass up_exit=0 leader=1 term=2 seconds_until_agreed=0.123
+d2 put via node1 pass exit=0 redirects_to_leader=0 (leader is node1)
+d2 put via node2 pass exit=0 redirects_to_leader=1 (leader is node1)
+d2 put via node3 pass exit=0 redirects_to_leader=1 (leader is node1)
+d2 get m4-key-1 via node1 pass got=[value-1]
+d2 get m4-key-1 via node2 pass got=[value-1]
+d2 get m4-key-1 via node3 pass got=[value-1]
+d2 get m4-key-2 via node1 pass got=[value-2]
+d2 get m4-key-2 via node2 pass got=[value-2]
+d2 get m4-key-2 via node3 pass got=[value-2]
+d2 get m4-key-3 via node1 pass got=[value-3]
+d2 get m4-key-3 via node2 pass got=[value-3]
+d2 get m4-key-3 via node3 pass got=[value-3]
+d3 round 1 pass killed=node1 term=2 new_leader=node3 term=3 seconds_kill_to_write=0.735 put=pass new_leader=pass reads=pass caught_up=pass (commit 6)
+d3 round 2 pass killed=node3 term=3 new_leader=node2 term=5 seconds_kill_to_write=2.232 put=pass new_leader=pass reads=pass caught_up=pass (commit 8)
+d3 round 3 pass killed=node2 term=5 new_leader=node3 term=6 seconds_kill_to_write=0.719 put=pass new_leader=pass reads=pass caught_up=pass (commit 10)
+d3 round 4 pass killed=node3 term=6 new_leader=node2 term=8 seconds_kill_to_write=1.745 put=pass new_leader=pass reads=pass caught_up=pass (commit 12)
+d3 round 5 pass killed=node2 term=8 new_leader=node3 term=9 seconds_kill_to_write=1.230 put=pass new_leader=pass reads=pass caught_up=pass (commit 14)
+d4 pass down_exit=0

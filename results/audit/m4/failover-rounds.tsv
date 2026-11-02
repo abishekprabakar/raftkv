@@ -1,0 +1,6 @@
+round	killed	old_term	new_leader	new_term	seconds_kill_to_write	put	new_leader_ok	reads_ok	caught_up
+1	node1	2	node3	3	0.735	pass	pass	pass	pass
+2	node3	3	node2	5	2.232	pass	pass	pass	pass
+3	node2	5	node3	6	0.719	pass	pass	pass	pass
+4	node3	6	node2	8	1.745	pass	pass	pass	pass
+5	node2	8	node3	9	1.230	pass	pass	pass	pass

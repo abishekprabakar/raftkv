@@ -1,0 +1,8 @@
+t1-gofmt exit=0 seconds=0
+t2-vet exit=0 seconds=0
+t3-test exit=0 seconds=14
+t4-race exit=0 seconds=34
+t5-core-deps exit=0 seconds=0
+t6-binary-deps exit=0 seconds=1
+g-tests exit=0 seconds=5
+d-compose exit=0 seconds=27
