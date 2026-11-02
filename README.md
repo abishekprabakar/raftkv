@@ -4,8 +4,9 @@ A replicated key-value store written from scratch in Go: a log-structured
 merge-tree storage engine on every node, replicated with Raft, deployed on
 AWS. No external storage engine or consensus library is used.
 
-Status: **Phase 1 (storage engine) complete.** Phase 2 adds Raft, Phase 3
-deploys a 3-node cluster to EC2 with CloudWatch metrics and CI.
+Status: **the storage engine and the Raft core are built, but they are not
+connected yet.** The Raft core runs only in tests, on a simulated network. A
+replicated KV service, a real network and an AWS deployment are still to come.
 
 ## Architecture
 
@@ -40,6 +41,7 @@ Failure modes, alternatives, and questions with answers: [docs/NOTES.md](docs/NO
 
 | Path | What |
 |---|---|
+| `internal/raft` | Raft from Figure 2: election, replication, commit, durable state, transport interface |
 | `internal/storage/wal` | segmented write-ahead log, CRC32C per record, group commit with a straggler window |
 | `internal/storage/memtable` | skiplist with lock-free readers and a single writer |
 | `internal/storage/sstable` | immutable tables: 4 KiB checksummed blocks, sparse index, bloom filter, properties |

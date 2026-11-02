@@ -1,9 +1,10 @@
 # raftkv design
 
 raftkv is a replicated key-value store written in Go with no external
-storage or consensus libraries. Phase 1 (this document's current scope) is
-the single-node storage engine: a log-structured merge tree in
-`internal/storage`. Later phases add Raft replication and AWS deployment.
+storage or consensus libraries. Built so far: the single-node storage engine,
+a log-structured merge tree in `internal/storage`, and the Raft core in
+`internal/raft`. The two are not connected yet. That comes in M3, and the real
+network and AWS deployment come after it.
 
 ## Package layout
 
@@ -15,6 +16,7 @@ raftkv/
     results/           make results        -> results/RESULTS.md and the README block
   internal/
     hwinfo/            records CPU, memory, OS, filesystem for every results file
+    raft/              consensus: election, replication, commit, durable state
     storage/
       ikey/            internal key encoding and ordering (user key + seq + kind)
       wal/             segmented write-ahead log, CRC32C per record, group commit
@@ -22,8 +24,9 @@ raftkv/
       sstable/         immutable sorted tables: blocks, sparse index, bloom filter
       engine/          the DB: write path, read path, flush, leveled compaction,
                        manifest, recovery, range iterators
-  docs/                DESIGN.md (this file), NOTES.md
+  docs/                DESIGN.md (this file), NOTES.md, acceptance/
   results/             machine-generated JSON from the tools in cmd/
+  scripts/audit/       runners and patches behind the acceptance checks
 ```
 
 Dependency direction is strictly downward: `engine` imports `wal`,
@@ -203,6 +206,91 @@ cannot open the same directory.
 
 The background worker is a single goroutine, so flushes and compactions
 never race each other and manifest writes are naturally serialized.
+
+## Raft
+
+`internal/raft` implements Figure 2 of the Raft paper by hand.
+
+### Shape of the code
+
+```
+              Tick()      Receive(from, msg)      Propose(data)
+                 \               |                   /
+                  ▼              ▼                  ▼
+            ┌─────────────────────────────────────────────┐
+            │ Node: one call at a time, no goroutines     │
+            │   handlers change memory and queue messages │
+            │                                             │
+            │ finish(), at the end of every call:         │
+            │   1. Storage.Save(update)  fsync            │
+            │   2. StateMachine.Apply(committed entries)  │
+            │   3. Transport.Send(queued messages)        │
+            └─────────────────────────────────────────────┘
+```
+
+A `Node` has no clock, goroutines or network of its own. The caller delivers
+time, messages and commands one call at a time. Two things follow:
+
+- **Determinism.** With the same seed and the same order of calls, a cluster does
+  exactly the same thing, so M2 can replay any failure from a seed.
+- **Persist before reply holds by construction.** Handlers never send. They queue
+  messages, and `finish` saves before it sends. No handler can forget the rule.
+
+The cost is that an fsync blocks the node. A real server can reduce this later by
+batching several inputs into one call.
+
+### Where Figure 2 lives
+
+| Figure 2 | Code |
+|---|---|
+| Persistent state | `Node.currentTerm`, `votedFor`, `log`; saved by `finish` through `Storage` |
+| Volatile state | `Node.commitIndex`, `lastApplied`, `nextIndex`, `matchIndex` |
+| RequestVote receiver | `handleRequestVote`, `candidateLogUpToDate` |
+| AppendEntries receiver | `handleAppendEntries` |
+| All servers: apply committed entries | `applyCommitted` |
+| All servers: higher term means follower | `Receive`, `stepDown` |
+| Followers: election timeout | `Tick`, `startElection` |
+| Candidates: win a majority | `handleRequestVoteReply`, `becomeLeader` |
+| Leaders: heartbeats and replication | `broadcastAppend`, `sendAppend` |
+| Leaders: back up on rejection | `handleAppendEntriesReply` |
+| Leaders: advance the commit index | `advanceCommit` |
+
+### Where the code goes beyond Figure 2
+
+| Addition | Why |
+|---|---|
+| Requests and replies are separate one-way messages | A network can lose or reorder either half, and this is what M2 simulates |
+| `AppendEntriesReply` carries `MatchIndex` | The leader can no longer read this from the request it sent |
+| `ConflictTerm` and `ConflictIndex` | Back up a term at a time instead of an entry at a time (end of section 5.3) |
+| A no-op entry when a leader takes over | Section 8: otherwise inherited entries may never commit |
+| `max` around the follower's commit update | Reordered messages must not move `commitIndex` backwards |
+| One `Update` per input | Term, vote and entries changed by one message cost one fsync and survive together |
+| A failed `Save` stops the node for good | Its memory is ahead of its disk, so its promises cannot be trusted |
+| Panics on truncating a committed entry, and on two leaders in one term | These can only be bugs, and carrying on would corrupt data |
+
+### Durable state on disk
+
+`FileStorage` uses the same `wal` package as the engine. Each `Update` is one WAL
+record, so the checksum makes it all-or-nothing. Truncating the log is a record
+too, and replay rebuilds the final state by applying records in order.
+
+```
+record := flags u8 | [term, votedFor uvarints] | [truncateFrom uvarint]
+          | entry count uvarint | entry*
+entry  := index uvarint | term uvarint | kind u8 | data length uvarint | data
+```
+
+A torn tail is dropped, which is safe because that `Save` never returned, so no
+reply depended on it. Other damage stops the node from starting, because a node
+that forgets a vote or an acknowledged entry can break safety.
+
+### Not implemented yet
+
+Snapshots and log compaction, so the log and its file only grow (M3). The real
+network (M4). Membership changes. Pre-vote and check-quorum, which are not in
+Figure 2: a node returning from a partition with a high term forces an election,
+and a partitioned leader keeps believing it leads until it hears a higher term.
+Safety is unaffected, and M3's ReadIndex covers the stale-leader read problem.
 
 ## Tradeoffs
 

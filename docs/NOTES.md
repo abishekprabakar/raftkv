@@ -3,7 +3,8 @@
 These notes explain why each design decision was made, what the
 alternatives were, how things fail, and how to answer the questions this
 project is likely to prompt. Numbers are deliberately absent; quote them
-from `results/storage.json` and `results/crash.json`.
+from `results/storage.json` and `results/crash.json`. Raft questions and each
+milestone's notes are in `LEARNING.md`.
 
 ## Why an LSM tree at all
 
