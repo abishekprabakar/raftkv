@@ -406,7 +406,9 @@ func benchBloom(sz sizes, root string) (*bloomResult, error) {
 			return nil, err
 		}
 		// Keys are even numbers; lookups probe odd numbers so every probe
-		// misses but lands inside the key range of every table.
+		// misses but still lands inside a table's key range. Keys arrive
+		// nearly in order, so tables barely overlap and a probe typically
+		// reaches one table: the easy case for going without a filter.
 		_, _, err = runClients(sz.Clients, sz.BloomKeys, func(_, i int) error {
 			return db.Put(keyOf(uint64(i)*2), valueOf(uint64(i)))
 		})

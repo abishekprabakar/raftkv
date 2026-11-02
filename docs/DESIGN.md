@@ -12,6 +12,7 @@ raftkv/
   cmd/
     storagebench/      make bench-storage  -> results/storage.json
     crashtest/         make crash-test     -> results/crash.json
+    results/           make results        -> results/RESULTS.md and the README block
   internal/
     hwinfo/            records CPU, memory, OS, filesystem for every results file
     storage/
@@ -67,7 +68,11 @@ Dependency direction is strictly downward: `engine` imports `wal`,
    WAL, it is durable too.
 
 Reads use `visible` as a snapshot and ignore memtable entries with a higher
-sequence number, so a value can never be observed before it is on disk.
+sequence number, so a value can never be observed before it is on disk. A read
+captures the memtables and the version first and loads `visible` second, under
+the same lock. Flush and compaction drop old versions based on `visible` when
+they started, and it only moves forward, so this order guarantees that anything
+dropped is shadowed by a version the read can see.
 
 ### Read path
 
@@ -121,9 +126,11 @@ leveled is the better fit; the measured amplification numbers are in
 `.tmp` file the manifest does not list (left by a crash mid-compaction),
 replays the WAL segments in order skipping records whose sequence is at or
 below `flushed_seq`, flushes the rebuilt memtable to L0, deletes the old
-segments and starts a fresh one. Corruption in the tail of the newest
-segment is truncated (a torn write); corruption anywhere else is reported as
-an error because no fsynced record may ever fail its checksum.
+segments and starts a fresh one. Damage in the newest segment with no valid
+record after it is a torn write and is truncated. Any other damage is reported
+as an error because no fsynced record may ever fail its checksum. Damage to
+the very last record looks exactly like a torn write, so that one record is
+cut off.
 
 ## On-disk formats
 
@@ -164,8 +171,9 @@ footer (64 B) index off/len, bloom off/len, props off/len u64 each, reserved, ma
 
 A point lookup reads the footer, index, bloom and props once at open, then
 exactly one `pread` of one data block per probe. The bloom filter is built
-over user keys with 10 bits per key and k = 7 probes using one 64-bit hash
-split into two 32-bit halves (double hashing).
+over user keys with 10 bits per key and k = 6 probes (`int(10 * 0.69)`, the
+same truncation LevelDB uses; the best value is about 6.9) using one 64-bit
+hash split into two 32-bit halves (double hashing).
 
 ### Manifest: `MANIFEST`
 

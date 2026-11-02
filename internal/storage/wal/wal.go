@@ -11,8 +11,10 @@
 //
 // Both integers are little-endian. The CRC covers only the payload. A record
 // whose length or CRC does not check out ends the readable part of a
-// segment: a torn tail in the newest segment is expected after a crash and
-// is truncated away; corruption anywhere else is reported as ErrCorrupt.
+// segment. If it is in the newest segment and no valid record follows it, it
+// is a torn tail: a write that never finished, which is expected after a crash
+// and is truncated away. Anything else is reported as ErrCorrupt, because it
+// means records that may have been acknowledged are damaged.
 //
 // Durability: Append enqueues the record and returns a Future. A single
 // syncer goroutine drains everything that queued up since the last fsync,
@@ -62,10 +64,13 @@ func (m SyncMode) String() string {
 	return "unknown"
 }
 
+// MaxRecordBytes is the largest payload Append accepts. Replay treats a larger
+// length field as damage, so the limit has to be enforced on the way in.
+const MaxRecordBytes = 64 << 20
+
 const (
-	headerSize    = 8
-	maxRecordSize = 64 << 20
-	suffix        = ".wal"
+	headerSize = 8
+	suffix     = ".wal"
 )
 
 var (
@@ -73,6 +78,8 @@ var (
 	ErrCorrupt = errors.New("wal: corrupt record")
 	// ErrClosed is returned by operations on a closed log.
 	ErrClosed = errors.New("wal: closed")
+	// ErrTooLarge is returned by Append for a payload over MaxRecordBytes.
+	ErrTooLarge = errors.New("wal: record too large")
 )
 
 var castagnoli = crc32.MakeTable(crc32.Castagnoli)
@@ -176,9 +183,10 @@ func (l *Log) segPath(n uint64) string {
 	return filepath.Join(l.dir, fmt.Sprintf("%020d%s", n, suffix))
 }
 
-// Replay reads every segment in order and calls fn for each valid record.
-// Corruption in the tail of the newest segment is truncated; corruption
-// anywhere else returns ErrCorrupt.
+// Replay reads every segment in order and calls fn for each valid record. A
+// torn tail in the newest segment is truncated; any other damage returns
+// ErrCorrupt. Damage to the very last record cannot be told apart from a torn
+// write, so it counts as a torn tail.
 func (l *Log) Replay(fn func(seg uint64, payload []byte) error) error {
 	segs, err := l.Segments()
 	if err != nil {
@@ -216,15 +224,61 @@ func (l *Log) replaySegment(seg uint64, last bool, fn func(uint64, []byte) error
 			if !last {
 				return fmt.Errorf("%w: segment %d offset %d: %v", ErrCorrupt, seg, off, err)
 			}
+			after, aerr := validRecordAfter(path, off)
+			if aerr != nil {
+				return aerr
+			}
+			if after {
+				return fmt.Errorf("%w: segment %d offset %d: %v, and valid records follow it", ErrCorrupt, seg, off, err)
+			}
 			l.stats.TruncatedBytes.Add(size - off)
 			f.Close()
-			return os.Truncate(path, off)
+			return truncateDurably(path, off)
 		}
 		if err := fn(seg, payload); err != nil {
 			return err
 		}
 		off += int64(n)
 	}
+}
+
+// validRecordAfter reports whether a complete, checksummed record starts after
+// the damaged record at off. Records reach the file in order, so a write that
+// was cut off cannot have a good record after it: finding one means the damage
+// is in data that was already on disk. The damaged length field cannot be
+// trusted to find the next record, so every byte offset is tried. This only
+// runs on a damaged log, so its cost does not matter.
+func validRecordAfter(path string, off int64) (bool, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return false, err
+	}
+	size := int64(len(data))
+	for i := off + 1; i+headerSize < size; i++ {
+		n := int64(binary.LittleEndian.Uint32(data[i:]))
+		if n == 0 || n > MaxRecordBytes || i+headerSize+n > size {
+			continue
+		}
+		crc := binary.LittleEndian.Uint32(data[i+4:])
+		if crc32.Checksum(data[i+headerSize:i+headerSize+n], castagnoli) == crc {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
+// truncateDurably cuts the file to size and fsyncs it, so a torn tail cannot
+// come back after a power loss and turn into corruption in an older segment.
+func truncateDurably(path string, size int64) error {
+	f, err := os.OpenFile(path, os.O_WRONLY, 0)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	if err := f.Truncate(size); err != nil {
+		return err
+	}
+	return f.Sync()
 }
 
 type reader struct {
@@ -277,7 +331,7 @@ func (r *reader) next() ([]byte, int, error) {
 	hdr := r.buf[r.pos : r.pos+headerSize]
 	n := binary.LittleEndian.Uint32(hdr[0:4])
 	crc := binary.LittleEndian.Uint32(hdr[4:8])
-	if n == 0 || n > maxRecordSize {
+	if n == 0 || n > MaxRecordBytes {
 		return nil, 0, fmt.Errorf("bad record length %d", n)
 	}
 	if err := r.fill(headerSize + int(n)); err != nil {
@@ -335,6 +389,11 @@ func (l *Log) CurrentSegment() uint64 {
 // order.
 func (l *Log) Append(payload []byte) *Future {
 	fut := &Future{done: make(chan struct{})}
+	if len(payload) > MaxRecordBytes {
+		fut.err = ErrTooLarge
+		close(fut.done)
+		return fut
+	}
 	l.mu.Lock()
 	if l.closed || l.err != nil {
 		err := l.err

@@ -41,7 +41,17 @@ var (
 	ErrNotFound = errors.New("engine: key not found")
 	// ErrClosed is returned after Close.
 	ErrClosed = errors.New("engine: closed")
+	// ErrTooLarge is returned for a key and value too big for one WAL record.
+	ErrTooLarge = errors.New("engine: key and value too large")
 )
+
+// recordHeader is the size of a WAL payload before the key and value: kind
+// u8, seq u64, keylen u32.
+const recordHeader = 13
+
+// testHookBeforeCapture lets a regression test run code just before a read
+// captures its view of the database. It is always nil outside tests.
+var testHookBeforeCapture func()
 
 // immTable is a frozen memtable waiting to be flushed.
 type immTable struct {
@@ -245,7 +255,7 @@ func (db *DB) recover() error {
 
 // WAL payload: kind u8, seq u64 LE, keylen u32 LE, key, value.
 func encodeRecord(seq uint64, kind ikey.Kind, key, value []byte) []byte {
-	buf := make([]byte, 0, 13+len(key)+len(value))
+	buf := make([]byte, 0, recordHeader+len(key)+len(value))
 	buf = append(buf, byte(kind))
 	buf = binary.LittleEndian.AppendUint64(buf, seq)
 	buf = binary.LittleEndian.AppendUint32(buf, uint32(len(key)))
@@ -254,16 +264,16 @@ func encodeRecord(seq uint64, kind ikey.Kind, key, value []byte) []byte {
 }
 
 func decodeRecord(p []byte) (seq uint64, kind ikey.Kind, key, value []byte, err error) {
-	if len(p) < 13 {
+	if len(p) < recordHeader {
 		return 0, 0, nil, nil, errors.New("engine: short wal record")
 	}
 	kind = ikey.Kind(p[0])
 	seq = binary.LittleEndian.Uint64(p[1:9])
 	kl := binary.LittleEndian.Uint32(p[9:13])
-	if uint64(len(p)) < 13+uint64(kl) {
+	if uint64(len(p)) < recordHeader+uint64(kl) {
 		return 0, 0, nil, nil, errors.New("engine: bad wal record key length")
 	}
-	return seq, kind, p[13 : 13+kl], p[13+kl:], nil
+	return seq, kind, p[recordHeader : recordHeader+kl], p[recordHeader+kl:], nil
 }
 
 // ---- writes ----------------------------------------------------------------
@@ -287,6 +297,11 @@ func (db *DB) Delete(key []byte) error {
 }
 
 func (db *DB) write(kind ikey.Kind, key, value []byte) error {
+	// Reject this before it gets a sequence number. Recovery cannot replay a
+	// record above the WAL's limit, so acknowledging one would lose it later.
+	if recordHeader+len(key)+len(value) > wal.MaxRecordBytes {
+		return ErrTooLarge
+	}
 	db.writeMu.Lock()
 	if db.closing.Load() {
 		db.writeMu.Unlock()
@@ -355,7 +370,9 @@ func (db *DB) makeRoomForWrite() error {
 // Get returns the value stored under key or ErrNotFound.
 func (db *DB) Get(key []byte) ([]byte, error) {
 	db.counters.gets.Add(1)
-	snap := db.visible.Load()
+	if testHookBeforeCapture != nil {
+		testHookBeforeCapture()
+	}
 	db.mu.Lock()
 	if db.closed {
 		db.mu.Unlock()
@@ -365,6 +382,13 @@ func (db *DB) Get(key []byte) ([]byte, error) {
 	imm := db.imm
 	v := db.current
 	v.ref()
+	// Load the snapshot only after capturing the version. A flush or
+	// compaction drops old versions of a key once a newer one is visible,
+	// judged by the value of visible when it started. visible never goes
+	// backwards, so a snapshot loaded now is at least that value, and every
+	// version dropped from v is shadowed by one this read can see. Loading
+	// the snapshot first would let a read see neither of them.
+	snap := db.visible.Load()
 	db.mu.Unlock()
 	defer v.unref()
 

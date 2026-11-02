@@ -214,6 +214,7 @@ type Iterator struct {
 	lastKey []byte
 	valid   bool
 	started bool
+	done    bool // reached the end or the upper bound
 	ver     *version
 	err     error
 }
@@ -222,12 +223,15 @@ type Iterator struct {
 // begins at the first key; a nil end runs to the last key. Call Next to
 // position it, and Close when done.
 func (db *DB) Scan(start, end []byte) *Iterator {
-	snap := db.visible.Load()
+	if testHookBeforeCapture != nil {
+		testHookBeforeCapture()
+	}
 	db.mu.Lock()
 	mem := db.mem
 	imm := db.imm
 	v := db.current
 	v.ref()
+	snap := db.visible.Load() // after capturing v; see the comment in Get
 	db.mu.Unlock()
 
 	children := []internalIter{memIter{mem.Iter()}}
@@ -257,7 +261,7 @@ func (db *DB) Scan(start, end []byte) *Iterator {
 // Next advances to the next live key. It returns false at the end or on
 // error.
 func (it *Iterator) Next() bool {
-	if it.err != nil || it.merge == nil {
+	if it.err != nil || it.merge == nil || it.done {
 		return false
 	}
 	if it.started {
@@ -276,6 +280,7 @@ func (it *Iterator) Next() bool {
 			it.lastKey = append(it.lastKey[:0], user...)
 			if it.end != nil && bytes.Compare(user, it.end) >= 0 {
 				it.valid = false
+				it.done = true
 				return false
 			}
 			if kind == ikey.KindValue {
@@ -289,6 +294,7 @@ func (it *Iterator) Next() bool {
 	}
 	it.err = it.merge.Err()
 	it.valid = false
+	it.done = true
 	return false
 }
 

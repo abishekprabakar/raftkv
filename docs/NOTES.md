@@ -13,8 +13,9 @@ a disk does. An LSM tree turns every write into a sequential append (WAL)
 plus an in-memory insert, and defers the sorting work to background
 compaction, which rewrites data in large sequential batches. The price is
 read amplification (several places to look) and write amplification
-(rewriting data as it moves down levels). This is the design behind
-RocksDB, Cassandra and DynamoDB's storage layer.
+(rewriting data as it moves down levels). This is the design behind LevelDB,
+RocksDB and Cassandra. DynamoDB is not an example: AWS describes its storage
+replicas as a write-ahead log plus a B-tree.
 
 ## Design decisions and alternatives
 
@@ -24,10 +25,12 @@ RocksDB, Cassandra and DynamoDB's storage layer.
   rot. Castagnoli is hardware accelerated on x86 and arm64. The CRC covers
   the payload only; a corrupt length is caught by the bounds check and the
   CRC of whatever follows.
-- **Truncate the tail of the newest segment, error elsewhere.** After a
-  crash, only the last segment can have a partial record (older segments
-  were fully synced before rotation). A bad checksum in an older segment
-  means real data loss and must not be silently skipped.
+- **Truncate a torn tail, error on anything else.** After a crash, only the
+  last segment can have a partial record (older segments were fully synced
+  before rotation). A torn write is by definition the end of the data, so if a
+  valid record follows the damage, the damage is in data that reached the disk
+  and Open refuses to continue. The one blind spot is the very last record: a
+  flipped bit there looks the same as a write that never finished.
 - **Group commit with a dedicated syncer goroutine** instead of
   leader/follower batching on the write lock: simpler to reason about, no
   lock hand-off, and writers are never blocked behind fsync while holding
@@ -67,7 +70,7 @@ RocksDB, Cassandra and DynamoDB's storage layer.
 - **4 KiB data blocks with a sparse index** (one entry per block) rather than
   a dense index: the index for a 2 MiB file is a few hundred entries, lives
   in memory, and a lookup costs one block read.
-- **Bloom filter per file over user keys, 10 bits/key, k=7.** Turns most
+- **Bloom filter per file over user keys, 10 bits/key, k=6.** Turns most
   "key not in this file" questions into a memory lookup. Critical for
   leveled compaction where a miss would otherwise read one block per level.
   Alternatives: ribbon/xor filters (smaller, more complex), partitioned
@@ -116,17 +119,18 @@ RocksDB, Cassandra and DynamoDB's storage layer.
 | Killed after manifest write, before WAL segment delete | WAL and table both have the data | replay skips `seq <= flushed_seq` |
 | Killed mid-compaction | orphan outputs, inputs still live in manifest | orphans deleted; compaction simply re-runs |
 | Killed during recovery (replay or flush) | partial flush orphan | same orphan logic; replay is idempotent |
-| Bit flip in a WAL record | checksum mismatch | tail: truncate; elsewhere: refuse to open |
+| Bit flip in a WAL record | checksum mismatch | valid record after it: refuse to open; last record: cut off as a torn write |
 | Bit flip in an SSTable block | checksum mismatch on read | read returns an error rather than bad data |
 | Two processes open the same directory | would corrupt | `flock` on `LOCK` |
 | Writers outrun compaction | unbounded L0 would make reads slow | stall when frozen memtables or L0 files exceed thresholds |
 | fsync acknowledged but power lost (consumer SSD lying) | not defensible in software | document; F_FULLFSYNC on macOS mitigates |
 
-What the SIGKILL harness does **not** test: torn sector writes and
-reordering below the OS, because a killed process's completed `write(2)`
-calls are still in the page cache. Those failure modes are covered by the
-checksum unit tests that corrupt files directly, and only a power-cut test
-would exercise them end to end.
+What the SIGKILL harness does **not** test: anything that depends on the page
+cache being lost. A killed process's completed `write(2)` calls survive, so the
+harness passes even with fsync turned off, and it says nothing about power
+loss. The harness adds torn WAL tails itself because SIGKILL never produces one.
+Sector reordering below the OS is covered only by the checksum unit tests that
+corrupt files directly, and only a power-cut test would exercise it end to end.
 
 ## What the crash harness found
 
@@ -162,8 +166,11 @@ fix it, but the invariant is cheaper than the fix.
 
 **Q: How do you know a write is durable before you acknowledge it?** The
 syncer calls `fsync` (`F_FULLFSYNC` on macOS) after the `write`, and only
-then completes the futures. The harness verifies this: it kills the process
-with SIGKILL at random points and checks every acknowledged op is present.
+then completes the futures. That comes from reading the code, not from the
+harness. SIGKILL leaves the page cache alive, so the harness proves a write is
+not acknowledged before it reaches the OS, and it still passes with fsync
+turned off. Proving the fsync itself needs a fake disk that drops unsynced
+writes, or real power cuts.
 
 **Q: What is group commit and why does it help?** Many writers' records are
 written with one `write` and one `fsync`. Fsync latency is the bottleneck
@@ -232,6 +239,7 @@ time for paranoia mode.
 **Q: How did you test it?** Unit tests per package including corruption
 injection (bit flips, truncated tails); a randomized model test that checks
 Get and Scan against a map through flushes, compactions and reopen; a
-concurrency test under the race detector; and the SIGKILL harness that
-kills a child process at random points hundreds of times and checks every
-acknowledged write and every stored checksum.
+concurrency test under the race detector; and the SIGKILL harness that kills
+a child process at random points hundreds of times, kills recovery while it has
+work to do, adds torn WAL tails, and checks every acknowledged write and every
+stored checksum. I also broke the code on purpose to confirm the tests can fail.

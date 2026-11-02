@@ -54,9 +54,9 @@ Failure modes, alternatives, and questions with answers: [docs/NOTES.md](docs/NO
 All commands run from the repository root.
 
 ```sh
-make race            # go vet + unit tests under the race detector
+make race            # unit tests under the race detector
 make bench-storage   # storage benchmarks, writes results/storage.json (~3 min)
-make crash-test      # 500 SIGKILL trials, writes results/crash.json (~3 min)
+make crash-test      # 500 SIGKILL trials, writes results/crash.json (~4 min)
 make results         # regenerate results/RESULTS.md and the table below
 ```
 

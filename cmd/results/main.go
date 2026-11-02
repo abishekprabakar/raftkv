@@ -212,19 +212,23 @@ func crashSection(w *strings.Builder, d doc, full bool) {
 	w.WriteString("## Crash recovery harness (`make crash-test` -> `results/crash.json`)\n\n")
 	if full {
 		hardware(w, d)
-		w.WriteString(fmt.Sprintf("Each trial starts a child process with %s writer goroutines over %s keys each (memtable %s bytes, L0 trigger %s, %s), kills it with %s after a random delay (%s), reopens the directory and verifies acknowledged writes, prefix consistency per writer and every value checksum.\n\n",
+		w.WriteString(fmt.Sprintf("Each trial starts a child process with %s writer goroutines over %s keys each (memtable %s bytes, L0 trigger %s, %s) and kills it with %s after a random delay (%s). It adds a torn WAL tail in %s, kills recovery %s times in a row (%s), then reopens the directory and verifies acknowledged writes, prefix consistency per writer and every value checksum. Seed %s.\n\n",
 			d.str("config.writers"), d.str("config.keys_per_writer"), d.str("config.memtable_bytes"), d.str("config.l0_compaction_trigger"),
-			d.str("config.sync_mode"), d.str("config.kill_signal"), d.str("config.kill_delay_ms")))
+			d.str("config.sync_mode"), d.str("config.kill_signal"), d.str("config.kill_delay_ms"),
+			d.str("config.torn_tail_chance"), d.str("config.recovery_kills_per_trial"), d.str("config.recovery_kill_delay_ms"), d.str("config.seed")))
+		w.WriteString("SIGKILL leaves the OS page cache intact, so this harness cannot detect a missing fsync and says nothing about power loss.\n\n")
 	}
 	table(w, []string{"Metric", "Value", "JSON field"}, [][]string{
 		{"Trials (SIGKILL at a random point)", commas(d.num("trials")), "trials"},
 		{"Passed / failed", commas(d.num("passed")) + " / " + commas(d.num("failed")), "passed, failed"},
-		{"Acknowledged writes verified present after recovery", commas(d.num("total_acked_ops")), "total_acked_ops"},
+		{"Acknowledged writes checked against the recovered state", commas(d.num("total_acked_ops")), "total_acked_ops"},
 		{"Stored values checksum-validated", commas(d.num("total_values_validated")), "total_values_validated"},
 		{"Trials with data already compacted below L0 at the kill", commas(d.num("trials_with_data_below_l0")), "trials_with_data_below_l0"},
-		{"Trials killed during startup/recovery (before first ack)", commas(d.num("trials_killed_before_first_ack")), "trials_killed_before_first_ack"},
+		{"Trials killed before the first ack", commas(d.num("trials_killed_before_first_ack")), "trials_killed_before_first_ack"},
+		{"Recovery kills (total / during Open with WAL data present)", commas(d.num("recovery_kills")) + " / " + commas(d.num("recovery_kills_mid_open")), "recovery_kills, recovery_kills_mid_open"},
 		{"Durable but unacknowledged writes seen (total / max per trial)", commas(d.num("total_unacked_durable_ops")) + " / " + commas(d.num("max_unacked_durable_ops")), "total_unacked_durable_ops, max_unacked_durable_ops"},
-		{"Torn WAL tails truncated", commas(d.num("trials_with_truncated_wal_tail")), "trials_with_truncated_wal_tail"},
+		{"Torn WAL tails injected", commas(d.num("torn_tails_injected")), "torn_tails_injected"},
+		{"Torn tails seen truncated by the final Open (a recovery child truncates the rest)", commas(d.num("trials_with_truncated_wal_tail")), "trials_with_truncated_wal_tail"},
 		{"Wall time", fmt.Sprintf("%.0f s", d.num("wall_seconds")), "wall_seconds"},
 	})
 }

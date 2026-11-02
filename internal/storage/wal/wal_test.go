@@ -2,6 +2,7 @@ package wal
 
 import (
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -125,24 +126,73 @@ func TestTornTailIsTruncated(t *testing.T) {
 	}
 }
 
-func TestBitFlipDetected(t *testing.T) {
-	dir := t.TempDir()
+// writeRecords returns the path of a one-segment log holding the given payloads.
+func writeRecords(t *testing.T, dir string, payloads ...string) string {
+	t.Helper()
 	l, _ := Open(dir, Options{Mode: GroupCommit})
 	l.Start()
-	l.Append([]byte("first")).Wait()
-	l.Append([]byte("second")).Wait()
+	for _, p := range payloads {
+		if err := l.Append([]byte(p)).Wait(); err != nil {
+			t.Fatal(err)
+		}
+	}
 	l.Close()
+	return filepath.Join(dir, fmt.Sprintf("%020d.wal", 1))
+}
 
-	path := filepath.Join(dir, fmt.Sprintf("%020d.wal", 1))
+func TestMidSegmentCorruptionIsAnError(t *testing.T) {
+	cases := []struct {
+		name   string
+		offset int
+	}{
+		{"payload", 8 + 2}, // inside "first"
+		{"crc", 5},
+		{"length", 1}, // the length can no longer be trusted to find "second"
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			dir := t.TempDir()
+			path := writeRecords(t, dir, "first", "second")
+			data, _ := os.ReadFile(path)
+			data[c.offset] ^= 0x01
+			os.WriteFile(path, data, 0o644)
+
+			l, _ := Open(dir, Options{Mode: GroupCommit})
+			err := l.Replay(func(uint64, []byte) error { return nil })
+			if !errors.Is(err, ErrCorrupt) {
+				t.Fatalf("Replay returned %v, want ErrCorrupt: \"second\" is valid and must not be dropped", err)
+			}
+			if info, _ := os.Stat(path); info.Size() != int64(len(data)) {
+				t.Fatalf("a corrupt log must be left alone, size went from %d to %d", len(data), info.Size())
+			}
+		})
+	}
+}
+
+// Damage to the last record looks exactly like a write that never finished.
+func TestDamagedLastRecordIsTreatedAsTornTail(t *testing.T) {
+	dir := t.TempDir()
+	path := writeRecords(t, dir, "first", "second")
 	data, _ := os.ReadFile(path)
-	data[8+2] ^= 0x01 // flip a bit inside "first"
+	data[len(data)-1] ^= 0x01
 	os.WriteFile(path, data, 0o644)
 
 	got := replayAll(t, dir)
-	// The corrupted record is in the only (hence newest) segment, so the
-	// log is truncated at that point: nothing after it is trusted.
-	if len(got) != 0 {
-		t.Fatalf("got %d records after corruption, want 0", len(got))
+	if len(got) != 1 || string(got[0]) != "first" {
+		t.Fatalf("got %q, want only first", got)
+	}
+}
+
+func TestOversizeRecordRejected(t *testing.T) {
+	dir := t.TempDir()
+	l, _ := Open(dir, Options{Mode: GroupCommit})
+	l.Start()
+	defer l.Close()
+	if err := l.Append(make([]byte, MaxRecordBytes+1)).Wait(); !errors.Is(err, ErrTooLarge) {
+		t.Fatalf("Append returned %v, want ErrTooLarge", err)
+	}
+	if err := l.Append([]byte("still works")).Wait(); err != nil {
+		t.Fatalf("a rejected record must not poison the log: %v", err)
 	}
 }
 
