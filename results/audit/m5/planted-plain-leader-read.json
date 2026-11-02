@@ -1,0 +1,1068 @@
+{
+  "generated_at": "2026-11-02T23:51:00Z",
+  "hardware": {
+    "collected_at": "2026-11-02T23:41:55Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "docker": "29.7.2",
+  "image": "raftkv:plain-leader-read",
+  "first_seed": 1,
+  "count": 20,
+  "wall_seconds": 544.818783334,
+  "runs": 20,
+  "violations": 7,
+  "inconclusive": 0,
+  "errors": 0,
+  "not_recovered": 0,
+  "final_reads_failed": 0,
+  "faults": {
+    "follower": 14,
+    "leader": 27,
+    "two": 10
+  },
+  "faults_skipped": 0,
+  "totals": {
+    "writes_acknowledged": 43457,
+    "writes_unknown": 80,
+    "reads_served": 30066,
+    "reads_refused_or_timed_out": 16
+  },
+  "failover": {
+    "leader_isolations": 27,
+    "measured": 27,
+    "no_new_leader": 0,
+    "unmatched": 0,
+    "min_ms": 458.487,
+    "median_ms": 625.016,
+    "p95_ms": 1293.858,
+    "max_ms": 1423.604
+  },
+  "check_seconds_max": 0.003284084,
+  "results": [
+    {
+      "seed": 1,
+      "faults": [
+        {
+          "kind": "follower",
+          "targets": [
+            2
+          ],
+          "leader_before": 1,
+          "start_ms": 2051,
+          "end_ms": 6424
+        },
+        {
+          "kind": "follower",
+          "targets": [
+            1
+          ],
+          "leader_before": 3,
+          "start_ms": 7500,
+          "end_ms": 12277
+        },
+        {
+          "kind": "leader",
+          "targets": [
+            2
+          ],
+          "leader_before": 2,
+          "start_ms": 14475,
+          "end_ms": 17677
+        }
+      ],
+      "counts": {
+        "writes_acknowledged": 2177,
+        "writes_unknown": 4,
+        "reads_served": 1510,
+        "reads_refused_or_timed_out": 0
+      },
+      "linearizable": "Illegal",
+      "check_seconds": 0.003284084,
+      "recovered": true,
+      "recovery_seconds": 0.0470185,
+      "final_reads_ok": true,
+      "failovers": [
+        {
+          "isolated": 2,
+          "old_term": 18,
+          "new_leader": 1,
+          "new_term": 19,
+          "ms": 762.449
+        }
+      ]
+    },
+    {
+      "seed": 2,
+      "faults": [
+        {
+          "kind": "follower",
+          "targets": [
+            2
+          ],
+          "leader_before": 1,
+          "start_ms": 2058,
+          "end_ms": 6758
+        },
+        {
+          "kind": "leader",
+          "targets": [
+            3
+          ],
+          "leader_before": 3,
+          "start_ms": 8315,
+          "end_ms": 10740
+        }
+      ],
+      "counts": {
+        "writes_acknowledged": 2700,
+        "writes_unknown": 1,
+        "reads_served": 1853,
+        "reads_refused_or_timed_out": 1
+      },
+      "linearizable": "Ok",
+      "check_seconds": 0.002162166,
+      "recovered": true,
+      "recovery_seconds": 0.045727417,
+      "final_reads_ok": true,
+      "failovers": [
+        {
+          "isolated": 3,
+          "old_term": 8,
+          "new_leader": 2,
+          "new_term": 9,
+          "ms": 802.852
+        }
+      ]
+    },
+    {
+      "seed": 3,
+      "faults": [
+        {
+          "kind": "leader",
+          "targets": [
+            3
+          ],
+          "leader_before": 3,
+          "start_ms": 2091,
+          "end_ms": 5168
+        },
+        {
+          "kind": "follower",
+          "targets": [
+            3
+          ],
+          "leader_before": 1,
+          "start_ms": 7600,
+          "end_ms": 11982
+        }
+      ],
+      "counts": {
+        "writes_acknowledged": 2538,
+        "writes_unknown": 3,
+        "reads_served": 1714,
+        "reads_refused_or_timed_out": 0
+      },
+      "linearizable": "Ok",
+      "check_seconds": 0.001918625,
+      "recovered": true,
+      "recovery_seconds": 0.053792,
+      "final_reads_ok": true,
+      "failovers": [
+        {
+          "isolated": 3,
+          "old_term": 1,
+          "new_leader": 1,
+          "new_term": 2,
+          "ms": 566.465
+        }
+      ]
+    },
+    {
+      "seed": 4,
+      "faults": [
+        {
+          "kind": "follower",
+          "targets": [
+            3
+          ],
+          "leader_before": 2,
+          "start_ms": 2053,
+          "end_ms": 4497
+        },
+        {
+          "kind": "follower",
+          "targets": [
+            3
+          ],
+          "leader_before": 2,
+          "start_ms": 5584,
+          "end_ms": 10815
+        },
+        {
+          "kind": "leader",
+          "targets": [
+            2
+          ],
+          "leader_before": 2,
+          "start_ms": 13390,
+          "end_ms": 17741
+        }
+      ],
+      "counts": {
+        "writes_acknowledged": 2097,
+        "writes_unknown": 3,
+        "reads_served": 1422,
+        "reads_refused_or_timed_out": 2
+      },
+      "linearizable": "Ok",
+      "check_seconds": 0.001559541,
+      "recovered": true,
+      "recovery_seconds": 0.055275083,
+      "final_reads_ok": true,
+      "failovers": [
+        {
+          "isolated": 2,
+          "old_term": 16,
+          "new_leader": 1,
+          "new_term": 18,
+          "ms": 1293.858
+        }
+      ]
+    },
+    {
+      "seed": 5,
+      "faults": [
+        {
+          "kind": "leader",
+          "targets": [
+            3
+          ],
+          "leader_before": 3,
+          "start_ms": 2048,
+          "end_ms": 5755
+        },
+        {
+          "kind": "leader",
+          "targets": [
+            1
+          ],
+          "leader_before": 1,
+          "start_ms": 6942,
+          "end_ms": 12188
+        }
+      ],
+      "counts": {
+        "writes_acknowledged": 2490,
+        "writes_unknown": 4,
+        "reads_served": 1763,
+        "reads_refused_or_timed_out": 0
+      },
+      "linearizable": "Illegal",
+      "check_seconds": 0.002166583,
+      "recovered": true,
+      "recovery_seconds": 0.060230292,
+      "final_reads_ok": true,
+      "failovers": [
+        {
+          "isolated": 3,
+          "old_term": 1,
+          "new_leader": 1,
+          "new_term": 2,
+          "ms": 665.833
+        },
+        {
+          "isolated": 1,
+          "old_term": 2,
+          "new_leader": 3,
+          "new_term": 3,
+          "ms": 535.612
+        }
+      ]
+    },
+    {
+      "seed": 6,
+      "faults": [
+        {
+          "kind": "leader",
+          "targets": [
+            2
+          ],
+          "leader_before": 2,
+          "start_ms": 2050,
+          "end_ms": 4849
+        },
+        {
+          "kind": "two",
+          "targets": [
+            1,
+            3
+          ],
+          "leader_before": 3,
+          "start_ms": 6332,
+          "end_ms": 11812
+        }
+      ],
+      "counts": {
+        "writes_acknowledged": 1873,
+        "writes_unknown": 6,
+        "reads_served": 1321,
+        "reads_refused_or_timed_out": 0
+      },
+      "linearizable": "Ok",
+      "check_seconds": 0.001867125,
+      "recovered": true,
+      "recovery_seconds": 0.053449542,
+      "final_reads_ok": true,
+      "failovers": [
+        {
+          "isolated": 2,
+          "old_term": 1,
+          "new_leader": 3,
+          "new_term": 2,
+          "ms": 745.657
+        }
+      ]
+    },
+    {
+      "seed": 7,
+      "faults": [
+        {
+          "kind": "two",
+          "targets": [
+            2,
+            3
+          ],
+          "leader_before": 3,
+          "start_ms": 2048,
+          "end_ms": 5164
+        },
+        {
+          "kind": "leader",
+          "targets": [
+            3
+          ],
+          "leader_before": 3,
+          "start_ms": 6479,
+          "end_ms": 11906
+        }
+      ],
+      "counts": {
+        "writes_acknowledged": 2030,
+        "writes_unknown": 6,
+        "reads_served": 1392,
+        "reads_refused_or_timed_out": 2
+      },
+      "linearizable": "Illegal",
+      "check_seconds": 0.001827125,
+      "recovered": true,
+      "recovery_seconds": 0.068650875,
+      "final_reads_ok": true,
+      "failovers": [
+        {
+          "isolated": 3,
+          "old_term": 6,
+          "new_leader": 1,
+          "new_term": 8,
+          "ms": 819.126
+        }
+      ]
+    },
+    {
+      "seed": 8,
+      "faults": [
+        {
+          "kind": "leader",
+          "targets": [
+            2
+          ],
+          "leader_before": 2,
+          "start_ms": 2060,
+          "end_ms": 6160
+        },
+        {
+          "kind": "two",
+          "targets": [
+            1,
+            2
+          ],
+          "leader_before": 3,
+          "start_ms": 8172,
+          "end_ms": 11602
+        },
+        {
+          "kind": "two",
+          "targets": [
+            1,
+            3
+          ],
+          "leader_before": 2,
+          "start_ms": 13561,
+          "end_ms": 15750
+        }
+      ],
+      "counts": {
+        "writes_acknowledged": 1761,
+        "writes_unknown": 8,
+        "reads_served": 1237,
+        "reads_refused_or_timed_out": 0
+      },
+      "linearizable": "Ok",
+      "check_seconds": 0.001587458,
+      "recovered": true,
+      "recovery_seconds": 0.053558666,
+      "final_reads_ok": true,
+      "failovers": [
+        {
+          "isolated": 2,
+          "old_term": 1,
+          "new_leader": 3,
+          "new_term": 2,
+          "ms": 711.846
+        }
+      ]
+    },
+    {
+      "seed": 9,
+      "faults": [
+        {
+          "kind": "leader",
+          "targets": [
+            3
+          ],
+          "leader_before": 3,
+          "start_ms": 2046,
+          "end_ms": 5891
+        },
+        {
+          "kind": "follower",
+          "targets": [
+            3
+          ],
+          "leader_before": 2,
+          "start_ms": 8270,
+          "end_ms": 13459
+        }
+      ],
+      "counts": {
+        "writes_acknowledged": 2453,
+        "writes_unknown": 3,
+        "reads_served": 1718,
+        "reads_refused_or_timed_out": 1
+      },
+      "linearizable": "Ok",
+      "check_seconds": 0.002242042,
+      "recovered": true,
+      "recovery_seconds": 0.055980333,
+      "final_reads_ok": true,
+      "failovers": [
+        {
+          "isolated": 3,
+          "old_term": 1,
+          "new_leader": 2,
+          "new_term": 2,
+          "ms": 461.785
+        }
+      ]
+    },
+    {
+      "seed": 10,
+      "faults": [
+        {
+          "kind": "leader",
+          "targets": [
+            1
+          ],
+          "leader_before": 1,
+          "start_ms": 2081,
+          "end_ms": 6050
+        },
+        {
+          "kind": "leader",
+          "targets": [
+            3
+          ],
+          "leader_before": 3,
+          "start_ms": 8103,
+          "end_ms": 10663
+        },
+        {
+          "kind": "two",
+          "targets": [
+            1,
+            2
+          ],
+          "leader_before": 2,
+          "start_ms": 12331,
+          "end_ms": 14347
+        }
+      ],
+      "counts": {
+        "writes_acknowledged": 2153,
+        "writes_unknown": 2,
+        "reads_served": 1534,
+        "reads_refused_or_timed_out": 0
+      },
+      "linearizable": "Ok",
+      "check_seconds": 0.001518292,
+      "recovered": true,
+      "recovery_seconds": 0.055659542,
+      "final_reads_ok": true,
+      "failovers": [
+        {
+          "isolated": 1,
+          "old_term": 1,
+          "new_leader": 3,
+          "new_term": 2,
+          "ms": 458.487
+        },
+        {
+          "isolated": 3,
+          "old_term": 2,
+          "new_leader": 2,
+          "new_term": 3,
+          "ms": 681.696
+        }
+      ]
+    },
+    {
+      "seed": 11,
+      "faults": [
+        {
+          "kind": "leader",
+          "targets": [
+            1
+          ],
+          "leader_before": 1,
+          "start_ms": 2049,
+          "end_ms": 5475
+        },
+        {
+          "kind": "follower",
+          "targets": [
+            1
+          ],
+          "leader_before": 2,
+          "start_ms": 8368,
+          "end_ms": 11853
+        }
+      ],
+      "counts": {
+        "writes_acknowledged": 2658,
+        "writes_unknown": 2,
+        "reads_served": 1821,
+        "reads_refused_or_timed_out": 0
+      },
+      "linearizable": "Ok",
+      "check_seconds": 0.002469625,
+      "recovered": true,
+      "recovery_seconds": 0.058276916,
+      "final_reads_ok": true,
+      "failovers": [
+        {
+          "isolated": 1,
+          "old_term": 1,
+          "new_leader": 2,
+          "new_term": 2,
+          "ms": 483.387
+        }
+      ]
+    },
+    {
+      "seed": 12,
+      "faults": [
+        {
+          "kind": "leader",
+          "targets": [
+            3
+          ],
+          "leader_before": 3,
+          "start_ms": 2048,
+          "end_ms": 5851
+        },
+        {
+          "kind": "leader",
+          "targets": [
+            1
+          ],
+          "leader_before": 1,
+          "start_ms": 7820,
+          "end_ms": 13461
+        },
+        {
+          "kind": "follower",
+          "targets": [
+            3
+          ],
+          "leader_before": 2,
+          "start_ms": 15144,
+          "end_ms": 17763
+        }
+      ],
+      "counts": {
+        "writes_acknowledged": 2237,
+        "writes_unknown": 4,
+        "reads_served": 1489,
+        "reads_refused_or_timed_out": 0
+      },
+      "linearizable": "Illegal",
+      "check_seconds": 0.001614875,
+      "recovered": true,
+      "recovery_seconds": 0.0539645,
+      "final_reads_ok": true,
+      "failovers": [
+        {
+          "isolated": 3,
+          "old_term": 1,
+          "new_leader": 1,
+          "new_term": 2,
+          "ms": 601.789
+        },
+        {
+          "isolated": 1,
+          "old_term": 2,
+          "new_leader": 2,
+          "new_term": 3,
+          "ms": 497.697
+        }
+      ]
+    },
+    {
+      "seed": 13,
+      "faults": [
+        {
+          "kind": "leader",
+          "targets": [
+            1
+          ],
+          "leader_before": 1,
+          "start_ms": 2141,
+          "end_ms": 5188
+        },
+        {
+          "kind": "leader",
+          "targets": [
+            3
+          ],
+          "leader_before": 3,
+          "start_ms": 8116,
+          "end_ms": 11299
+        },
+        {
+          "kind": "two",
+          "targets": [
+            1,
+            2
+          ],
+          "leader_before": 1,
+          "start_ms": 13184,
+          "end_ms": 17157
+        }
+      ],
+      "counts": {
+        "writes_acknowledged": 1907,
+        "writes_unknown": 5,
+        "reads_served": 1308,
+        "reads_refused_or_timed_out": 2
+      },
+      "linearizable": "Ok",
+      "check_seconds": 0.00188225,
+      "recovered": true,
+      "recovery_seconds": 0.054069209,
+      "final_reads_ok": true,
+      "failovers": [
+        {
+          "isolated": 1,
+          "old_term": 1,
+          "new_leader": 3,
+          "new_term": 2,
+          "ms": 607.092
+        },
+        {
+          "isolated": 3,
+          "old_term": 2,
+          "new_leader": 1,
+          "new_term": 3,
+          "ms": 828.733
+        }
+      ]
+    },
+    {
+      "seed": 14,
+      "faults": [
+        {
+          "kind": "leader",
+          "targets": [
+            2
+          ],
+          "leader_before": 2,
+          "start_ms": 2044,
+          "end_ms": 7699
+        },
+        {
+          "kind": "leader",
+          "targets": [
+            3
+          ],
+          "leader_before": 3,
+          "start_ms": 8953,
+          "end_ms": 13386
+        }
+      ],
+      "counts": {
+        "writes_acknowledged": 2443,
+        "writes_unknown": 4,
+        "reads_served": 1642,
+        "reads_refused_or_timed_out": 0
+      },
+      "linearizable": "Illegal",
+      "check_seconds": 0.001768709,
+      "recovered": true,
+      "recovery_seconds": 0.052854625,
+      "final_reads_ok": true,
+      "failovers": [
+        {
+          "isolated": 2,
+          "old_term": 1,
+          "new_leader": 3,
+          "new_term": 2,
+          "ms": 625.016
+        },
+        {
+          "isolated": 3,
+          "old_term": 2,
+          "new_leader": 1,
+          "new_term": 3,
+          "ms": 560.023
+        }
+      ]
+    },
+    {
+      "seed": 15,
+      "faults": [
+        {
+          "kind": "follower",
+          "targets": [
+            1
+          ],
+          "leader_before": 3,
+          "start_ms": 2044,
+          "end_ms": 5915
+        },
+        {
+          "kind": "follower",
+          "targets": [
+            1
+          ],
+          "leader_before": 3,
+          "start_ms": 8435,
+          "end_ms": 11950
+        }
+      ],
+      "counts": {
+        "writes_acknowledged": 2545,
+        "writes_unknown": 1,
+        "reads_served": 1749,
+        "reads_refused_or_timed_out": 3
+      },
+      "linearizable": "Ok",
+      "check_seconds": 0.00187925,
+      "recovered": true,
+      "recovery_seconds": 0.046952833,
+      "final_reads_ok": true,
+      "failovers": null
+    },
+    {
+      "seed": 16,
+      "faults": [
+        {
+          "kind": "leader",
+          "targets": [
+            2
+          ],
+          "leader_before": 2,
+          "start_ms": 2046,
+          "end_ms": 5779
+        },
+        {
+          "kind": "two",
+          "targets": [
+            1,
+            3
+          ],
+          "leader_before": 1,
+          "start_ms": 7926,
+          "end_ms": 12310
+        },
+        {
+          "kind": "two",
+          "targets": [
+            1,
+            2
+          ],
+          "leader_before": 3,
+          "start_ms": 15068,
+          "end_ms": 17306
+        }
+      ],
+      "counts": {
+        "writes_acknowledged": 1592,
+        "writes_unknown": 7,
+        "reads_served": 1077,
+        "reads_refused_or_timed_out": 1
+      },
+      "linearizable": "Ok",
+      "check_seconds": 0.001158542,
+      "recovered": true,
+      "recovery_seconds": 0.045617708,
+      "final_reads_ok": true,
+      "failovers": [
+        {
+          "isolated": 2,
+          "old_term": 1,
+          "new_leader": 1,
+          "new_term": 2,
+          "ms": 469.433
+        }
+      ]
+    },
+    {
+      "seed": 17,
+      "faults": [
+        {
+          "kind": "leader",
+          "targets": [
+            1
+          ],
+          "leader_before": 1,
+          "start_ms": 2047,
+          "end_ms": 6478
+        },
+        {
+          "kind": "follower",
+          "targets": [
+            1
+          ],
+          "leader_before": 3,
+          "start_ms": 8864,
+          "end_ms": 13149
+        },
+        {
+          "kind": "follower",
+          "targets": [
+            1
+          ],
+          "leader_before": 2,
+          "start_ms": 14561,
+          "end_ms": 17555
+        }
+      ],
+      "counts": {
+        "writes_acknowledged": 1962,
+        "writes_unknown": 4,
+        "reads_served": 1407,
+        "reads_refused_or_timed_out": 2
+      },
+      "linearizable": "Illegal",
+      "check_seconds": 0.001448958,
+      "recovered": true,
+      "recovery_seconds": 0.054921125,
+      "final_reads_ok": true,
+      "failovers": [
+        {
+          "isolated": 1,
+          "old_term": 1,
+          "new_leader": 3,
+          "new_term": 3,
+          "ms": 1423.604
+        }
+      ]
+    },
+    {
+      "seed": 18,
+      "faults": [
+        {
+          "kind": "leader",
+          "targets": [
+            2
+          ],
+          "leader_before": 2,
+          "start_ms": 2046,
+          "end_ms": 5137
+        },
+        {
+          "kind": "leader",
+          "targets": [
+            3
+          ],
+          "leader_before": 3,
+          "start_ms": 7581,
+          "end_ms": 11051
+        },
+        {
+          "kind": "two",
+          "targets": [
+            1,
+            3
+          ],
+          "leader_before": 2,
+          "start_ms": 12558,
+          "end_ms": 17510
+        }
+      ],
+      "counts": {
+        "writes_acknowledged": 1604,
+        "writes_unknown": 6,
+        "reads_served": 1160,
+        "reads_refused_or_timed_out": 1
+      },
+      "linearizable": "Ok",
+      "check_seconds": 0.001212958,
+      "recovered": true,
+      "recovery_seconds": 0.050558375,
+      "final_reads_ok": true,
+      "failovers": [
+        {
+          "isolated": 2,
+          "old_term": 1,
+          "new_leader": 3,
+          "new_term": 2,
+          "ms": 477.969
+        },
+        {
+          "isolated": 3,
+          "old_term": 2,
+          "new_leader": 2,
+          "new_term": 3,
+          "ms": 632.165
+        }
+      ]
+    },
+    {
+      "seed": 19,
+      "faults": [
+        {
+          "kind": "two",
+          "targets": [
+            1,
+            2
+          ],
+          "leader_before": 2,
+          "start_ms": 2047,
+          "end_ms": 4657
+        },
+        {
+          "kind": "follower",
+          "targets": [
+            3
+          ],
+          "leader_before": 2,
+          "start_ms": 7114,
+          "end_ms": 10022
+        },
+        {
+          "kind": "leader",
+          "targets": [
+            2
+          ],
+          "leader_before": 2,
+          "start_ms": 11671,
+          "end_ms": 15903
+        }
+      ],
+      "counts": {
+        "writes_acknowledged": 2037,
+        "writes_unknown": 2,
+        "reads_served": 1410,
+        "reads_refused_or_timed_out": 1
+      },
+      "linearizable": "Ok",
+      "check_seconds": 0.001470916,
+      "recovered": true,
+      "recovery_seconds": 0.051221167,
+      "final_reads_ok": true,
+      "failovers": [
+        {
+          "isolated": 2,
+          "old_term": 14,
+          "new_leader": 3,
+          "new_term": 15,
+          "ms": 783.247
+        }
+      ]
+    },
+    {
+      "seed": 20,
+      "faults": [
+        {
+          "kind": "leader",
+          "targets": [
+            1
+          ],
+          "leader_before": 1,
+          "start_ms": 2045,
+          "end_ms": 4334
+        },
+        {
+          "kind": "leader",
+          "targets": [
+            2
+          ],
+          "leader_before": 2,
+          "start_ms": 6438,
+          "end_ms": 11635
+        },
+        {
+          "kind": "leader",
+          "targets": [
+            3
+          ],
+          "leader_before": 3,
+          "start_ms": 13045,
+          "end_ms": 17479
+        }
+      ],
+      "counts": {
+        "writes_acknowledged": 2200,
+        "writes_unknown": 5,
+        "reads_served": 1539,
+        "reads_refused_or_timed_out": 0
+      },
+      "linearizable": "Illegal",
+      "check_seconds": 0.001958666,
+      "recovered": true,
+      "recovery_seconds": 0.050838208,
+      "final_reads_ok": true,
+      "failovers": [
+        {
+          "isolated": 1,
+          "old_term": 1,
+          "new_leader": 2,
+          "new_term": 2,
+          "ms": 525.216
+        },
+        {
+          "isolated": 2,
+          "old_term": 2,
+          "new_leader": 3,
+          "new_term": 3,
+          "ms": 680.206
+        },
+        {
+          "isolated": 3,
+          "old_term": 3,
+          "new_leader": 2,
+          "new_term": 4,
+          "ms": 521.777
+        }
+      ]
+    }
+  ]
+}

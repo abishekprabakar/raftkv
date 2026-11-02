@@ -1,0 +1,4 @@
+=== RUN   TestModelRejectsBadHistories
+--- PASS: TestModelRejectsBadHistories (0.00s)
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/chaos	0.177s

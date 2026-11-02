@@ -457,6 +457,22 @@ with a named volume for its files. The CLI runs inside the Compose network
 (`docker compose run --rm cli ...`), because the addresses in redirects are Compose
 service names, which don't resolve on the host.
 
+## Partition testing on real containers
+
+`internal/chaos` and `cmd/chaos` test the real binaries the way Jepsen does, on a
+smaller scale. Each seeded schedule starts a fresh Compose cluster and runs six
+clients (`cmd/kvworker`), two inside each node's container through `docker exec`, so a
+node cut off from the network still gets requests. `docker network disconnect` cuts
+off the leader, a follower or two nodes, then `docker network connect` heals them.
+The harness records every operation's call and return on one clock and gives the
+history to Porcupine, split by key. A write that timed out stays in the history with
+no return time, since it may or may not have happened; a read that failed is dropped.
+
+Failover time comes from two logs on the same clock, the Docker VM's: Docker's
+network events say when the leader was cut off, and the nodes' "raft state" log lines
+say when another node became leader. Every run's logs, events and history are kept
+under `results/audit/m5/runs/`.
+
 ## Tradeoffs
 
 - **Group commit vs fsync per write.** One fsync per record bounds write

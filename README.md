@@ -6,8 +6,9 @@ AWS. No external storage engine or consensus library is used.
 
 Status: **the storage engine, Raft and the replicated KV store run as a real
 cluster over gRPC**, locally on Docker Compose, with a CLI client that follows leader
-redirects. Linearizability checking of real runs, benchmarks of the cluster and an
-AWS deployment are still to come.
+redirects. Histories recorded while Docker cuts nodes off the network are checked for
+linearizability with Porcupine. Benchmarks of the cluster and an AWS deployment are
+still to come.
 
 ## Architecture
 
@@ -45,6 +46,7 @@ Failure modes, alternatives, and questions with answers: [docs/NOTES.md](docs/NO
 | `internal/server` | one node as a process: the single-goroutine loop, gRPC services, a stream per peer |
 | `internal/client` | client library: follows leader redirects, retries writes under the same session |
 | `internal/pb` | the wire format, `raftkv.proto`, and the code generated from it |
+| `internal/chaos` | partition harness: seeded faults with `docker network disconnect`, client histories, the Porcupine model, failover read from logs |
 | `internal/kv` | replicated store: sessions for exactly-once writes, ReadIndex reads, snapshots |
 | `internal/raft` | Raft from Figure 2: election, replication, commit, durable state, snapshots, ReadIndex |
 | `internal/raft/sim` | deterministic simulator: faults, crash points, clients and safety checks, all from one seed |
@@ -55,6 +57,8 @@ Failure modes, alternatives, and questions with answers: [docs/NOTES.md](docs/NO
 | `internal/storage/ikey` | internal key encoding (user key, sequence, kind) |
 | `cmd/raftkvd` | the node process |
 | `cmd/raftkv` | the command-line client |
+| `cmd/kvworker` | a client the partition harness runs inside each node's container |
+| `cmd/chaos` | seeded partition schedules on Docker, checked with Porcupine -> `results/chaos.json` |
 | `cmd/storagebench` | benchmarks -> `results/storage.json` |
 | `cmd/crashtest` | SIGKILL crash-recovery harness -> `results/crash.json` |
 | `cmd/raftsim` | seeded simulation schedules -> `results/sim.json` |
@@ -69,6 +73,7 @@ make race            # unit tests under the race detector
 make bench-storage   # storage benchmarks, writes results/storage.json (~3 min)
 make crash-test      # 500 SIGKILL trials, writes results/crash.json (~4 min)
 make sim             # 10,000 simulated Raft schedules, writes results/sim.json
+make chaos           # 100 partition schedules on Docker, writes results/chaos.json (slow: a fresh cluster each)
 make results         # regenerate results/RESULTS.md and the table below
 ```
 
@@ -206,5 +211,22 @@ Bloom filters cut disk block reads for missing keys by 116.3x (`bloom.disk_read_
 | stale-snapshot-rolls-back | commit-monotonic (11), panic (3) |
 | restore-position-lost | panic (110) |
 | save-before-restore | panic (7) |
+
+## Partitions on real containers (`cmd/chaos` -> `results/chaos.json`)
+
+| Metric | Value | JSON field |
+|---|---|---|
+| Schedules (first seed 1) | 100 | runs |
+| Histories Porcupine found not linearizable | 0 | violations |
+| Checks that timed out / runs that broke | 0 / 0 | inconclusive, errors |
+| Runs with no agreed leader 20 s after the final heal | 0 | not_recovered |
+| Partitions: leader / follower / two nodes cut off | 150 / 58 / 39 | faults |
+| Writes acknowledged / outcome unknown | 212,271 / 296 | totals.writes_* |
+| Reads served / refused or timed out | 147,646 / 165 | totals.reads_* |
+| Leader isolations measured / with no new leader before the heal | 150 / 0 | failover.measured, no_new_leader |
+| Failover time: median / p95 / max | 584 ms / 874 ms / 1614 ms | failover.*_ms |
+| Running time, not counting time the machine slept | 2754 s | wall_seconds |
+
+With the `plain-leader-read` bug planted, Porcupine found 7 violations in 20 schedules (`results/audit/m5/planted-plain-leader-read.json`).
 
 <!-- results:end -->

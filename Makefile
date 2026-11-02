@@ -1,6 +1,6 @@
 GO ?= go
 
-.PHONY: all build test vet race fmt proto cluster-up cluster-down bench-storage bench-storage-quick crash-test crash-test-quick sim results clean
+.PHONY: all build test vet race fmt proto cluster-up cluster-down chaos bench-storage bench-storage-quick crash-test crash-test-quick sim results clean
 
 all: vet test
 
@@ -53,6 +53,10 @@ crash-test-quick:
 # Seeded Raft simulation schedules -> results/sim.json
 sim:
 	$(GO) run ./cmd/raftsim -first 1 -count 10000 -out results/sim.json
+
+# Seeded partition schedules on Docker, checked with Porcupine -> results/chaos.json
+chaos:
+	$(GO) run ./cmd/chaos -first 1 -count 100 -out results/chaos.json
 
 # Render results/*.json into results/RESULTS.md and the README results block
 results:

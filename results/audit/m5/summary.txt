@@ -1,0 +1,12 @@
+t1-gofmt exit=0 seconds=1
+t2-vet exit=0 seconds=0
+t3-test exit=0 seconds=19
+t4-race exit=0 seconds=75
+t5-core-deps exit=0 seconds=0
+t6-binary-deps exit=0 seconds=0
+p1-model exit=0 seconds=0
+s-stale-read exit=0 seconds=174
+c-chaos exit=0 seconds=5388
+f-minimums exit=0 seconds=0
+s3-stale-read-planted exit=1 seconds=45
+p2-chaos-planted exit=1 seconds=545

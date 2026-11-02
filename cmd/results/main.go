@@ -324,7 +324,9 @@ func chaosSection(w *strings.Builder, d doc, full bool) {
 		{"Reads served / refused or timed out", commas(d.num("totals.reads_served")) + " / " + commas(d.num("totals.reads_refused_or_timed_out")), "totals.reads_*"},
 		{"Leader isolations measured / with no new leader before the heal", commas(d.num("failover.measured")) + " / " + commas(d.num("failover.no_new_leader")), "failover.measured, no_new_leader"},
 		{"Failover time: median / p95 / max", ms("failover.median_ms") + " / " + ms("failover.p95_ms") + " / " + ms("failover.max_ms"), "failover.*_ms"},
-		{"Wall time", fmt.Sprintf("%.0f s", d.num("wall_seconds")), "wall_seconds"},
+		// Go's clock on macOS stops while the machine sleeps, and the Mac slept
+		// during the M5 run, so this is time spent running, not time on the wall.
+		{"Running time, not counting time the machine slept", fmt.Sprintf("%.0f s", d.num("wall_seconds")), "wall_seconds"},
 	})
 	if planted, ok := load(filepath.Join(*resultsDir, "audit", "m5", "planted-plain-leader-read.json")); ok {
 		fmt.Fprintf(w, "With the `plain-leader-read` bug planted, Porcupine found %s violations in %s schedules (`results/audit/m5/planted-plain-leader-read.json`).\n\n",

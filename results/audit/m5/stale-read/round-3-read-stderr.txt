@@ -1,0 +1,6 @@
+raftkv: localhost:7000: rpc error: code = Unavailable desc = kv: read not confirmed, retry; retrying in 20ms
+raftkv: localhost:7000: rpc error: code = Unavailable desc = kv: read not confirmed, retry; retrying in 40ms
+raftkv: localhost:7000: rpc error: code = Unavailable desc = kv: read not confirmed, retry; retrying in 80ms
+raftkv: localhost:7000: rpc error: code = Unavailable desc = kv: read not confirmed, retry; retrying in 160ms
+raftkv: localhost:7000: rpc error: code = DeadlineExceeded desc = stream terminated by RST_STREAM with error code: CANCEL; retrying in 320ms
+raftkv: client: gave up: context deadline exceeded (last error: localhost:7000: rpc error: code = DeadlineExceeded desc = stream terminated by RST_STREAM with error code: CANCEL)

@@ -1,0 +1,9 @@
+ok   schedules: 100 (minimum 100)
+ok   leader isolations: 150 (minimum 100)
+ok   follower isolations: 58 (minimum 50)
+ok   two-node isolations: 39 (minimum 25)
+ok   writes acknowledged: 212271 (minimum 20000)
+ok   reads served: 147646 (minimum 10000)
+ok   writes with an unknown outcome: 296 (minimum 100)
+ok   reads refused or timed out: 165 (minimum 100)
+failover: 150 measured of 150 leader isolations, median 583.698 ms, p95 874.097 ms, max 1613.962 ms, 0 with no new leader, 0 unmatched

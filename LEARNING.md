@@ -4,6 +4,185 @@ One section per milestone, newest first: what was done, the ideas behind it, and
 the questions worth being able to answer about it. Every number comes from a real
 run. Criteria are in `docs/acceptance/`, and the runs are in `results/audit/`.
 
+## M5: partitions on real containers, checked with Porcupine
+
+Criteria: `docs/acceptance/M5.md`. Results: `results/chaos.json` and
+`results/audit/m5/`. Code: `internal/chaos`, `cmd/chaos` and `cmd/kvworker`.
+
+### How reads work, checked before any partition code
+
+Reads use ReadIndex: not a local read on the leader, and not a lease. The leader
+notes its commit index, sends a round of heartbeats, and answers only after a
+majority has replied to that round, so a leader that has been cut off can never
+finish a read. It doesn't step down either, since there is no check-quorum, but its
+reads time out after 1 s and are refused. So the prediction, written down before
+the test existed, was that a deposed leader can't return a stale value.
+
+**The Docker stale-read test** (`scripts/audit/m5/stale-read.sh`) plays the case
+step by step: start 3 nodes, write `x=1`, cut the leader off with `docker network
+disconnect`, wait for a new leader, write `x=2` through it, then read `x` from the old
+leader, with the CLI run inside the old leader's own container. Before the read, it
+checks the trap is set: the old leader still says it leads, in its old term, and has
+applied `x=1`.
+
+| Build | Rounds | What the old leader did |
+|---|---|---|
+| this checkout | 5 | refused all 5: the CLI printed nothing and exited 1 after its 5 s timeout. After the heal it stepped down, and `x` read back as 2 on every node |
+| with `plain-leader-read` planted | 5 | printed `1` in all 5 |
+
+Sources: `results/audit/m5/stale-read/summary.txt` and
+`results/audit/m5/stale-read-planted/summary.txt`. So no fix to reads was needed, and
+check-quorum was not added.
+
+### What was built
+
+`cmd/chaos` runs one seeded schedule per seed, each on a fresh 3-node cluster:
+
+- Six clients, two inside each node's container, started with `docker exec`. Each
+  talks to its own node first, so a node that is cut off still gets requests. That
+  is how a stale read could happen, so the test has to allow it.
+- From 2 s to 18 s, `docker network disconnect` cuts off the leader, a follower or
+  two nodes, for 2 to 6 s at a time, with 1 to 3 s heals between.
+- After 20 s everything heals, and every client reads every key.
+- Porcupine checks the whole history. Every run's node logs, Docker network events
+  and history are kept, compressed, under `results/audit/m5/runs/`.
+
+### The ideas in plain language
+
+**Linearizability.** Every operation has to look as if it happened at one instant
+between when the client called it and when the answer came back, in an order a single
+correct copy of the data could produce. Porcupine searches for such an order. If none
+exists, the history is illegal. Splitting the history by key makes the search far
+cheaper, because operations on different keys can't constrain each other.
+
+**Writes with an unknown outcome.** A write that timed out may have happened, or not.
+It goes into the history with no return time, so Porcupine may place it anywhere after
+its call, including at the very end, which is the same as never. A read that failed
+saw nothing, so it is left out.
+
+**One clock for the history.** The harness stamps every call and return on the host,
+which makes each interval a little wider than the truth. Wider intervals can only make
+a history look more legal, so this can hide a violation but never invent one.
+
+**Failover from logs.** For each leader cut off, the time runs from Docker's own
+"network disconnect" event to the first line in another node's log saying it became
+leader. Both come from the Docker VM's clock. The harness's clock is never mixed in.
+
+**Why no check-quorum.** The test passed without it, so I didn't add it. Check-quorum
+would make a cut-off leader step down after an election timeout, so its clients would
+get "not the leader" at once instead of a 1 s timeout. It is about availability, not
+correctness: ReadIndex already refuses the read.
+
+### Two real bugs, both about reconnecting
+
+Neither broke correctness. Both left the cluster or a client stuck long after the
+network healed, and both were found in development runs, before the acceptance run.
+
+1. **A node kept talking to the wrong node.** When two nodes were cut off and
+   reconnected, Docker sometimes gave each the other's IP address. gRPC's default
+   resolver caches a name for up to 30 s, so node1's connection to "node2" reached
+   node3. Node3 refused every message, because each one names its receiver, so nothing
+   was misdelivered. But the connection itself was healthy, so gRPC kept reusing it,
+   and the logs show a stream opened and refused every 50 ms while elections failed.
+   Fix: look names up on every dial (gRPC's `passthrough` scheme), and when a message
+   is refused as misaddressed, drop the connection and dial again.
+2. **A client kept using a dead connection.** The client library had no keepalive, and
+   a connection that died during a partition stayed open. Every request on it timed
+   out, so one client failed everything for the rest of a run. Fix: keepalive, and drop
+   a connection after a request on it times out.
+
+Each has a regression test that fails without its fix. The logs that found bug 1 also
+showed a mistake in my M4 notes: I wrote that peers ping every 2 s, but gRPC silently
+raises any interval under 10 s to 10 s.
+
+### Results
+
+Every number here is read from `results/chaos.json`, `results/audit/m5/summary.txt`
+and the files beside them, from one run of `scripts/audit/m5/run.sh` on commit
+`448db8f`.
+
+| Check | Result |
+|---|---|
+| Format, vet, tests, race detector, dependencies, the model test | all pass |
+| Stale read on Docker, this build | refused in 5 of 5 rounds |
+| Stale read on Docker, `plain-leader-read` planted | returned the stale `1` in 5 of 5 rounds |
+| Schedules (seeds 1 to 100) | 100 |
+| Histories Porcupine found not linearizable | 0 |
+| Checks that timed out, or runs that broke | 0 and 0 |
+| Runs that recovered after the final heal, with every final read served | 100 of 100 |
+| Partitions: leader / one follower / two nodes cut off | 150 / 58 / 39 |
+| Writes acknowledged / with an unknown outcome | 212,271 / 296 |
+| Reads served / refused or timed out | 147,646 / 165 |
+| `plain-leader-read` planted, seeds 1 to 20 | 7 of 20 histories not linearizable |
+
+Failover, over all 150 leader isolations, every one measured from the logs: median
+584 ms, 95th percentile 874 ms, maximum 1,614 ms, minimum 456 ms. 5 of the 150 took
+over a second. Election timeouts are drawn from 500 ms to 1 s, so most failovers are
+one election. The minimum is under 500 ms because a follower's timer starts at the
+last heartbeat it heard, which can be just before the leader was cut off.
+
+The planted bug shows the harness can fail: 7 of 20 schedules, against 16 of 2,000
+in M3's simulator. A real cut-off leader with real clients behind it is a much better
+trap than random simulated faults.
+
+**The Mac slept during the run.** It was on battery, and `pmset -g log` shows idle
+sleeps throughout the 100 schedules. So the runner took 5,388 s on the wall, while
+`results/chaos.json` reports 2,754 s, because Go's clock on macOS stops during sleep.
+Everything pauses together, the Docker VM included, so each history stays consistent.
+And if a sleep had landed inside a failover window and the VM's clock jumped on wake,
+it would show up as a failover of a minute or more; the longest is 1.6 s. The planted
+runs were kept awake with `caffeinate`. M6's benchmarks need the same, on mains power.
+
+### What this does not show
+
+- A seed fixes the faults and the clients' operations, not how real processes
+  interleave. A rerun of a seed is a similar run, not the same one.
+- Only one kind of partition: a node cut off from everyone. No one-way links, no
+  partial partitions where A sees B and B sees C, no slow links, no clock skew, no
+  disk faults. Kills were M4's.
+- `docker network disconnect` is harsher than a cable pull in one way: a reconnected
+  container gets a new MAC address and sometimes a new IP.
+- Three nodes on one machine, so network latency is tiny.
+- Porcupine checks what the clients saw. A clean result is strong evidence, not a
+  proof.
+
+### Questions and answers
+
+**Q: What does linearizable mean, and how do you check it?**
+Each operation appears to take effect at one instant between its call and its return,
+in an order a single correct copy could produce. I record every operation's call and
+return time and give the history to Porcupine, which searches for such an order.
+
+**Q: A write timed out. How does it go into the history?**
+With no return time. Porcupine may then place it anywhere after it was called, or at
+the very end, which is the same as it never happening. Dropping it would be wrong,
+because a later read might show it did happen.
+
+**Q: Why run the clients inside the node containers?**
+So that a node cut off from the network still gets client requests. A stale read can
+only happen if someone asks the cut-off leader. With every client on the majority
+side, the test couldn't fail.
+
+**Q: How do you know the checker can catch anything?**
+Two ways. A unit test feeds it a stale read, a lost write and a duplicated append, and
+it rejects all three. And the harness was run on a build with reads served from the
+leader's local state, and Porcupine flagged those histories.
+
+**Q: How did you measure failover, and why not with the harness's clock?**
+From Docker's disconnect event to the new leader's log line. Both are stamped by the
+Docker VM's clock. The harness runs on the host, whose clock can differ from the VM's,
+so mixing them would measure the clock difference too.
+
+**Q: Tell me about a bug you found.**
+Bug 1 above. It's a good story because nothing in the Raft code was wrong: the
+receiver's address check did its job, and the cost was liveness. The fix was in how
+gRPC resolves names and reuses connections.
+
+**Q: Why didn't you add check-quorum?**
+The stale-read test passed without it, because ReadIndex already needs a majority. It
+would make a cut-off leader step down sooner and fail clients faster, which is worth
+doing for availability, but it isn't needed for correctness.
+
 ## M4: a real network
 
 Criteria: `docs/acceptance/M4.md`. Results: `results/audit/m4/`. Code:

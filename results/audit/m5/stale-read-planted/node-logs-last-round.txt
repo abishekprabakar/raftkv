@@ -1,0 +1,29 @@
+node1-1  | time=2026-11-02T23:41:46.232Z level=INFO msg=started node=1 listen=[::]:7000 peers=3
+node1-1  | time=2026-11-02T23:41:46.233Z level=INFO msg="stream to peer open" node=1 peer=2
+node3-1  | time=2026-11-02T23:41:46.134Z level=INFO msg=started node=3 listen=[::]:7000 peers=3
+node3-1  | time=2026-11-02T23:41:46.290Z level=INFO msg="stream to peer open" node=3 peer=1
+node3-1  | time=2026-11-02T23:41:46.290Z level=INFO msg="stream to peer open" node=3 peer=2
+node3-1  | time=2026-11-02T23:41:46.870Z level=INFO msg="raft state" node=3 role=follower term=1 leader=0
+node1-1  | time=2026-11-02T23:41:46.233Z level=INFO msg="stream to peer open" node=1 peer=3
+node1-1  | time=2026-11-02T23:41:46.870Z level=INFO msg="raft state" node=1 role=follower term=1 leader=0
+node1-1  | time=2026-11-02T23:41:46.872Z level=INFO msg="raft state" node=1 role=follower term=1 leader=2
+node1-1  | time=2026-11-02T23:41:53.109Z level=INFO msg="raft state" node=1 role=follower term=2 leader=0
+node1-1  | time=2026-11-02T23:41:53.110Z level=INFO msg="raft state" node=1 role=follower term=2 leader=3
+node1-1  | time=2026-11-02T23:41:54.716Z level=INFO msg="stream to peer lost" node=1 peer=2 err="rpc error: code = Unavailable desc = error reading from server: connection timed out"
+node1-1  | time=2026-11-02T23:41:54.767Z level=INFO msg="stream to peer open" node=1 peer=2
+node2-1  | time=2026-11-02T23:41:46.185Z level=INFO msg=started node=2 listen=[::]:7000 peers=3
+node2-1  | time=2026-11-02T23:41:46.185Z level=INFO msg="stream to peer open" node=2 peer=3
+node2-1  | time=2026-11-02T23:41:46.339Z level=INFO msg="stream to peer open" node=2 peer=1
+node2-1  | time=2026-11-02T23:41:46.868Z level=INFO msg="raft state" node=2 role=candidate term=1 leader=0
+node2-1  | time=2026-11-02T23:41:46.871Z level=INFO msg="raft state" node=2 role=leader term=1 leader=2
+node3-1  | time=2026-11-02T23:41:46.872Z level=INFO msg="raft state" node=3 role=follower term=1 leader=2
+node3-1  | time=2026-11-02T23:41:53.108Z level=INFO msg="raft state" node=3 role=candidate term=2 leader=0
+node3-1  | time=2026-11-02T23:41:53.110Z level=INFO msg="raft state" node=3 role=leader term=2 leader=3
+node3-1  | time=2026-11-02T23:41:54.716Z level=INFO msg="stream to peer lost" node=3 peer=2 err="rpc error: code = Unavailable desc = error reading from server: connection timed out"
+node3-1  | time=2026-11-02T23:41:54.767Z level=INFO msg="stream to peer open" node=3 peer=2
+node2-1  | time=2026-11-02T23:41:54.265Z level=INFO msg="stream to peer lost" node=2 peer=3 err="rpc error: code = Unavailable desc = error reading from server: network is unreachable"
+node2-1  | time=2026-11-02T23:41:54.265Z level=INFO msg="stream to peer lost" node=2 peer=1 err="rpc error: code = Unavailable desc = error reading from server: network is unreachable"
+node2-1  | time=2026-11-02T23:41:54.316Z level=INFO msg="stream to peer open" node=2 peer=3
+node2-1  | time=2026-11-02T23:41:54.317Z level=INFO msg="stream to peer open" node=2 peer=1
+node2-1  | time=2026-11-02T23:41:54.768Z level=INFO msg="raft state" node=2 role=follower term=2 leader=0
+node2-1  | time=2026-11-02T23:41:54.769Z level=INFO msg="raft state" node=2 role=follower term=2 leader=3

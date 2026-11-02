@@ -1,0 +1,6 @@
+round 1 s1=pass s2=pass old_leader=node2 term=1 new_leader=node1 x2_write_exit=0 trap_set=yes (old leader role=leader term=1 applied=2, x=1 at index 2) read_from_old_leader: exit=1 value=[]; after heal: node1=2 node2=2 node3=2
+round 2 s1=pass s2=pass old_leader=node3 term=1 new_leader=node1 x2_write_exit=0 trap_set=yes (old leader role=leader term=1 applied=2, x=1 at index 2) read_from_old_leader: exit=1 value=[]; after heal: node1=2 node2=2 node3=2
+round 3 s1=pass s2=pass old_leader=node1 term=1 new_leader=node2 x2_write_exit=0 trap_set=yes (old leader role=leader term=1 applied=2, x=1 at index 2) read_from_old_leader: exit=1 value=[]; after heal: node1=2 node2=2 node3=2
+round 4 s1=pass s2=pass old_leader=node3 term=1 new_leader=node2 x2_write_exit=0 trap_set=yes (old leader role=leader term=1 applied=2, x=1 at index 2) read_from_old_leader: exit=1 value=[]; after heal: node1=2 node2=2 node3=2
+round 5 s1=pass s2=pass old_leader=node1 term=1 new_leader=node3 x2_write_exit=0 trap_set=yes (old leader role=leader term=1 applied=2, x=1 at index 2) read_from_old_leader: exit=1 value=[]; after heal: node1=2 node2=2 node3=2
+rounds=5 failed=0

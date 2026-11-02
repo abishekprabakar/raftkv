@@ -1,0 +1,22 @@
+seed 1: Illegal, 3 faults, writes 2177 acked / 4 unknown, reads 1510 served / 0 failed, recovered true (0.0s), final reads ok true, check 0.0s
+seed 2: Ok, 2 faults, writes 2700 acked / 1 unknown, reads 1853 served / 1 failed, recovered true (0.0s), final reads ok true, check 0.0s
+seed 3: Ok, 2 faults, writes 2538 acked / 3 unknown, reads 1714 served / 0 failed, recovered true (0.1s), final reads ok true, check 0.0s
+seed 4: Ok, 3 faults, writes 2097 acked / 3 unknown, reads 1422 served / 2 failed, recovered true (0.1s), final reads ok true, check 0.0s
+seed 5: Illegal, 2 faults, writes 2490 acked / 4 unknown, reads 1763 served / 0 failed, recovered true (0.1s), final reads ok true, check 0.0s
+seed 6: Ok, 2 faults, writes 1873 acked / 6 unknown, reads 1321 served / 0 failed, recovered true (0.1s), final reads ok true, check 0.0s
+seed 7: Illegal, 2 faults, writes 2030 acked / 6 unknown, reads 1392 served / 2 failed, recovered true (0.1s), final reads ok true, check 0.0s
+seed 8: Ok, 3 faults, writes 1761 acked / 8 unknown, reads 1237 served / 0 failed, recovered true (0.1s), final reads ok true, check 0.0s
+seed 9: Ok, 2 faults, writes 2453 acked / 3 unknown, reads 1718 served / 1 failed, recovered true (0.1s), final reads ok true, check 0.0s
+seed 10: Ok, 3 faults, writes 2153 acked / 2 unknown, reads 1534 served / 0 failed, recovered true (0.1s), final reads ok true, check 0.0s
+seed 11: Ok, 2 faults, writes 2658 acked / 2 unknown, reads 1821 served / 0 failed, recovered true (0.1s), final reads ok true, check 0.0s
+seed 12: Illegal, 3 faults, writes 2237 acked / 4 unknown, reads 1489 served / 0 failed, recovered true (0.1s), final reads ok true, check 0.0s
+seed 13: Ok, 3 faults, writes 1907 acked / 5 unknown, reads 1308 served / 2 failed, recovered true (0.1s), final reads ok true, check 0.0s
+seed 14: Illegal, 2 faults, writes 2443 acked / 4 unknown, reads 1642 served / 0 failed, recovered true (0.1s), final reads ok true, check 0.0s
+seed 15: Ok, 2 faults, writes 2545 acked / 1 unknown, reads 1749 served / 3 failed, recovered true (0.0s), final reads ok true, check 0.0s
+seed 16: Ok, 3 faults, writes 1592 acked / 7 unknown, reads 1077 served / 1 failed, recovered true (0.0s), final reads ok true, check 0.0s
+seed 17: Illegal, 3 faults, writes 1962 acked / 4 unknown, reads 1407 served / 2 failed, recovered true (0.1s), final reads ok true, check 0.0s
+seed 18: Ok, 3 faults, writes 1604 acked / 6 unknown, reads 1160 served / 1 failed, recovered true (0.1s), final reads ok true, check 0.0s
+seed 19: Ok, 3 faults, writes 2037 acked / 2 unknown, reads 1410 served / 1 failed, recovered true (0.1s), final reads ok true, check 0.0s
+seed 20: Illegal, 3 faults, writes 2200 acked / 5 unknown, reads 1539 served / 0 failed, recovered true (0.1s), final reads ok true, check 0.0s
+20 runs: 7 violations, 0 inconclusive, 0 errors, 0 not recovered, 0 with failed final reads
+faults map[follower:14 leader:27 two:10] (0 skipped); failover over 27 leader isolations: 27 measured, median 625 ms, p95 1294 ms, max 1424 ms, 0 with no new leader

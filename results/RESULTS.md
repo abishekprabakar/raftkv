@@ -138,3 +138,26 @@ Each schedule runs real Raft nodes and KV servers on a simulated network with a 
 | restore-position-lost | panic (110) |
 | save-before-restore | panic (7) |
 
+## Partitions on real containers (`cmd/chaos` -> `results/chaos.json`)
+
+Hardware: Apple M5, 10 cores, 16 GB RAM, macOS 26.5.1 arm64, filesystem apfs, go1.27.2. Collected 2026-11-02T22:11:16Z.
+
+Note: On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware.
+
+Each schedule starts a fresh 3-node cluster on Docker Compose (Docker 29.7.2), runs 6 clients for 20 s while `docker network disconnect` cuts off the leader, a follower or two nodes, heals, and then checks the whole history with Porcupine. Clients run inside the nodes' containers, so a cut-off node still gets requests. The seed fixes the faults and every client's operations, not how real processes interleave. Failover time runs from Docker's disconnect event for the leader to the first log line in which another node becomes leader, both on the Docker VM's clock.
+
+| Metric | Value | JSON field |
+|---|---|---|
+| Schedules (first seed 1) | 100 | runs |
+| Histories Porcupine found not linearizable | 0 | violations |
+| Checks that timed out / runs that broke | 0 / 0 | inconclusive, errors |
+| Runs with no agreed leader 20 s after the final heal | 0 | not_recovered |
+| Partitions: leader / follower / two nodes cut off | 150 / 58 / 39 | faults |
+| Writes acknowledged / outcome unknown | 212,271 / 296 | totals.writes_* |
+| Reads served / refused or timed out | 147,646 / 165 | totals.reads_* |
+| Leader isolations measured / with no new leader before the heal | 150 / 0 | failover.measured, no_new_leader |
+| Failover time: median / p95 / max | 584 ms / 874 ms / 1614 ms | failover.*_ms |
+| Running time, not counting time the machine slept | 2754 s | wall_seconds |
+
+With the `plain-leader-read` bug planted, Porcupine found 7 violations in 20 schedules (`results/audit/m5/planted-plain-leader-read.json`).
+
