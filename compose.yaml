@@ -14,7 +14,9 @@ name: raftkv
 
 x-node: &node
   build: .
-  image: raftkv:dev
+  # RAFTKV_IMAGE lets a test run the cluster on another build, such as one with a
+  # planted bug, without touching the normal image.
+  image: ${RAFTKV_IMAGE:-raftkv:dev}
   healthcheck:
     # Healthy means the node answers; it says nothing about a leader.
     test: ["CMD", "/usr/local/bin/raftkv", "--addr", "localhost:7000", "--timeout", "2s", "status"]
@@ -43,7 +45,7 @@ services:
 
   # The CLI, for `docker compose run`. The tools profile keeps `up` from starting it.
   cli:
-    image: raftkv:dev
+    image: ${RAFTKV_IMAGE:-raftkv:dev}
     profiles: ["tools"]
     entrypoint: ["/usr/local/bin/raftkv"]
     environment:

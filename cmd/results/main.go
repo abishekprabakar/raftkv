@@ -307,11 +307,37 @@ func simSection(w *strings.Builder, d doc, full bool) {
 	}
 }
 
+func chaosSection(w *strings.Builder, d doc, full bool) {
+	w.WriteString("## Partitions on real containers (`cmd/chaos` -> `results/chaos.json`)\n\n")
+	if full {
+		hardware(w, d)
+		w.WriteString("Each schedule starts a fresh 3-node cluster on Docker Compose (Docker " + d.str("docker") + "), runs 6 clients for 20 s while `docker network disconnect` cuts off the leader, a follower or two nodes, heals, and then checks the whole history with Porcupine. Clients run inside the nodes' containers, so a cut-off node still gets requests. The seed fixes the faults and every client's operations, not how real processes interleave. Failover time runs from Docker's disconnect event for the leader to the first log line in which another node becomes leader, both on the Docker VM's clock.\n\n")
+	}
+	ms := func(path string) string { return fmt.Sprintf("%.0f ms", d.num(path)) }
+	table(w, []string{"Metric", "Value", "JSON field"}, [][]string{
+		{"Schedules (first seed " + d.str("first_seed") + ")", commas(d.num("runs")), "runs"},
+		{"Histories Porcupine found not linearizable", commas(d.num("violations")), "violations"},
+		{"Checks that timed out / runs that broke", commas(d.num("inconclusive")) + " / " + commas(d.num("errors")), "inconclusive, errors"},
+		{"Runs with no agreed leader 20 s after the final heal", commas(d.num("not_recovered")), "not_recovered"},
+		{"Partitions: leader / follower / two nodes cut off", commas(d.num("faults.leader")) + " / " + commas(d.num("faults.follower")) + " / " + commas(d.num("faults.two")), "faults"},
+		{"Writes acknowledged / outcome unknown", commas(d.num("totals.writes_acknowledged")) + " / " + commas(d.num("totals.writes_unknown")), "totals.writes_*"},
+		{"Reads served / refused or timed out", commas(d.num("totals.reads_served")) + " / " + commas(d.num("totals.reads_refused_or_timed_out")), "totals.reads_*"},
+		{"Leader isolations measured / with no new leader before the heal", commas(d.num("failover.measured")) + " / " + commas(d.num("failover.no_new_leader")), "failover.measured, no_new_leader"},
+		{"Failover time: median / p95 / max", ms("failover.median_ms") + " / " + ms("failover.p95_ms") + " / " + ms("failover.max_ms"), "failover.*_ms"},
+		{"Wall time", fmt.Sprintf("%.0f s", d.num("wall_seconds")), "wall_seconds"},
+	})
+	if planted, ok := load(filepath.Join(*resultsDir, "audit", "m5", "planted-plain-leader-read.json")); ok {
+		fmt.Fprintf(w, "With the `plain-leader-read` bug planted, Porcupine found %s violations in %s schedules (`results/audit/m5/planted-plain-leader-read.json`).\n\n",
+			commas(planted.num("violations")), commas(planted.num("runs")))
+	}
+}
+
 func main() {
 	flag.Parse()
 	storage, haveStorage := load(filepath.Join(*resultsDir, "storage.json"))
 	crash, haveCrash := load(filepath.Join(*resultsDir, "crash.json"))
 	simulation, haveSim := load(filepath.Join(*resultsDir, "sim.json"))
+	chaosRuns, haveChaos := load(filepath.Join(*resultsDir, "chaos.json"))
 
 	var full, short strings.Builder
 	full.WriteString("# Measured results\n\nEvery number below is read from a JSON file produced by a tool in `cmd/`; regenerate this file with `make results`.\n\n")
@@ -328,6 +354,10 @@ func main() {
 	if haveSim {
 		simSection(&full, simulation, true)
 		simSection(&short, simulation, false)
+	}
+	if haveChaos {
+		chaosSection(&full, chaosRuns, true)
+		chaosSection(&short, chaosRuns, false)
 	}
 	short.WriteString(endMarker)
 
