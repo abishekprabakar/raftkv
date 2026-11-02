@@ -104,13 +104,19 @@ func (n *Node) handleAppendEntriesReply(from NodeID, m AppendEntriesReply) {
 	if n.role != Leader || m.Term != n.currentTerm {
 		return
 	}
+	// Send again only when a reply taught the leader something new. Every reply
+	// that is answered with a send starts a chain that lasts until the follower
+	// catches up, and each heartbeat, proposal and duplicate would start another,
+	// so a follower that stays behind gets a message storm. Stopping here cannot
+	// strand it: the next heartbeat always tries again.
 	if m.Success {
 		// Replies can arrive out of order, so these only ever move forward.
-		if m.MatchIndex > n.matchIndex[from] {
-			n.matchIndex[from] = m.MatchIndex
-			n.advanceCommit()
+		if m.MatchIndex <= n.matchIndex[from] {
+			return
 		}
-		n.nextIndex[from] = max(n.nextIndex[from], n.matchIndex[from]+1)
+		n.matchIndex[from] = m.MatchIndex
+		n.advanceCommit()
+		n.nextIndex[from] = max(n.nextIndex[from], m.MatchIndex+1)
 		if n.nextIndex[from] <= n.log.lastIndex() {
 			n.sendAppend(from)
 		}
@@ -126,8 +132,11 @@ func (n *Node) handleAppendEntriesReply(from NodeID, m AppendEntriesReply) {
 	}
 	// A late rejection can name a point this follower has already passed. Never
 	// go back past what it has confirmed, and never forward on a rejection.
-	n.nextIndex[from] = max(n.matchIndex[from]+1, min(next, n.nextIndex[from]))
-	n.sendAppend(from)
+	next = max(n.matchIndex[from]+1, min(next, n.nextIndex[from]))
+	if next != n.nextIndex[from] {
+		n.nextIndex[from] = next
+		n.sendAppend(from)
+	}
 }
 
 // advanceCommit finds the highest index stored on a majority. Sorted ascending,

@@ -233,10 +233,67 @@ func crashSection(w *strings.Builder, d doc, full bool) {
 	})
 }
 
+// plantedBugs are the rules broken on purpose in scripts/audit/m1, in the order
+// docs/acceptance/M2.md lists them.
+var plantedBugs = []string{
+	"send-before-save", "forget-voted-for", "count-old-terms", "always-truncate", "commit-to-last-index",
+	"no-up-to-date-check", "commit-can-decrease", "fixed-timeout", "save-after-apply",
+}
+
+// checksFired lists which checks fired in a raftsim report, most frequent first.
+func checksFired(d doc) string {
+	arr, ok := d.get("by_check").([]any)
+	if !ok || len(arr) == 0 {
+		return "none"
+	}
+	var parts []string
+	for i := range arr {
+		p := fmt.Sprintf("by_check.%d.", i)
+		parts = append(parts, fmt.Sprintf("%s (%s)", d.str(p+"check"), commas(d.num(p+"schedules"))))
+	}
+	return strings.Join(parts, ", ")
+}
+
+func simSection(w *strings.Builder, d doc, full bool) {
+	w.WriteString("## Raft simulation (`make sim` -> `results/sim.json`)\n\n")
+	if full {
+		hardware(w, d)
+		w.WriteString("Each schedule runs real Raft nodes on a simulated network with a virtual clock, so one seed fixes the whole run and any failure replays exactly. After the faults stop, every schedule must elect a leader and bring every node up to date. The simulator stands in for the disk and models a crash during a save, so this says nothing about real fsync behavior.\n\n")
+	}
+	table(w, []string{"Metric", "Value", "JSON field"}, [][]string{
+		{"Schedules (first seed " + d.str("first_seed") + ")", commas(d.num("schedules")), "schedules"},
+		{"Schedules that failed a check", commas(d.num("violations")), "violations"},
+		{"Messages sent", commas(d.num("totals.messages_sent")), "totals.messages_sent"},
+		{"Messages dropped", commas(d.num("totals.messages_dropped")), "totals.messages_dropped"},
+		{"Messages duplicated", commas(d.num("totals.messages_duplicated")), "totals.messages_duplicated"},
+		{"Messages delayed past an election timeout", commas(d.num("totals.messages_delayed_past_election_timeout")), "totals.messages_delayed_past_election_timeout"},
+		{"Messages reordered", commas(d.num("totals.messages_reordered")), "totals.messages_reordered"},
+		{"Partitions (one-way cuts among them)", commas(d.num("totals.partitions")) + " (" + commas(d.num("totals.one_way_cuts")) + ")", "totals.partitions, one_way_cuts"},
+		{"Crash-restarts (during a save / after a save, before sending)", commas(d.num("totals.crashes")) + " (" + commas(d.num("totals.crashes_during_save")) + " / " + commas(d.num("totals.crashes_after_save")) + ")", "totals.crashes, crashes_during_save, crashes_after_save"},
+		{"Leaders elected", commas(d.num("totals.leaders_elected")), "totals.leaders_elected"},
+		{"Entries committed", commas(d.num("totals.entries_committed")), "totals.entries_committed"},
+		{"Wall time", fmt.Sprintf("%.0f s", d.num("wall_seconds")), "wall_seconds"},
+	})
+
+	var rows [][]string
+	for _, bug := range plantedBugs {
+		all, haveAll := load(filepath.Join(*resultsDir, "audit", "m2", "q-"+bug+".json"))
+		props, haveProps := load(filepath.Join(*resultsDir, "audit", "m2", "r-"+bug+".json"))
+		if haveAll && haveProps {
+			rows = append(rows, []string{bug, checksFired(all), checksFired(props)})
+		}
+	}
+	if len(rows) > 0 {
+		w.WriteString("### Planted bugs: which check caught each one (schedules failed, out of 2,000)\n\n")
+		table(w, []string{"Bug", "All checks", "Properties only, monitors off"}, rows)
+	}
+}
+
 func main() {
 	flag.Parse()
 	storage, haveStorage := load(filepath.Join(*resultsDir, "storage.json"))
 	crash, haveCrash := load(filepath.Join(*resultsDir, "crash.json"))
+	simulation, haveSim := load(filepath.Join(*resultsDir, "sim.json"))
 
 	var full, short strings.Builder
 	full.WriteString("# Measured results\n\nEvery number below is read from a JSON file produced by a tool in `cmd/`; regenerate this file with `make results`.\n\n")
@@ -249,6 +306,10 @@ func main() {
 	if haveCrash {
 		crashSection(&full, crash, true)
 		crashSection(&short, crash, false)
+	}
+	if haveSim {
+		simSection(&full, simulation, true)
+		simSection(&short, simulation, false)
 	}
 	short.WriteString(endMarker)
 

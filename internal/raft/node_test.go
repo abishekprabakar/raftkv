@@ -665,3 +665,55 @@ func TestRestartCannotVoteTwice(t *testing.T) {
 		t.Fatalf("voted twice in term 5: %+v", got)
 	}
 }
+
+// Regression, found by simulation: answering every reply with a send let chains
+// of messages pile up behind a slow follower, one more for each heartbeat,
+// proposal and duplicate, until the network carried a storm.
+func TestRepeatedReplySendsNothing(t *testing.T) {
+	n, r := newNode(t, NewMemStorage(), 1, 2, 3)
+	makeLeader(t, n, r)
+	term := n.Status().Term
+	n.Propose([]byte("a"))
+	n.Propose([]byte("b"))
+	r.clear()
+	receive(t, n, 2, AppendEntriesReply{Term: term, Success: true, MatchIndex: 2})
+	if got := len(sentOf[AppendEntriesArgs](r)); got != 1 {
+		t.Fatalf("a reply showing progress sent %d messages, want 1", got)
+	}
+	r.clear()
+	receive(t, n, 2, AppendEntriesReply{Term: term, Success: true, MatchIndex: 2})
+	if len(r.sent) != 0 {
+		t.Fatalf("a repeated reply sent %d messages", len(r.sent))
+	}
+}
+
+func TestRepeatedRejectionSendsNothing(t *testing.T) {
+	n, r := newNode(t, storeWith(t, 5, None, logWithTerms(1, 1, 1)...), 1, 2, 3)
+	makeLeader(t, n, r)
+	term := n.Status().Term
+	reject := AppendEntriesReply{Term: term, ConflictIndex: 2}
+	receive(t, n, 2, reject)
+	if got := len(sentOf[AppendEntriesArgs](r)); got != 1 {
+		t.Fatalf("a rejection that moves nextIndex sent %d messages, want 1", got)
+	}
+	r.clear()
+	receive(t, n, 2, reject)
+	if len(r.sent) != 0 {
+		t.Fatalf("a repeated rejection sent %d messages", len(r.sent))
+	}
+}
+
+// Stopping a chain must not strand a follower: the heartbeat picks it up.
+func TestHeartbeatContinuesAfterLostReply(t *testing.T) {
+	n, r := newNode(t, NewMemStorage(), 1, 2, 3)
+	makeLeader(t, n, r)
+	n.Propose([]byte("a"))
+	r.clear()
+	for i := 0; i < n.cfg.HeartbeatTicks; i++ {
+		n.Tick()
+	}
+	got := sentOf[AppendEntriesArgs](r)
+	if len(got) != 2 || len(got[0].Entries) == 0 {
+		t.Fatalf("heartbeat did not resend unacknowledged entries: %+v", got)
+	}
+}

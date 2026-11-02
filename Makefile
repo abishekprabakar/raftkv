@@ -1,6 +1,6 @@
 GO ?= go
 
-.PHONY: all build test vet race fmt bench-storage bench-storage-quick crash-test crash-test-quick results clean
+.PHONY: all build test vet race fmt bench-storage bench-storage-quick crash-test crash-test-quick sim results clean
 
 all: vet test
 
@@ -32,6 +32,10 @@ crash-test:
 
 crash-test-quick:
 	$(GO) run ./cmd/crashtest -trials 20 -v
+
+# Seeded Raft simulation schedules -> results/sim.json
+sim:
+	$(GO) run ./cmd/raftsim -first 1 -count 10000 -out results/sim.json
 
 # Render results/*.json into results/RESULTS.md and the README results block
 results:

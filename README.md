@@ -5,8 +5,9 @@ merge-tree storage engine on every node, replicated with Raft, deployed on
 AWS. No external storage engine or consensus library is used.
 
 Status: **the storage engine and the Raft core are built, but they are not
-connected yet.** The Raft core runs only in tests, on a simulated network. A
-replicated KV service, a real network and an AWS deployment are still to come.
+connected yet.** Raft runs only in tests and in a deterministic simulator, not
+on a real network. A replicated KV service, a real network and an AWS deployment
+are still to come.
 
 ## Architecture
 
@@ -42,6 +43,7 @@ Failure modes, alternatives, and questions with answers: [docs/NOTES.md](docs/NO
 | Path | What |
 |---|---|
 | `internal/raft` | Raft from Figure 2: election, replication, commit, durable state, transport interface |
+| `internal/raft/sim` | deterministic simulator: faults, crash points and safety checks, all from one seed |
 | `internal/storage/wal` | segmented write-ahead log, CRC32C per record, group commit with a straggler window |
 | `internal/storage/memtable` | skiplist with lock-free readers and a single writer |
 | `internal/storage/sstable` | immutable tables: 4 KiB checksummed blocks, sparse index, bloom filter, properties |
@@ -49,6 +51,7 @@ Failure modes, alternatives, and questions with answers: [docs/NOTES.md](docs/NO
 | `internal/storage/ikey` | internal key encoding (user key, sequence, kind) |
 | `cmd/storagebench` | benchmarks -> `results/storage.json` |
 | `cmd/crashtest` | SIGKILL crash-recovery harness -> `results/crash.json` |
+| `cmd/raftsim` | seeded simulation schedules -> `results/sim.json` |
 | `cmd/results` | renders `results/*.json` into `results/RESULTS.md` and this README |
 
 ## Running it
@@ -59,6 +62,7 @@ All commands run from the repository root.
 make race            # unit tests under the race detector
 make bench-storage   # storage benchmarks, writes results/storage.json (~3 min)
 make crash-test      # 500 SIGKILL trials, writes results/crash.json (~4 min)
+make sim             # 10,000 simulated Raft schedules, writes results/sim.json
 make results         # regenerate results/RESULTS.md and the table below
 ```
 

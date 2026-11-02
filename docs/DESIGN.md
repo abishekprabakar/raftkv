@@ -284,6 +284,46 @@ A torn tail is dropped, which is safe because that `Save` never returned, so no
 reply depended on it. Other damage stops the node from starting, because a node
 that forgets a vote or an acknowledged entry can break safety.
 
+### Simulation
+
+`internal/raft/sim` runs real `Node`s on a simulated network. A single goroutine
+pops events from a time-ordered queue, and every random choice comes from one
+generator seeded by the schedule, so a seed fixes the whole run. `go run
+./cmd/raftsim -first SEED -count 1 -trace` replays a failure event by event.
+
+```
+ seed ─► Schedule ─► event queue ─► tick / deliver / partition / crash / restart / propose
+                                          │
+                                          ▼
+                    host: the node's disk, network link and state machine
+                          (raft.Storage, raft.Transport, raft.StateMachine)
+                                          │
+                                          ▼
+                    checks after every event, then a quiet phase for liveness
+```
+
+- **Crash points.** Because `Save` is synchronous, a crash between events can never
+  land between a save and a send, which is exactly where ordering bugs live. So
+  `host.Save` can also crash a node inside a call: before the update is durable,
+  or after it is durable but before any message leaves.
+- **Profiles.** A seed's remainder picks one of seven: `calm`, `lossy`, `partition`,
+  `crash`, `chaos`, `figure8` and `solo`. Figure 8 needs a very particular history,
+  so that profile hunts leaders: it crashes each one right after it accepts
+  commands, and it sends few entries per message so old entries spread first.
+- **Lockstep clocks.** Identical clocks are the worst case for election timeouts,
+  because only randomization can break the tie, so many schedules use them.
+- **Checks.** Five properties state what Raft guarantees: election safety, log
+  matching, leader completeness, state machine safety and liveness. Monitors
+  compare each step with Figure 2, and catch a broken rule even if no harm follows
+  in that run. They can be switched off to ask whether a bug does visible damage.
+- **History, not snapshots.** Properties are checked against everything seen so
+  far, such as every (index, term) pair ever written, so later overwrites can't
+  erase the evidence. A running hash of each log makes Log Matching O(1) per entry.
+
+The simulated disk never lies about a completed `Save`, so simulation shows the
+protocol is right given durable saves. It does not test `FileStorage` or real
+fsyncs.
+
 ### Not implemented yet
 
 Snapshots and log compaction, so the log and its file only grow (M3). The real
