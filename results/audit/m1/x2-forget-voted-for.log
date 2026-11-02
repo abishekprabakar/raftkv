@@ -1,0 +1,5 @@
+--- FAIL: TestRestartCannotVoteTwice (0.00s)
+    node_test.go:665: voted twice in term 5: [{Term:5 VoteGranted:true}]
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft	0.201s
+FAIL

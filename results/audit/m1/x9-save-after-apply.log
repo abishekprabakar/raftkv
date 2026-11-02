@@ -1,0 +1,5 @@
+--- FAIL: TestSingleNodeAppliesOnlyAfterSave (0.00s)
+    node_test.go:614: events [apply save], want the save before the apply
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft	0.160s
+FAIL

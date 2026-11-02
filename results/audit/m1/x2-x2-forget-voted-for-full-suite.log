@@ -1,0 +1,13 @@
+--- FAIL: TestNodeRestoresFromFileStorage (0.02s)
+    filestorage_test.go:183: restored {ID:1 Role:follower Term:3 VotedFor:0 Leader:0 CommitIndex:0 LastApplied:0 LastLogIndex:2 LastLogTerm:2}
+--- FAIL: TestVoteIsDurableBeforeReply (0.00s)
+    node_test.go:556: durable state when the reply left: {CurrentTerm:3 VotedFor:0}
+--- FAIL: TestSelfVoteIsDurableBeforeRequestVote (0.00s)
+    node_test.go:566: message 0 left with durable state {CurrentTerm:1 VotedFor:0}
+--- FAIL: TestRestartRestoresState (0.00s)
+    node_test.go:648: restored {ID:1 Role:follower Term:5 VotedFor:0 Leader:0 CommitIndex:0 LastApplied:0 LastLogIndex:2 LastLogTerm:4}
+--- FAIL: TestRestartCannotVoteTwice (0.00s)
+    node_test.go:665: voted twice in term 5: [{Term:5 VoteGranted:true}]
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft	1.620s
+FAIL

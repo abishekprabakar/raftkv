@@ -1,0 +1,18 @@
+--- FAIL: TestElectsOneLeader (0.00s)
+    --- FAIL: TestElectsOneLeader/3_nodes (0.00s)
+        cluster_test.go:227: seed 1: no leader after 1000 ticks
+    --- FAIL: TestElectsOneLeader/5_nodes (0.00s)
+        cluster_test.go:227: seed 1: no leader after 1000 ticks
+--- FAIL: TestReplicatesToAllNodes (0.00s)
+    cluster_test.go:244: seed 1: no leader after 1000 ticks
+--- FAIL: TestLeaderFailover (0.00s)
+    cluster_test.go:270: seed 1: no leader after 1000 ticks
+--- FAIL: TestRestartKeepsCommittedEntries (0.00s)
+    cluster_test.go:308: seed 1: no leader after 1000 ticks
+--- FAIL: TestClusterOnFileStorage (1.00s)
+    cluster_test.go:338: seed 1: no leader after 1000 ticks
+--- FAIL: TestElectionTimeoutsAreRandomized (0.00s)
+    node_test.go:155: only 1 distinct timeouts across 50 seeds: map[10:true]
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft	1.247s
+FAIL

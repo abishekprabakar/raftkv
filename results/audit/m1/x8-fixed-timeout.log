@@ -1,0 +1,5 @@
+--- FAIL: TestElectionTimeoutsAreRandomized (0.00s)
+    node_test.go:155: only 1 distinct timeouts across 50 seeds: map[10:true]
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft	0.181s
+FAIL

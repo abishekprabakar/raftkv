@@ -1,0 +1,5 @@
+--- FAIL: TestCommitIndexNeverDecreases (0.00s)
+    node_test.go:528: commit went back to 1
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft	1.661s
+FAIL

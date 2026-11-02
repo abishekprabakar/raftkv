@@ -1,0 +1,28 @@
+--- FAIL: TestReplicatesToAllNodes (0.00s)
+panic: raft: node 2 truncating committed index 3 (commit 9) [recovered, repanicked]
+
+goroutine 49 [running]:
+testing.tRunner.func1.2({0x102ff7750, 0x7ae72359fb50})
+	/opt/homebrew/Cellar/go/1.27.2/libexec/src/testing/testing.go:2125 +0x1a0
+testing.tRunner.func1()
+	/opt/homebrew/Cellar/go/1.27.2/libexec/src/testing/testing.go:2128 +0x2c8
+panic({0x102ff7750?, 0x7ae72359fb50?})
+	/opt/homebrew/Cellar/go/1.27.2/libexec/src/runtime/panic.go:859 +0x120
+github.com/abishekprabakar/raftkv/internal/raft.(*Node).truncateLog(0x7ae7236d8300, 0x3)
+	$TMPDIR/raftkv-m1.R6cwhA/always-truncate/internal/raft/replication.go:90 +0xd4
+github.com/abishekprabakar/raftkv/internal/raft.(*Node).handleAppendEntries(0x7ae7236d8300, 0x1, {0x1, 0x1, 0x2, 0x1, {0x7ae7236ea000, 0x6, 0x6}, 0x2})
+	$TMPDIR/raftkv-m1.R6cwhA/always-truncate/internal/raft/replication.go:72 +0xdc
+github.com/abishekprabakar/raftkv/internal/raft.(*Node).Receive(0x7ae7236d8300, 0x1, {0x103019838, 0x7ae7236de8c0})
+	$TMPDIR/raftkv-m1.R6cwhA/always-truncate/internal/raft/node.go:217 +0x184
+github.com/abishekprabakar/raftkv/internal/raft.(*cluster).drain(0x7ae723659200)
+	$TMPDIR/raftkv-m1.R6cwhA/always-truncate/internal/raft/cluster_test.go:150 +0x120
+github.com/abishekprabakar/raftkv/internal/raft.(*cluster).tick(0x7ae723659200)
+	$TMPDIR/raftkv-m1.R6cwhA/always-truncate/internal/raft/cluster_test.go:137 +0xd8
+github.com/abishekprabakar/raftkv/internal/raft.TestReplicatesToAllNodes(0x7ae7234b4488)
+	$TMPDIR/raftkv-m1.R6cwhA/always-truncate/internal/raft/cluster_test.go:256 +0x220
+testing.tRunner(0x7ae7234b4488, 0x10301aa58)
+	/opt/homebrew/Cellar/go/1.27.2/libexec/src/testing/testing.go:2195 +0xc4
+created by testing.(*T).Run in goroutine 1
+	/opt/homebrew/Cellar/go/1.27.2/libexec/src/testing/testing.go:2260 +0x3b8
+FAIL	github.com/abishekprabakar/raftkv/internal/raft	0.179s
+FAIL

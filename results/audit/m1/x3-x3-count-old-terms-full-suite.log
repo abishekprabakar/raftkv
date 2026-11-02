@@ -1,0 +1,5 @@
+--- FAIL: TestLeaderDoesNotCountOldTermEntries (0.00s)
+    node_test.go:370: committed index 2 by counting entries from an earlier term
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft	1.609s
+FAIL

@@ -1,9 +1,168 @@
 # Learning notes
 
-One section per milestone: what was done, the ideas behind it, and the
-questions worth being able to answer about it. Every number comes from a real run
-and names the file it came from. Numbers from the audit are in
-`results/audit/m0/`, and their criteria are in `docs/acceptance/M0.md`.
+One section per milestone, newest first: what was done, the ideas behind it, and
+the questions worth being able to answer about it. Every number comes from a real
+run. Criteria are in `docs/acceptance/`, and the runs are in `results/audit/`.
+
+## M1: the Raft core
+
+Criteria: `docs/acceptance/M1.md`. Results: `results/audit/m1/`. Code:
+`internal/raft`.
+
+### What was built
+
+The core of Raft, by hand from Figure 2 of the paper, with no consensus library
+and no third-party packages: leader election with randomized timeouts, log
+replication, commit advancement, and a durable term, vote and log. It is not a
+service yet. It has no real network and no client API, and it is not connected to
+the storage engine. It runs only in tests.
+
+### Raft in plain language
+
+A cluster wants to agree on one ordered list of commands, even when machines die
+and messages get lost. Raft does this with one leader at a time.
+
+- **Terms** are numbered election periods, like a logical clock. A message from a
+  newer term tells a node it is out of date, whatever it thought it was doing.
+- **Election.** A follower that hears nothing for a while assumes the leader is
+  dead, moves to a new term and asks for votes. Each node gets one vote per term,
+  so at most one node can win a majority in a term.
+- **Replication.** The leader appends a command to its log and sends it out. Each
+  message includes the entry just before the new ones, and a follower accepts
+  only if it has that entry. This is what keeps logs identical.
+- **Commit.** Once a majority stores an entry, it is committed and can never be
+  lost, because any future leader needs votes from a majority, and those two
+  majorities must overlap in at least one node.
+
+### Each rule, and what goes wrong without it
+
+Each rule below was broken on purpose. The test named in `docs/acceptance/M1.md`
+failed all 9 times.
+
+| Rule | Without it |
+|---|---|
+| Save before replying | A crash forgets a promise already made, so a node can vote twice |
+| `votedFor` is durable | A restarted node votes for a second candidate, and a term gets two leaders |
+| Vote only for an up-to-date log | A node missing committed entries wins and erases them |
+| Commit by counting only current-term entries (Figure 8) | An old entry on a majority gets committed, then a later leader overwrites it |
+| Truncate only on a real conflict | A delayed duplicate message erases newer entries, possibly committed ones |
+| Follower commit stops at the last new entry | A follower commits stale entries that only sit at the right position |
+| Commit index never goes backwards | A reordered message un-commits entries |
+| Random election timeouts | Everyone times out together and splits the vote. With fixed timeouts, the cluster tests never elected a leader |
+| Apply only what is saved | The state machine runs ahead of what the node can recover |
+
+### Design choices worth explaining
+
+**A node is a plain state machine.** It has no goroutines, clock or network. Time
+arrives through `Tick`, messages through `Receive`, and commands through
+`Propose`. That makes a whole cluster deterministic, so M2 can replay any failure
+from its seed. A mutex-and-goroutines design, the usual 6.5840 style, can't do
+that.
+
+**One exit.** Handlers never send anything. Every call ends in `finish`, which
+saves, then applies, then sends. "Persist before reply" is then one fact about
+one function, not a rule to remember in every handler.
+
+**One save per input.** A message that changes the term, the vote and the log
+costs one fsync, and all of it survives or none of it does.
+
+**One-way messages.** Figure 2 describes RPCs, but here a request and its reply
+are unrelated messages, because a network can lose or reorder each one. So a reply
+has to carry `MatchIndex`: the leader can't rely on remembering what it asked.
+
+**A no-op at the start of each term.** Figure 8 stops a leader committing old
+entries by counting, so without a new entry from its own term, inherited entries
+could stay uncommitted forever.
+
+### Results
+
+| Check | Result |
+|---|---|
+| gofmt, go vet | clean |
+| Tests, normal and 5 repeats under the race detector | pass |
+| Third-party packages | none |
+| Raft test functions | 51, covering 93.1% of statements |
+| Cluster runs | 605 across fixed seeds, all pass |
+| Rules broken on purpose | 9 of 9 caught by their named test |
+
+### What these tests do not show yet
+
+The cluster tests are gentle. They isolate a node and restart nodes, but they
+never drop, delay or duplicate a message. With each of the 9 bugs added, only 2
+made a cluster test fail: `always-truncate` and `fixed-timeout`. The other 7 were
+caught only by single-node tests that set up the exact scenario by hand. So
+nothing yet shows the whole protocol staying safe under real fault patterns. M2
+is built to show that, and those bugs are its first targets.
+
+Other limits:
+
+- An fsync blocks the node, and followers learn the commit index only on the next
+  message. Throughput is unmeasured until M6.
+- The log and its file only grow until M3 adds snapshots.
+- No pre-vote: a node back from a partition with a high term forces an election.
+- A partitioned leader keeps believing it leads until it hears a higher term. That
+  is why a plain leader read is unsafe, which M3 deals with.
+- `FileStorage` assumes one process per directory and doesn't lock it yet. M4 runs
+  real processes, so it needs that lock.
+
+### Questions and answers
+
+**Q: Walk me through a leader election.**
+A follower's timer runs out. It adds one to its term, votes for itself, saves that,
+and asks everyone. A node grants its vote if it hasn't voted this term and the
+candidate's log is at least as up to date as its own. A majority makes a leader,
+which appends a no-op and starts heartbeats. A newer term, or a leader in the
+current term, sends a candidate back to follower.
+
+**Q: Why are the timeouts randomized?**
+So one node usually times out first and wins before others start. When I fixed the
+timeouts, every cluster test failed with no leader elected.
+
+**Q: Why must `currentTerm` and `votedFor` be saved before replying?**
+A reply is a promise. If a node voted, crashed and forgot, it could vote again in
+the same term, and two candidates could each reach a majority. The term matters
+too: a node that forgets it could accept messages from a deposed leader.
+
+**Q: Why isn't `commitIndex` saved?**
+It can be rebuilt. A restarted node starts at 0 and learns it from the leader, or a
+new leader works it out again. Committed entries are safe because they are on a
+majority, whatever any one node remembers.
+
+**Q: What does the Log Matching property say, and how is it enforced?**
+If two logs have an entry with the same index and term, the logs are identical up
+to that point. A leader creates at most one entry per index in a term, and a
+follower accepts new entries only if it holds the entry just before them, so
+agreement extends one step at a time.
+
+**Q: Explain Figure 8.**
+An old-term entry can sit on a majority and still be replaced. A candidate whose
+last entry has a newer term can win without that entry, because the log comparison
+uses the last term first. So a leader commits by counting only entries from its
+own term. Committing one commits everything before it, because logs match up to
+that point.
+
+**Q: Why not truncate everything after `PrevLogIndex`?**
+A delayed duplicate may carry fewer entries than the log now holds, and the extra
+entries could be committed. Only a real term conflict at an index proves the tail
+is stale.
+
+**Q: Figure 2 says `commitIndex = min(leaderCommit, last new index)`. Is that
+enough?**
+Not with reordering. A delayed message can have a last new index below the current
+commit index, which would move it backwards, so the code keeps the larger value.
+I have a test for that exact case.
+
+**Q: What happens if the disk fails on a save?**
+The node stops for good. Its memory is ahead of its disk, so anything it said next
+could be a promise it can't keep. Nothing leaves it after that.
+
+**Q: How is the log stored, given entries can be truncated?**
+As an append-only WAL. A truncation is one more record, and replay applies records
+in order. Each input is one checksummed record, so it survives whole or not at all.
+
+**Q: Why write your own instead of using etcd/raft?**
+To learn it and be able to defend every line. In production I would use a library
+with years of testing behind it.
 
 ## M0 fixes: the audit's bugs, and a stricter crash test
 

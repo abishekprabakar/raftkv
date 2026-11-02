@@ -1,0 +1,16 @@
+=== RUN   TestElectsOneLeader
+=== RUN   TestElectsOneLeader/3_nodes
+=== RUN   TestElectsOneLeader/5_nodes
+--- PASS: TestElectsOneLeader (0.03s)
+    --- PASS: TestElectsOneLeader/3_nodes (0.01s)
+    --- PASS: TestElectsOneLeader/5_nodes (0.02s)
+=== RUN   TestReplicatesToAllNodes
+--- PASS: TestReplicatesToAllNodes (0.01s)
+=== RUN   TestLeaderFailover
+--- PASS: TestLeaderFailover (0.00s)
+=== RUN   TestRestartKeepsCommittedEntries
+--- PASS: TestRestartKeepsCommittedEntries (0.00s)
+=== RUN   TestClusterOnFileStorage
+--- PASS: TestClusterOnFileStorage (1.30s)
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/raft	1.525s

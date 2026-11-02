@@ -1,0 +1,5 @@
+--- FAIL: TestVoteIsDurableBeforeReply (0.00s)
+    node_test.go:553: events [send save], want one save and then the reply
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft	0.197s
+FAIL

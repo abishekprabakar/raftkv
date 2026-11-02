@@ -1,0 +1,5 @@
+--- FAIL: TestFollowerCommitStopsAtLastNewEntry (0.00s)
+    node_test.go:514: commit 3, want 1
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft	0.186s
+FAIL

@@ -1,0 +1,15 @@
+--- FAIL: TestVoteIsDurableBeforeReply (0.00s)
+    node_test.go:553: events [send save], want one save and then the reply
+--- FAIL: TestSelfVoteIsDurableBeforeRequestVote (0.00s)
+    node_test.go:566: message 0 left with durable state {CurrentTerm:0 VotedFor:0}
+--- FAIL: TestAppendIsDurableBeforeReply (0.00s)
+    node_test.go:575: events [send save], [0] entries durable at send
+--- FAIL: TestLeaderEntryIsDurableBeforeReplication (0.00s)
+    node_test.go:585: message 0 left with 1 entries durable, want 2
+--- FAIL: TestOneInputMakesOneSave (0.00s)
+    node_test.go:595: events [send save]
+--- FAIL: TestSaveFailureStopsNode (0.00s)
+    node_test.go:626: a reply left without being durable
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft	1.612s
+FAIL

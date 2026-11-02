@@ -1,0 +1,5 @@
+--- FAIL: TestDuplicateAppendDoesNotTruncate (0.00s)
+    node_test.go:504: log shrank to 1 entries
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft	0.189s
+FAIL

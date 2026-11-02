@@ -1,0 +1,8 @@
+--- FAIL: TestRejectVoteForStaleLog (0.00s)
+    --- FAIL: TestRejectVoteForStaleLog/older_last_term,_longer_log (0.00s)
+        node_test.go:245: got [{Term:6 VoteGranted:true}], want granted=false
+    --- FAIL: TestRejectVoteForStaleLog/same_term,_shorter_log (0.00s)
+        node_test.go:245: got [{Term:6 VoteGranted:true}], want granted=false
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/raft	0.189s
+FAIL
