@@ -33,8 +33,17 @@ type HardState struct {
 	VotedFor    NodeID
 }
 
-// Message is one of the four messages nodes exchange. Figure 2 describes two
-// RPCs, but here a request and its reply are separate one-way messages, because
+// Snapshot marks where the log begins: everything through Index has been
+// discarded and is held by the state machine instead. Raft stores only this
+// marker. The state machine's own durable state is the snapshot's contents, which
+// avoids writing the whole data set a second time on every compaction.
+type Snapshot struct {
+	Index uint64
+	Term  uint64
+}
+
+// Message is one of the messages nodes exchange. The paper describes RPCs, but
+// here a request and its reply are separate one-way messages, because
 // a real network can lose, delay, repeat or reorder either half. Nothing in
 // this package assumes a reply matches a particular request.
 type Message interface {
@@ -65,12 +74,17 @@ type AppendEntriesArgs struct {
 	PrevLogTerm  uint64
 	Entries      []Entry
 	LeaderCommit uint64
+	// ReadSeq is the leader's newest read sequence number. A follower echoes it,
+	// which proves it still accepted this leader after the read arrived. See
+	// ReadIndex.
+	ReadSeq uint64
 }
 
 // AppendEntriesReply answers AppendEntriesArgs.
 type AppendEntriesReply struct {
 	Term    uint64
 	Success bool
+	ReadSeq uint64 // echoed from the request
 	// MatchIndex is set on success: the follower's log matches the leader's up
 	// to here. Figure 2's leader knows this from the RPC it sent. Here the reply
 	// is a separate message that can arrive late or twice, so it has to say.
@@ -84,10 +98,32 @@ type AppendEntriesReply struct {
 	ConflictIndex uint64
 }
 
-func (m RequestVoteArgs) term() uint64    { return m.Term }
-func (m RequestVoteReply) term() uint64   { return m.Term }
-func (m AppendEntriesArgs) term() uint64  { return m.Term }
-func (m AppendEntriesReply) term() uint64 { return m.Term }
+// InstallSnapshotArgs gives a follower the leader's whole state machine, for a
+// follower that needs entries the leader has already discarded (Figure 13). It is
+// sent in one message rather than in Figure 13's chunks, which keeps the follower
+// simple at the cost of holding a whole snapshot in memory.
+type InstallSnapshotArgs struct {
+	Term              uint64
+	LeaderID          NodeID
+	LastIncludedIndex uint64
+	LastIncludedTerm  uint64
+	Data              []byte
+	ReadSeq           uint64
+}
+
+// InstallSnapshotReply answers InstallSnapshotArgs.
+type InstallSnapshotReply struct {
+	Term       uint64
+	MatchIndex uint64 // the follower's log now matches the leader's through here
+	ReadSeq    uint64
+}
+
+func (m RequestVoteArgs) term() uint64      { return m.Term }
+func (m RequestVoteReply) term() uint64     { return m.Term }
+func (m AppendEntriesArgs) term() uint64    { return m.Term }
+func (m AppendEntriesReply) term() uint64   { return m.Term }
+func (m InstallSnapshotArgs) term() uint64  { return m.Term }
+func (m InstallSnapshotReply) term() uint64 { return m.Term }
 
 // Transport carries messages between nodes.
 type Transport interface {
@@ -96,9 +132,26 @@ type Transport interface {
 	Send(to NodeID, msg Message)
 }
 
-// StateMachine receives committed entries in log order. After a restart it
-// receives them again from the start of the log, so it must be rebuilt from
-// empty. Snapshots in M3 change that.
+// StateMachine receives committed entries in log order.
 type StateMachine interface {
+	// Apply applies one committed entry.
 	Apply(Entry)
+	// Position returns the index and term of the last entry the state machine
+	// holds. NewNode asks once at startup and continues applying from there, which
+	// may be behind what was applied before a crash, if the state machine lost
+	// writes it had not made durable.
+	Position() (index, term uint64)
+	// Snapshot returns the state machine's contents as of its Position.
+	Snapshot() []byte
+	// Restore replaces all contents with a snapshot, and must be durable and
+	// atomic before it returns.
+	Restore(index, term uint64, data []byte)
+}
+
+// ReadListener hears the outcome of each ReadIndex call.
+type ReadListener interface {
+	// ReadReady means the state machine may now serve this read.
+	ReadReady(id uint64)
+	// ReadFailed means this node could not confirm the read. Try again.
+	ReadFailed(id uint64)
 }

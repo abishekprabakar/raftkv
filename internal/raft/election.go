@@ -35,6 +35,7 @@ func (n *Node) startElection() {
 func (n *Node) stepDown(term uint64) {
 	if n.role == Leader {
 		n.resetElectionTimer()
+		n.failAllReads()
 	}
 	n.role = Follower
 	n.leaderID = None
@@ -96,6 +97,8 @@ func (n *Node) becomeLeader() {
 	for _, p := range n.peers {
 		n.nextIndex[p] = next
 		n.matchIndex[p] = 0
+		n.ackedSeq[p] = 0
+		delete(n.snapshotSent, p)
 	}
 	n.appendAsLeader(EntryNoop, nil)
 	n.advanceCommit()

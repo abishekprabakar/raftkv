@@ -49,6 +49,10 @@ var (
 // u8, seq u64, keylen u32.
 const recordHeader = 13
 
+// recordBatch in the first byte of a WAL payload marks an atomic batch, in place
+// of the kind of a single write. See encodeBatch.
+const recordBatch = 2
+
 // testHookBeforeCapture lets a regression test run code just before a read
 // captures its view of the database. It is always nil outside tests.
 var testHookBeforeCapture func()
@@ -208,20 +212,25 @@ func (db *DB) recover() error {
 	}
 	maxSeq := db.flushedSeq
 	replayStart := time.Now()
+	insert := func(seq uint64, kind ikey.Kind, key, value []byte) {
+		if seq > maxSeq {
+			maxSeq = seq
+		}
+		if seq > db.flushedSeq {
+			db.counters.replayedRecords.Add(1)
+			db.mem.Put(ikey.Encode(nil, key, seq, kind), append([]byte(nil), value...))
+		}
+	}
 	err = db.wal.Replay(func(_ uint64, payload []byte) error {
+		db.counters.replayedBytes.Add(int64(len(payload)))
+		if len(payload) > 0 && payload[0] == recordBatch {
+			return replayBatch(payload, insert)
+		}
 		seq, kind, key, value, err := decodeRecord(payload)
 		if err != nil {
 			return err
 		}
-		if seq > maxSeq {
-			maxSeq = seq
-		}
-		if seq <= db.flushedSeq {
-			return nil
-		}
-		db.counters.replayedRecords.Add(1)
-		db.counters.replayedBytes.Add(int64(len(payload)))
-		db.mem.Put(ikey.Encode(nil, key, seq, kind), append([]byte(nil), value...))
+		insert(seq, kind, key, value)
 		return nil
 	})
 	if err != nil {
@@ -276,6 +285,58 @@ func decodeRecord(p []byte) (seq uint64, kind ikey.Kind, key, value []byte, err 
 	return seq, kind, p[recordHeader : recordHeader+kl], p[recordHeader+kl:], nil
 }
 
+// A batch record is recordBatch u8, first seq u64, count u32, then for each op:
+// kind u8, uvarint keylen, uvarint valuelen, key, value. Ops take consecutive
+// sequence numbers. One record has one checksum, so after a crash replay sees the
+// whole batch or none of it.
+func encodeBatch(first uint64, b *Batch) []byte {
+	buf := make([]byte, 0, b.encodedBytes())
+	buf = append(buf, recordBatch)
+	buf = binary.LittleEndian.AppendUint64(buf, first)
+	buf = binary.LittleEndian.AppendUint32(buf, uint32(len(b.ops)))
+	for _, op := range b.ops {
+		buf = append(buf, byte(op.kind))
+		buf = binary.AppendUvarint(buf, uint64(len(op.key)))
+		buf = binary.AppendUvarint(buf, uint64(len(op.value)))
+		buf = append(buf, op.key...)
+		buf = append(buf, op.value...)
+	}
+	return buf
+}
+
+// replayBatch calls fn for each op in a batch record.
+func replayBatch(p []byte, fn func(seq uint64, kind ikey.Kind, key, value []byte)) error {
+	bad := errors.New("engine: bad batch record")
+	if len(p) < 13 {
+		return bad
+	}
+	seq := binary.LittleEndian.Uint64(p[1:9])
+	count := binary.LittleEndian.Uint32(p[9:13])
+	p = p[13:]
+	for i := uint32(0); i < count; i++ {
+		if len(p) < 1 {
+			return bad
+		}
+		kind := ikey.Kind(p[0])
+		kl, n1 := binary.Uvarint(p[1:])
+		if n1 <= 0 {
+			return bad
+		}
+		vl, n2 := binary.Uvarint(p[1+n1:])
+		if n2 <= 0 {
+			return bad
+		}
+		p = p[1+n1+n2:]
+		if uint64(len(p)) < kl+vl {
+			return bad
+		}
+		fn(seq, kind, p[:kl], p[kl:kl+vl])
+		p = p[kl+vl:]
+		seq++
+	}
+	return nil
+}
+
 // ---- writes ----------------------------------------------------------------
 
 // Put stores value under key. It returns once the write is durable.
@@ -294,6 +355,52 @@ func (db *DB) Delete(key []byte) error {
 	}
 	db.counters.deletes.Add(1)
 	return db.write(ikey.KindDelete, key, nil)
+}
+
+// Write applies every op in b, or none of them. It returns once the batch is
+// durable according to the sync mode. Readers see the whole batch or none of it,
+// because visible jumps past all its sequence numbers at once.
+func (db *DB) Write(b *Batch) error {
+	if len(b.ops) == 0 {
+		return nil
+	}
+	if b.encodedBytes() > wal.MaxRecordBytes {
+		return ErrTooLarge
+	}
+	db.writeMu.Lock()
+	if db.closing.Load() {
+		db.writeMu.Unlock()
+		return ErrClosed
+	}
+	if err := db.makeRoomForWrite(); err != nil {
+		db.writeMu.Unlock()
+		return err
+	}
+	first := db.seq + 1
+	db.seq += uint64(len(b.ops))
+	last := db.seq
+	fut := db.wal.Append(encodeBatch(first, b))
+	for i, op := range b.ops {
+		db.mem.Put(ikey.Encode(nil, op.key, first+uint64(i), op.kind), append([]byte(nil), op.value...))
+	}
+	db.writeMu.Unlock()
+
+	if err := fut.Wait(); err != nil {
+		return err
+	}
+	db.advanceVisible(last)
+	return nil
+}
+
+// advanceVisible raises visible to seq. Every record with a lower sequence number
+// sits earlier in the WAL and is therefore durable too, so this is safe.
+func (db *DB) advanceVisible(seq uint64) {
+	for {
+		cur := db.visible.Load()
+		if cur >= seq || db.visible.CompareAndSwap(cur, seq) {
+			return
+		}
+	}
 }
 
 func (db *DB) write(kind ikey.Kind, key, value []byte) error {
@@ -320,14 +427,8 @@ func (db *DB) write(kind ikey.Kind, key, value []byte) error {
 	if err := fut.Wait(); err != nil {
 		return err
 	}
-	// Every record with a lower sequence number sits earlier in the WAL and
-	// is therefore durable too, so advancing to seq is safe.
-	for {
-		cur := db.visible.Load()
-		if cur >= seq || db.visible.CompareAndSwap(cur, seq) {
-			return nil
-		}
-	}
+	db.advanceVisible(seq)
+	return nil
 }
 
 // makeRoomForWrite freezes the memtable when full, stalling if too much

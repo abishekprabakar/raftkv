@@ -11,9 +11,9 @@
 // first and sends second, so "persist before replying" holds for every message
 // by construction rather than by remembering it in each handler.
 //
-// Not implemented yet: snapshots and log compaction (M3), and membership
-// changes. Pre-vote is not in Figure 2 and is deliberately left out, so a
-// partitioned node returns with a high term and forces an election.
+// Not implemented: membership changes. Pre-vote is not in Figure 2 and is
+// deliberately left out, so a partitioned node returns with a high term and
+// forces an election.
 package raft
 
 import (
@@ -52,6 +52,9 @@ var (
 	ErrNotLeader = errors.New("raft: not the leader")
 	// ErrEntryTooLarge is returned by Propose for data over Config.MaxEntryBytes.
 	ErrEntryTooLarge = errors.New("raft: entry too large")
+	// ErrNotReady is returned by ReadIndex until a new leader has committed an
+	// entry from its own term. Try again shortly.
+	ErrNotReady = errors.New("raft: leader not ready for reads")
 )
 
 // Config configures a Node. Zero values select the defaults listed.
@@ -79,6 +82,8 @@ type Config struct {
 	Storage      Storage
 	Transport    Transport
 	StateMachine StateMachine
+	// Reads hears ReadIndex outcomes. It may be nil if ReadIndex is never used.
+	Reads ReadListener
 }
 
 func (c Config) withDefaults() Config {
@@ -126,32 +131,45 @@ type Node struct {
 	electionElapsed  int
 	electionTimeout  int
 	heartbeatElapsed int
+	ticks            int // calls to Tick so far
+
+	// Leader state for reads and snapshots. See read.go and snapshot.go.
+	readSeq      uint64
+	ackedSeq     map[NodeID]uint64
+	reads        []pendingRead
+	snapshotSent map[NodeID]int // the tick each peer was last sent a snapshot
 
 	// Work collected during the current call for finish to carry out.
-	hardDirty    bool
-	truncateFrom uint64
-	unsaved      []Entry
-	outbox       []outgoing
+	hardDirty     bool
+	snapshotDirty bool
+	truncateFrom  uint64
+	unsaved       []Entry
+	failedReads   []uint64
+	outbox        []outgoing
 
 	failed error // set once Storage fails; the node then refuses all input
 }
 
-// NewNode restores a node from cfg.Storage. It always starts as a follower with
-// commitIndex 0: both are volatile, and the leader teaches it the commit index.
+// NewNode restores a node from cfg.Storage and cfg.StateMachine. It always starts
+// as a follower. The commit index is volatile, so it starts from what the state
+// machine holds, which is committed by definition, and the leader teaches it the
+// rest.
 func NewNode(cfg Config) (*Node, error) {
 	cfg = cfg.withDefaults()
-	hard, entries, err := cfg.Storage.Load()
+	d, err := cfg.Storage.Load()
 	if err != nil {
 		return nil, err
 	}
 	n := &Node{
-		cfg:         cfg,
-		id:          cfg.ID,
-		rnd:         rand.New(rand.NewPCG(cfg.Seed, uint64(cfg.ID))),
-		currentTerm: hard.CurrentTerm,
-		votedFor:    hard.VotedFor,
-		nextIndex:   map[NodeID]uint64{},
-		matchIndex:  map[NodeID]uint64{},
+		cfg:          cfg,
+		id:           cfg.ID,
+		rnd:          rand.New(rand.NewPCG(cfg.Seed, uint64(cfg.ID))),
+		currentTerm:  d.Hard.CurrentTerm,
+		votedFor:     d.Hard.VotedFor,
+		nextIndex:    map[NodeID]uint64{},
+		matchIndex:   map[NodeID]uint64{},
+		ackedSeq:     map[NodeID]uint64{},
+		snapshotSent: map[NodeID]int{},
 	}
 	found := false
 	for _, p := range cfg.Peers {
@@ -164,8 +182,12 @@ func NewNode(cfg Config) (*Node, error) {
 	if !found {
 		return nil, fmt.Errorf("raft: node %d is not in Peers %v", cfg.ID, cfg.Peers)
 	}
-	n.log.append(entries...)
+	n.log.reset(d.Snapshot.Index, d.Snapshot.Term)
+	n.log.append(d.Entries...)
 	n.resetElectionTimer()
+	if err := n.adoptStateMachinePosition(); err != nil {
+		return nil, err
+	}
 	return n, nil
 }
 
@@ -184,7 +206,9 @@ func (n *Node) Tick() error {
 	if n.failed != nil {
 		return n.failed
 	}
+	n.ticks++
 	if n.role == Leader {
+		n.expireReads()
 		n.heartbeatElapsed++
 		if n.heartbeatElapsed >= n.cfg.HeartbeatTicks {
 			n.broadcastAppend()
@@ -217,6 +241,10 @@ func (n *Node) Receive(from NodeID, msg Message) error {
 		n.handleAppendEntries(from, m)
 	case AppendEntriesReply:
 		n.handleAppendEntriesReply(from, m)
+	case InstallSnapshotArgs:
+		n.handleInstallSnapshot(from, m)
+	case InstallSnapshotReply:
+		n.handleInstallSnapshotReply(from, m)
 	default:
 		panic(fmt.Sprintf("raft: unknown message %T", msg))
 	}
@@ -261,10 +289,7 @@ func (n *Node) Propose(data []byte) (index, term uint64, err error) {
 // Save fails the node's memory is ahead of its disk and nothing it says can be
 // trusted, so it stops permanently.
 func (n *Node) finish() error {
-	u := Update{TruncateFrom: n.truncateFrom, Entries: n.unsaved}
-	if n.hardDirty {
-		u.HardState = &HardState{CurrentTerm: n.currentTerm, VotedFor: n.votedFor}
-	}
+	u := n.pendingUpdate()
 	if !u.empty() {
 		if err := n.cfg.Storage.Save(u); err != nil {
 			n.failed = fmt.Errorf("raft: node %d stopped, save failed: %w", n.id, err)
@@ -272,15 +297,30 @@ func (n *Node) finish() error {
 			return n.failed
 		}
 	}
-	n.hardDirty, n.truncateFrom, n.unsaved = false, 0, nil
+	n.hardDirty, n.snapshotDirty, n.truncateFrom, n.unsaved = false, false, 0, nil
 
 	n.applyCommitted()
+	n.deliverReads()
 
 	for _, o := range n.outbox {
 		n.cfg.Transport.Send(o.to, o.msg)
 	}
 	n.outbox = nil
 	return nil
+}
+
+// pendingUpdate gathers what this call changed. A snapshot update stands for the
+// whole durable state, so it carries the hard state and every entry after it.
+func (n *Node) pendingUpdate() Update {
+	hard := &HardState{CurrentTerm: n.currentTerm, VotedFor: n.votedFor}
+	if n.snapshotDirty {
+		return Update{HardState: hard, Snapshot: &Snapshot{n.log.snapIndex, n.log.snapTerm}, Entries: n.log.tail()}
+	}
+	u := Update{TruncateFrom: n.truncateFrom, Entries: n.unsaved}
+	if n.hardDirty {
+		u.HardState = hard
+	}
+	return u
 }
 
 func (n *Node) send(to NodeID, msg Message) {
@@ -305,6 +345,8 @@ type Status struct {
 	LastApplied  uint64
 	LastLogIndex uint64
 	LastLogTerm  uint64
+	// SnapshotIndex is where the log starts: entries through here are discarded.
+	SnapshotIndex uint64
 }
 
 // Status returns the node's current state.
@@ -312,6 +354,6 @@ func (n *Node) Status() Status {
 	return Status{
 		ID: n.id, Role: n.role, Term: n.currentTerm, VotedFor: n.votedFor, Leader: n.leaderID,
 		CommitIndex: n.commitIndex, LastApplied: n.lastApplied,
-		LastLogIndex: n.log.lastIndex(), LastLogTerm: n.log.lastTerm(),
+		LastLogIndex: n.log.lastIndex(), LastLogTerm: n.log.lastTerm(), SnapshotIndex: n.log.snapIndex,
 	}
 }

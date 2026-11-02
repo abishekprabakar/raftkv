@@ -30,17 +30,17 @@ func save(t *testing.T, s Storage, u Update) {
 
 func wantState(t *testing.T, s Storage, hard HardState, terms ...uint64) {
 	t.Helper()
-	gotHard, entries, err := s.Load()
+	d, err := s.Load()
 	if err != nil {
 		t.Fatal(err)
 	}
-	if gotHard != hard {
-		t.Fatalf("hard state %+v, want %+v", gotHard, hard)
+	if d.Hard != hard {
+		t.Fatalf("hard state %+v, want %+v", d.Hard, hard)
 	}
-	got := make([]uint64, len(entries))
-	for i, e := range entries {
-		if e.Index != uint64(i+1) {
-			t.Fatalf("entry %d has index %d", i, e.Index)
+	got := make([]uint64, len(d.Entries))
+	for i, e := range d.Entries {
+		if want := d.Snapshot.Index + uint64(i+1); e.Index != want {
+			t.Fatalf("entry %d has index %d, want %d", i, e.Index, want)
 		}
 		got[i] = e.Term
 	}
@@ -55,6 +55,7 @@ func TestUpdateEncodingRoundTrip(t *testing.T) {
 		{TruncateFrom: 9},
 		{Entries: []Entry{{Index: 1, Term: 2, Kind: EntryNoop}, {Index: 2, Term: 2, Data: []byte("x")}}},
 		{HardState: &HardState{CurrentTerm: 1 << 40}, TruncateFrom: 3, Entries: []Entry{{Index: 3, Term: 9, Data: []byte("data")}}},
+		{HardState: &HardState{CurrentTerm: 9}, Snapshot: &Snapshot{Index: 40, Term: 8}, Entries: []Entry{{Index: 41, Term: 9, Data: []byte("x")}}},
 	}
 	for _, u := range cases {
 		got, err := decodeUpdate(encodeUpdate(u))
@@ -106,8 +107,8 @@ func TestFileStorageKeepsEntryContents(t *testing.T) {
 	s.Close()
 	s = openFile(t, dir)
 	defer s.Close()
-	if _, got, _ := s.Load(); !reflect.DeepEqual(got, saved) {
-		t.Fatalf("got %+v want %+v", got, saved)
+	if d, _ := s.Load(); !reflect.DeepEqual(d.Entries, saved) {
+		t.Fatalf("got %+v want %+v", d.Entries, saved)
 	}
 }
 
@@ -163,7 +164,7 @@ func TestNodeRestoresFromFileStorage(t *testing.T) {
 	dir := t.TempDir()
 	start := func(s *FileStorage) (*Node, *recorder) {
 		r := &recorder{store: NewMemStorage()}
-		n, err := NewNode(Config{ID: 1, Peers: []NodeID{1, 2, 3}, Storage: s, Transport: r, StateMachine: r})
+		n, err := NewNode(Config{ID: 1, Peers: []NodeID{1, 2, 3}, Storage: s, Transport: r, StateMachine: r, Reads: r})
 		if err != nil {
 			t.Fatal(err)
 		}

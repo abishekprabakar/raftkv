@@ -64,6 +64,19 @@ func (m *checkedMachine) Apply(e Entry) {
 	m.applied = append(m.applied, e)
 }
 
+// Position starts at zero: a test machine is rebuilt from the log after a restart.
+func (m *checkedMachine) Position() (uint64, uint64) {
+	if len(m.applied) == 0 {
+		return 0, 0
+	}
+	e := m.applied[len(m.applied)-1]
+	return e.Index, e.Term
+}
+
+func (m *checkedMachine) Snapshot() []byte { panic("cluster tests do not compact") }
+
+func (m *checkedMachine) Restore(uint64, uint64, []byte) { panic("cluster tests do not compact") }
+
 func (m *checkedMachine) commands() []string {
 	var out []string
 	for _, e := range m.applied {

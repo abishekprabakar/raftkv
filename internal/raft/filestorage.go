@@ -15,11 +15,11 @@ import (
 // is rewritten, and replay rebuilds the final state by applying records in
 // order.
 //
-// The file only grows until M3 adds snapshots.
+// A snapshot is what shrinks the file. Its Update holds the complete state, so it
+// starts a fresh segment and every older segment can go. See Save.
 type FileStorage struct {
-	log     *wal.Log
-	hard    HardState
-	entries []Entry // the replayed state; only Load reads it
+	log   *wal.Log
+	state Durable // the replayed state; only Load reads it
 }
 
 // OpenFileStorage opens or creates storage in dir. A torn tail from a crash is
@@ -38,8 +38,7 @@ func OpenFileStorage(dir string) (*FileStorage, error) {
 		if err != nil {
 			return err
 		}
-		s.entries, err = applyUpdate(&s.hard, s.entries, u)
-		return err
+		return s.state.apply(u)
 	})
 	if err != nil {
 		return nil, fmt.Errorf("raft: replay log: %w", err)
@@ -51,13 +50,39 @@ func OpenFileStorage(dir string) (*FileStorage, error) {
 }
 
 // Load implements Storage.
-func (s *FileStorage) Load() (HardState, []Entry, error) {
-	return s.hard, s.entries, nil
-}
+func (s *FileStorage) Load() (Durable, error) { return s.state, nil }
 
 // Save implements Storage. It returns after the WAL's fsync.
+//
+// A snapshot update is written to a new segment and only then are older segments
+// deleted. A crash before the new record is durable leaves the old log whole. A
+// crash after it leaves old segments to replay, which is harmless because the
+// snapshot record replaces whatever they built. Deleting newest first means any
+// survivors are still a contiguous prefix of the old log, so replay never meets a
+// gap.
 func (s *FileStorage) Save(u Update) error {
-	return s.log.Append(encodeUpdate(u)).Wait()
+	if u.Snapshot == nil {
+		return s.log.Append(encodeUpdate(u)).Wait()
+	}
+	closed, err := s.log.Rotate()
+	if err != nil {
+		return err
+	}
+	if err := s.log.Append(encodeUpdate(u)).Wait(); err != nil {
+		return err
+	}
+	segs, err := s.log.Segments()
+	if err != nil {
+		return err
+	}
+	for i := len(segs) - 1; i >= 0; i-- {
+		if segs[i] <= closed {
+			if err := s.log.Remove(segs[i]); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 // Close releases the log. Everything Saved is already durable.
@@ -66,11 +91,13 @@ func (s *FileStorage) Close() error { return s.log.Close() }
 // ---- record encoding -------------------------------------------------------
 
 // Update record: flags u8, then if flagged: term and votedFor uvarints, then
-// truncateFrom uvarint, then an entry count and the entries. Entry: index
-// uvarint, term uvarint, kind u8, data length uvarint, data.
+// snapshot index and term uvarints, then truncateFrom uvarint, then an entry
+// count and the entries. Entry: index uvarint, term uvarint, kind u8, data length
+// uvarint, data.
 const (
 	flagHardState = 1 << iota
 	flagTruncate
+	flagSnapshot
 )
 
 func encodeUpdate(u Update) []byte {
@@ -81,10 +108,17 @@ func encodeUpdate(u Update) []byte {
 	if u.TruncateFrom != 0 {
 		flags |= flagTruncate
 	}
+	if u.Snapshot != nil {
+		flags |= flagSnapshot
+	}
 	buf := []byte{flags}
 	if u.HardState != nil {
 		buf = binary.AppendUvarint(buf, u.HardState.CurrentTerm)
 		buf = binary.AppendUvarint(buf, uint64(u.HardState.VotedFor))
+	}
+	if u.Snapshot != nil {
+		buf = binary.AppendUvarint(buf, u.Snapshot.Index)
+		buf = binary.AppendUvarint(buf, u.Snapshot.Term)
 	}
 	if u.TruncateFrom != 0 {
 		buf = binary.AppendUvarint(buf, u.TruncateFrom)
@@ -149,6 +183,9 @@ func decodeUpdate(payload []byte) (Update, error) {
 	flags := r.byte()
 	if flags&flagHardState != 0 {
 		u.HardState = &HardState{CurrentTerm: r.uvarint(), VotedFor: NodeID(r.uvarint())}
+	}
+	if flags&flagSnapshot != 0 {
+		u.Snapshot = &Snapshot{Index: r.uvarint(), Term: r.uvarint()}
 	}
 	if flags&flagTruncate != 0 {
 		u.TruncateFrom = r.uvarint()

@@ -14,6 +14,12 @@ const (
 	CheckStateMachineSafety = "state-machine-safety"
 	CheckLiveness           = "liveness"
 
+	CheckExactlyOnce  = "kv-exactly-once"
+	CheckLinearizable = "kv-linearizable"
+	CheckLostWrite    = "kv-lost-write"
+	CheckPhantom      = "kv-phantom"
+	CheckDivergence   = "kv-divergence"
+
 	CheckVoteOnce        = "vote-once"
 	CheckDurablePromise  = "durable-promise"
 	CheckDurableApply    = "durable-apply"
@@ -48,7 +54,9 @@ type appliedRecord struct {
 
 // commitRecord remembers what was committed at an index and in which term that
 // was first observed. A leader of an older term has no duty to hold it, because
-// Leader Completeness only speaks about later terms.
+// Leader Completeness only speaks about later terms. A zero record marks an index
+// nobody saw commit, which happens when the node that committed it crashed in the
+// same step.
 type commitRecord struct {
 	term     uint64
 	hash     uint64
@@ -142,38 +150,37 @@ func (c *checker) sawGrant(voter, candidate raft.NodeID, term uint64) {
 // seen for the first time must already be on a majority of disks (holders is
 // the count), and every later sighting must agree with the first.
 func (c *checker) sawCommit(id raft.NodeID, index, term, hash, nodeTerm uint64, holders int) {
-	if index <= uint64(len(c.committed)) {
-		rec := c.committed[index-1]
+	for uint64(len(c.committed)) < index {
+		c.committed = append(c.committed, commitRecord{})
+	}
+	rec := &c.committed[index-1]
+	if rec.term != 0 {
 		if rec.term != term || rec.hash != hash {
 			c.fail(CheckStateMachineSafety, id, "index %d committed as term %d, but another node committed term %d", index, term, rec.term)
 		}
 		return
 	}
-	if index != uint64(len(c.committed))+1 {
-		panic(fmt.Sprintf("sim: commit of index %d skipped ahead of %d", index, len(c.committed)))
-	}
 	if holders < c.quorum() {
 		c.monitor(CheckCommitMajority, id, "index %d committed with %d copies on disk, majority is %d", index, holders, c.quorum())
 	}
-	c.committed = append(c.committed, commitRecord{term, hash, nodeTerm})
+	*rec = commitRecord{term, hash, nodeTerm}
 }
 
-// checkLeaderHolds is Leader Completeness for one leader: logTerm reads the
-// leader's log, and returns 0 for an index it does not hold.
-func (c *checker) checkLeaderHolds(id raft.NodeID, leaderTerm uint64, logTerm func(uint64) uint64) {
+// checkLeaderHolds is Leader Completeness for one leader: holds reports whether
+// the leader's log, or the snapshot it started from, has an entry.
+func (c *checker) checkLeaderHolds(id raft.NodeID, leaderTerm uint64, holds func(index, term uint64) bool) {
 	for i, rec := range c.committed {
-		index := uint64(i + 1)
-		if rec.observed <= leaderTerm && logTerm(index) != rec.term {
-			c.fail(CheckLeaderCompleteness, id, "leader of term %d has term %d at index %d, but term %d was committed there", leaderTerm, logTerm(index), index, rec.term)
+		if rec.term != 0 && rec.observed <= leaderTerm && !holds(uint64(i+1), rec.term) {
+			c.fail(CheckLeaderCompleteness, id, "leader of term %d lacks index %d, committed in term %d", leaderTerm, i+1, rec.term)
 			return
 		}
 	}
 }
 
 // checkLeaderHoldsOne is Leader Completeness for a newly committed index.
-func (c *checker) checkLeaderHoldsOne(id raft.NodeID, leaderTerm, index uint64, logTerm func(uint64) uint64) {
+func (c *checker) checkLeaderHoldsOne(id raft.NodeID, leaderTerm, index uint64, holds func(index, term uint64) bool) {
 	rec := c.committed[index-1]
-	if rec.observed <= leaderTerm && logTerm(index) != rec.term {
-		c.fail(CheckLeaderCompleteness, id, "leader of term %d has term %d at index %d, but term %d was committed there", leaderTerm, logTerm(index), index, rec.term)
+	if rec.observed <= leaderTerm && !holds(index, rec.term) {
+		c.fail(CheckLeaderCompleteness, id, "leader of term %d lacks index %d, committed in term %d", leaderTerm, index, rec.term)
 	}
 }

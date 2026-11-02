@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/abishekprabakar/raftkv/internal/hwinfo"
@@ -25,6 +26,7 @@ var (
 	workers        = flag.Int("workers", 0, "parallel workers (0: one per CPU)")
 	propertiesOnly = flag.Bool("properties-only", false, "switch off the Figure 2 monitors")
 	trace          = flag.Bool("trace", false, "print every event (one seed only)")
+	lsm            = flag.Bool("lsm", false, "run state machines on the real storage engine (slower)")
 	out            = flag.String("out", "", "write a JSON summary here")
 )
 
@@ -54,6 +56,17 @@ func main() {
 		opts.Trace = os.Stdout
 		fmt.Printf("%+v\n", sim.NewSchedule(*first))
 	}
+	if *lsm {
+		dir, err := os.MkdirTemp("", "raftsim-")
+		if err != nil {
+			fatal(err)
+		}
+		defer os.RemoveAll(dir)
+		opts.LSMDir = dir
+		if *workers == 0 {
+			*workers = runtime.NumCPU() / 2 // engines run goroutines of their own
+		}
+	}
 	start := time.Now()
 	results := sim.RunRange(*first, *count, *workers, opts)
 	rep := report{
@@ -69,9 +82,11 @@ func main() {
 	}
 
 	t := rep.Totals
-	fmt.Printf("%d schedules, %d failed, %.1fs: %d events, %d sent, %d dropped, %d duplicated, %d long delays, %d reordered, %d partitions (%d one-way), %d crashes (%d during save, %d after save), %d leaders, %d entries committed\n",
+	fmt.Printf("%d schedules, %d failed, %.1fs: %d events, %d sent, %d dropped, %d duplicated, %d long delays, %d reordered, %d partitions (%d one-way), %d crashes (%d during save, %d after save, %d power losses), %d leaders, %d entries committed\n",
 		rep.Schedules, rep.Violations, rep.WallSeconds, t.Events, t.Sent, t.Dropped, t.Duplicated, t.LongDelayed, t.Reordered,
-		t.Partitions, t.OneWayCuts, t.Crashes, t.CrashesDuringSave, t.CrashesAfterSave, t.LeadersElected, t.Committed)
+		t.Partitions, t.OneWayCuts, t.Crashes, t.CrashesDuringSave, t.CrashesAfterSave, t.PowerLosses, t.LeadersElected, t.Committed)
+	fmt.Printf("  %d writes acknowledged, %d retries dropped, %d reads served, %d reads refused, %d compactions, %d snapshots installed\n",
+		t.WritesAcked, t.Deduped, t.ReadsServed, t.ReadsRefused, t.Compactions, t.SnapshotsInstalled)
 	for _, c := range rep.ByCheck {
 		fmt.Printf("  %-22s %6d schedules, first at seed %d\n", c.Check, c.Schedules, c.FirstSeed)
 	}
@@ -90,6 +105,9 @@ func main() {
 			fatal(err)
 		}
 		fmt.Println("wrote", *out)
+	}
+	if opts.LSMDir != "" {
+		os.RemoveAll(opts.LSMDir)
 	}
 	if rep.Violations > 0 {
 		os.Exit(1)

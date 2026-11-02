@@ -94,7 +94,7 @@ func TestProfilesProduceTheirFaults(t *testing.T) {
 	for _, p := range Profiles {
 		sum[p] = &Stats{}
 	}
-	for _, r := range RunRange(devSeeds, 7*30, 0, Options{}) {
+	for _, r := range RunRange(devSeeds, len(Profiles)*30, 0, Options{}) {
 		sum[r.Profile].add(r.Stats)
 	}
 	if s := sum["calm"]; s.Dropped+s.Duplicated+s.Crashes+s.Partitions != 0 {
@@ -118,6 +118,13 @@ func TestProfilesProduceTheirFaults(t *testing.T) {
 		{"crash", "restarts", func(s *Stats) int64 { return s.Restarts }},
 		{"figure8", "crashes", func(s *Stats) int64 { return s.Crashes }},
 		{"solo", "crashes during save", func(s *Stats) int64 { return s.CrashesDuringSave }},
+		{"snapshot", "compactions", func(s *Stats) int64 { return s.Compactions }},
+		{"snapshot", "snapshots installed", func(s *Stats) int64 { return s.SnapshotsInstalled }},
+		{"chaos", "power losses", func(s *Stats) int64 { return s.PowerLosses }},
+		{"chaos", "dropped retries", func(s *Stats) int64 { return s.Deduped }},
+		{"calm", "acknowledged writes", func(s *Stats) int64 { return s.WritesAcked }},
+		{"calm", "reads served", func(s *Stats) int64 { return s.ReadsServed }},
+		{"partition", "refused reads", func(s *Stats) int64 { return s.ReadsRefused }},
 	}
 	for _, c := range checks {
 		if c.got(sum[c.profile]) == 0 {
@@ -183,13 +190,8 @@ func TestLeaderCompletenessCheck(t *testing.T) {
 	c := newTestChecker(t)
 	c.sawCommit(1, 1, 4, 100, 4, 2)
 	c.sawCommit(1, 2, 4, 200, 4, 2)
-	full := func(uint64) uint64 { return 4 }
-	missing := func(i uint64) uint64 {
-		if i == 2 {
-			return 0
-		}
-		return 4
-	}
+	full := func(uint64, uint64) bool { return true }
+	missing := func(index, _ uint64) bool { return index != 2 }
 	c.checkLeaderHolds(2, 5, full)
 	c.checkLeaderHolds(2, 3, missing) // an older leader owes nothing
 	if c.violation != nil {
@@ -238,6 +240,89 @@ func TestMonitorsCanBeSwitchedOff(t *testing.T) {
 	wantViolation(t, c, CheckElectionSafety)
 }
 
+// ---- the client model ---------------------------------------------------------
+
+func newTestModel(t *testing.T, tokens ...string) *kvModel {
+	t.Helper()
+	m := newKVModel(newTestChecker(t))
+	for _, token := range tokens {
+		m.issued[token] = true
+	}
+	return m
+}
+
+func wantModelViolation(t *testing.T, m *kvModel, check string) {
+	t.Helper()
+	wantViolation(t, m.check, check)
+}
+
+func TestModelAcceptsACorrectHistory(t *testing.T) {
+	m := newTestModel(t, "a", "b", "c")
+	acked, tokens := m.readStart("k")
+	m.ack("k", "a")
+	m.readDone(1, "k", []byte("a,"), acked, tokens) // overlapped the write, may see it
+	m.ack("k", "b")
+	acked, tokens = m.readStart("k")
+	m.readDone(1, "k", []byte("a,b,c,"), acked, tokens) // c is not acknowledged yet, but it can show up
+	if m.check.violation != nil {
+		t.Fatalf("%+v", m.check.violation)
+	}
+}
+
+func TestModelCatchesADuplicate(t *testing.T) {
+	m := newTestModel(t, "a")
+	m.readDone(1, "k", []byte("a,a,"), 0, 0)
+	wantModelViolation(t, m, CheckExactlyOnce)
+}
+
+func TestModelCatchesAPhantom(t *testing.T) {
+	m := newTestModel(t, "a")
+	m.readDone(1, "k", []byte("z,"), 0, 0)
+	wantModelViolation(t, m, CheckPhantom)
+}
+
+func TestModelCatchesAMissedWrite(t *testing.T) {
+	m := newTestModel(t, "a", "b")
+	m.ack("k", "a")
+	acked, tokens := m.readStart("k")
+	m.readDone(1, "k", nil, acked, tokens)
+	wantModelViolation(t, m, CheckLinearizable)
+}
+
+func TestModelCatchesTimeTravel(t *testing.T) {
+	m := newTestModel(t, "a", "b")
+	m.readDone(1, "k", []byte("a,b,"), 0, 0)
+	acked, tokens := m.readStart("k")
+	m.readDone(1, "k", []byte("a,"), acked, tokens)
+	wantModelViolation(t, m, CheckLinearizable)
+}
+
+func TestModelAllowsOverlappingReadsToDiffer(t *testing.T) {
+	m := newTestModel(t, "a", "b")
+	acked, tokens := m.readStart("k") // both reads start before either finishes
+	m.readDone(1, "k", []byte("a,b,"), acked, tokens)
+	m.readDone(1, "k", []byte("a,"), acked, tokens)
+	if m.check.violation != nil {
+		t.Fatalf("%+v", m.check.violation)
+	}
+}
+
+func TestModelCatchesDisagreeingReads(t *testing.T) {
+	m := newTestModel(t, "a", "b")
+	m.readDone(1, "k", []byte("a,b,"), 0, 0)
+	m.readDone(1, "k", []byte("b,"), 0, 0)
+	wantModelViolation(t, m, CheckLinearizable)
+}
+
+func TestModelCatchesALostWrite(t *testing.T) {
+	m := newTestModel(t, "a", "b")
+	m.ack("k", "a")
+	m.finalRead(1, "k", []byte("b,"))
+	if m.check.violation == nil {
+		t.Fatal("an acknowledged write is missing")
+	}
+}
+
 // ---- crash points -------------------------------------------------------------
 
 // A crash during Save must lose the update, and nothing may leave the node. With
@@ -268,7 +353,7 @@ func TestCrashDuringSaveSendsNothing(t *testing.T) {
 // heartbeats, one send per proposal and one catch-up send per entry, with room
 // to spare, in each direction of each link.
 func TestNoMessageStorm(t *testing.T) {
-	for _, r := range RunRange(devSeeds, 7*30, 0, Options{}) {
+	for _, r := range RunRange(devSeeds, len(Profiles)*30, 0, Options{}) {
 		nodes := NewSchedule(r.Seed).Nodes
 		limit := int64(2000*(nodes-1)) * max(r.Stats.VirtualMs, 1000) / 1000
 		if r.Stats.Sent > limit {

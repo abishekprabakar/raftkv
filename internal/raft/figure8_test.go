@@ -137,12 +137,12 @@ func (s *scripted) restart(id NodeID) {
 // wantDisk checks the terms in a server's durable log.
 func (s *scripted) wantDisk(step string, id NodeID, terms ...uint64) {
 	s.t.Helper()
-	_, entries, err := s.stores[id].Load()
+	d, err := s.stores[id].Load()
 	if err != nil {
 		s.t.Fatal(err)
 	}
-	got := make([]uint64, len(entries))
-	for i, e := range entries {
+	got := make([]uint64, len(d.Entries))
+	for i, e := range d.Entries {
 		got[i] = e.Term
 	}
 	if fmt.Sprint(got) != fmt.Sprint(terms) {

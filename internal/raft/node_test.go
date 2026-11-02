@@ -19,9 +19,14 @@ type recorder struct {
 
 	durableAtSend []HardState // HardState on disk at each Send
 	entriesAtSend []int       // log length on disk at each Send
+
+	position    Snapshot // where the state machine stands
+	restored    []byte
+	readsReady  []uint64
+	readsFailed []uint64
 }
 
-func (r *recorder) Load() (HardState, []Entry, error) { return r.store.Load() }
+func (r *recorder) Load() (Durable, error) { return r.store.Load() }
 
 func (r *recorder) Save(u Update) error {
 	r.events = append(r.events, "save")
@@ -31,15 +36,29 @@ func (r *recorder) Save(u Update) error {
 func (r *recorder) Send(to NodeID, msg Message) {
 	r.events = append(r.events, "send")
 	r.sent = append(r.sent, outgoing{to, msg})
-	hard, entries, _ := r.store.Load()
-	r.durableAtSend = append(r.durableAtSend, hard)
-	r.entriesAtSend = append(r.entriesAtSend, len(entries))
+	d, _ := r.store.Load()
+	r.durableAtSend = append(r.durableAtSend, d.Hard)
+	r.entriesAtSend = append(r.entriesAtSend, len(d.Entries))
 }
 
 func (r *recorder) Apply(e Entry) {
 	r.events = append(r.events, "apply")
 	r.applied = append(r.applied, e)
+	r.position = Snapshot{e.Index, e.Term}
 }
+
+func (r *recorder) Position() (uint64, uint64) { return r.position.Index, r.position.Term }
+
+func (r *recorder) Snapshot() []byte { return []byte(fmt.Sprintf("state@%d", r.position.Index)) }
+
+func (r *recorder) Restore(index, term uint64, data []byte) {
+	r.events = append(r.events, "restore")
+	r.position = Snapshot{index, term}
+	r.restored = data
+}
+
+func (r *recorder) ReadReady(id uint64)  { r.readsReady = append(r.readsReady, id) }
+func (r *recorder) ReadFailed(id uint64) { r.readsFailed = append(r.readsFailed, id) }
 
 func (r *recorder) clear() { r.events, r.sent, r.durableAtSend, r.entriesAtSend = nil, nil, nil, nil }
 
@@ -57,7 +76,7 @@ func sentOf[T Message](r *recorder) []T {
 func newNode(t *testing.T, store *MemStorage, peers ...NodeID) (*Node, *recorder) {
 	t.Helper()
 	r := &recorder{store: store}
-	n, err := NewNode(Config{ID: 1, Peers: peers, ElectionTicks: 10, HeartbeatTicks: 2, Seed: 1, Storage: r, Transport: r, StateMachine: r})
+	n, err := NewNode(Config{ID: 1, Peers: peers, ElectionTicks: 10, HeartbeatTicks: 2, Seed: 1, Storage: r, Transport: r, StateMachine: r, Reads: r})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -137,7 +156,7 @@ func TestElectionTimeoutsAreRandomized(t *testing.T) {
 	seen := map[int]bool{}
 	for seed := uint64(1); seed <= 50; seed++ {
 		r := &recorder{store: NewMemStorage()}
-		n, err := NewNode(Config{ID: 1, Peers: []NodeID{1, 2, 3}, ElectionTicks: 10, Seed: seed, Storage: r, Transport: r, StateMachine: r})
+		n, err := NewNode(Config{ID: 1, Peers: []NodeID{1, 2, 3}, ElectionTicks: 10, Seed: seed, Storage: r, Transport: r, StateMachine: r, Reads: r})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -278,8 +297,8 @@ func TestHigherTermClearsVoteAndStepsDown(t *testing.T) {
 	if st.Role != Follower || st.Term != term+1 || st.VotedFor != None || st.Leader != None {
 		t.Fatalf("after a higher term: %+v", st)
 	}
-	if hard, _, _ := store.Load(); hard.CurrentTerm != term+1 || hard.VotedFor != None {
-		t.Fatalf("new term not persisted: %+v", hard)
+	if d, _ := store.Load(); d.Hard.CurrentTerm != term+1 || d.Hard.VotedFor != None {
+		t.Fatalf("new term not persisted: %+v", d.Hard)
 	}
 }
 
@@ -472,9 +491,9 @@ func TestConflictTruncatesAndReplaces(t *testing.T) {
 	if len(got) != 1 || !got[0].Success || got[0].MatchIndex != 3 {
 		t.Fatalf("got %+v", got)
 	}
-	_, durable, _ := store.Load()
-	if len(durable) != 3 || string(durable[1].Data) != "new2" || string(durable[2].Data) != "new3" {
-		t.Fatalf("durable log %+v", durable)
+	d, _ := store.Load()
+	if len(d.Entries) != 3 || string(d.Entries[1].Data) != "new2" || string(d.Entries[2].Data) != "new3" {
+		t.Fatalf("durable log %+v", d.Entries)
 	}
 	if n.Status().LastLogIndex != 3 {
 		t.Fatalf("log has %d entries", n.Status().LastLogIndex)

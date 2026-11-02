@@ -29,6 +29,10 @@ func (n *Node) broadcastAppend() {
 }
 
 func (n *Node) sendAppend(to NodeID) {
+	if n.nextIndex[to] <= n.log.snapIndex {
+		n.sendSnapshot(to)
+		return
+	}
 	prev := n.nextIndex[to] - 1
 	n.send(to, AppendEntriesArgs{
 		Term:         n.currentTerm,
@@ -37,6 +41,7 @@ func (n *Node) sendAppend(to NodeID) {
 		PrevLogTerm:  n.log.term(prev),
 		Entries:      n.log.slice(prev+1, n.cfg.MaxEntriesPerMessage),
 		LeaderCommit: n.commitIndex,
+		ReadSeq:      n.readSeq,
 	})
 }
 
@@ -45,23 +50,21 @@ func (n *Node) handleAppendEntries(from NodeID, m AppendEntriesArgs) {
 		n.send(from, AppendEntriesReply{Term: n.currentTerm})
 		return
 	}
-	if n.role == Leader {
-		panic(fmt.Sprintf("raft: node %d is leader of term %d and heard from leader %d of the same term", n.id, m.Term, m.LeaderID))
-	}
-	// This message is from the legitimate leader of the current term.
-	n.role = Follower
-	n.leaderID = m.LeaderID
-	n.resetElectionTimer()
+	n.followLeader(m.LeaderID)
 
 	// Consistency check: if the follower holds the entry just before these
-	// ones, Log Matching says everything before that is identical too.
+	// ones, Log Matching says everything before that is identical too. Anything
+	// at or before the snapshot is committed, so it matches by Leader
+	// Completeness and there is nothing to compare it with anyway.
 	if m.PrevLogIndex > n.log.lastIndex() {
-		n.send(from, AppendEntriesReply{Term: n.currentTerm, ConflictIndex: n.log.lastIndex() + 1})
+		n.send(from, AppendEntriesReply{Term: n.currentTerm, ConflictIndex: n.log.lastIndex() + 1, ReadSeq: m.ReadSeq})
 		return
 	}
-	if t := n.log.term(m.PrevLogIndex); t != m.PrevLogTerm {
-		n.send(from, AppendEntriesReply{Term: n.currentTerm, ConflictTerm: t, ConflictIndex: n.log.firstIndexOfTerm(m.PrevLogIndex)})
-		return
+	if m.PrevLogIndex >= n.log.snapIndex {
+		if t := n.log.term(m.PrevLogIndex); t != m.PrevLogTerm {
+			n.send(from, AppendEntriesReply{Term: n.currentTerm, ConflictTerm: t, ConflictIndex: n.log.firstIndexOfTerm(m.PrevLogIndex), ReadSeq: m.ReadSeq})
+			return
+		}
 	}
 
 	// Cut the log only at a real conflict. A delayed copy of an old message may
@@ -69,6 +72,9 @@ func (n *Node) handleAppendEntries(from NodeID, m AppendEntriesArgs) {
 	// end may be committed, so "replace everything after PrevLogIndex" would
 	// lose committed entries.
 	for i, e := range m.Entries {
+		if e.Index <= n.log.snapIndex {
+			continue
+		}
 		if e.Index <= n.log.lastIndex() {
 			if n.log.term(e.Index) == e.Term {
 				continue
@@ -88,7 +94,18 @@ func (n *Node) handleAppendEntries(from NodeID, m AppendEntriesArgs) {
 		// from a newer message, and commitIndex must never go backwards.
 		n.commitIndex = max(n.commitIndex, min(m.LeaderCommit, lastNew))
 	}
-	n.send(from, AppendEntriesReply{Term: n.currentTerm, Success: true, MatchIndex: lastNew})
+	n.send(from, AppendEntriesReply{Term: n.currentTerm, Success: true, MatchIndex: lastNew, ReadSeq: m.ReadSeq})
+}
+
+// followLeader records that a message came from the legitimate leader of the
+// current term. Two leaders in one term can only be a bug.
+func (n *Node) followLeader(leader NodeID) {
+	if n.role == Leader {
+		panic(fmt.Sprintf("raft: node %d is leader of term %d and heard from leader %d of the same term", n.id, n.currentTerm, leader))
+	}
+	n.role = Follower
+	n.leaderID = leader
+	n.resetElectionTimer()
 }
 
 func (n *Node) truncateLog(index uint64) {
@@ -104,6 +121,7 @@ func (n *Node) handleAppendEntriesReply(from NodeID, m AppendEntriesReply) {
 	if n.role != Leader || m.Term != n.currentTerm {
 		return
 	}
+	n.noteAck(from, m.ReadSeq)
 	// Send again only when a reply taught the leader something new. Every reply
 	// that is answered with a send starts a chain that lasts until the follower
 	// catches up, and each heartbeat, proposal and duplicate would start another,

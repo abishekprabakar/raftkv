@@ -65,7 +65,7 @@ func (s *Sim) deliver(e *event) {
 	case s.links.cut[l]:
 		s.stats.DroppedByCut++
 		return
-	case h.node == nil:
+	case h.server == nil:
 		s.stats.DroppedAtDown++
 		return
 	}
@@ -77,11 +77,11 @@ func (s *Sim) deliver(e *event) {
 	s.tracef("deliver %d->%d %s", e.from, h.id, describe(e.msg))
 
 	before := h.status.CommitIndex
-	s.call(h, func() error { return h.node.Receive(e.from, e.msg) })
+	s.call(h, func() error { return h.server.Receive(e.from, e.msg) })
 
 	// Receiver rule 5 of AppendEntries: however a message moves the commit
 	// index, it can't move it past what the message itself verified.
-	if m, ok := e.msg.(raft.AppendEntriesArgs); ok && h.node != nil {
+	if m, ok := e.msg.(raft.AppendEntriesArgs); ok && h.server != nil {
 		lastNew := m.PrevLogIndex + uint64(len(m.Entries))
 		if allowed := max(before, min(m.LeaderCommit, lastNew)); h.status.CommitIndex > allowed {
 			s.check.monitor(CheckCommitBound, h.id, "commit index reached %d, but this message allowed %d", h.status.CommitIndex, allowed)
@@ -132,6 +132,10 @@ func describe(msg raft.Message) string {
 		return fmt.Sprintf("Append term %d prev %d/%d entries %d commit %d", m.Term, m.PrevLogIndex, m.PrevLogTerm, len(m.Entries), m.LeaderCommit)
 	case raft.AppendEntriesReply:
 		return fmt.Sprintf("AppendReply term %d ok %v match %d conflict %d/%d", m.Term, m.Success, m.MatchIndex, m.ConflictIndex, m.ConflictTerm)
+	case raft.InstallSnapshotArgs:
+		return fmt.Sprintf("InstallSnapshot term %d through %d/%d, %d bytes", m.Term, m.LastIncludedIndex, m.LastIncludedTerm, len(m.Data))
+	case raft.InstallSnapshotReply:
+		return fmt.Sprintf("SnapshotReply term %d match %d", m.Term, m.MatchIndex)
 	}
 	return fmt.Sprintf("%T", msg)
 }
