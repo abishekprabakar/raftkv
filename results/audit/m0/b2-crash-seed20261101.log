@@ -1,0 +1,23 @@
+trial   25/500  kill@ 184ms acked=  212 unacked_durable=4 ssts= 8 deepest=L2 replayed=216  pass=25 fail=0
+trial   50/500  kill@ 249ms acked=  252 unacked_durable=4 ssts=10 deepest=L2 replayed=256  pass=50 fail=0
+trial   75/500  kill@  93ms acked=   92 unacked_durable=4 ssts=10 deepest=L2 replayed=96  pass=75 fail=0
+trial  100/500  kill@   9ms acked=    0 unacked_durable=0 ssts= 8 deepest=L2 replayed=0  pass=100 fail=0
+trial  125/500  kill@ 489ms acked=  494 unacked_durable=4 ssts=10 deepest=L2 replayed=156  pass=125 fail=0
+trial  150/500  kill@   3ms acked=    0 unacked_durable=0 ssts= 8 deepest=L2 replayed=0  pass=150 fail=0
+trial  175/500  kill@  83ms acked=   48 unacked_durable=4 ssts=10 deepest=L2 replayed=52  pass=175 fail=0
+trial  200/500  kill@ 362ms acked=  340 unacked_durable=4 ssts= 9 deepest=L2 replayed=344  pass=200 fail=0
+trial  225/500  kill@  41ms acked=   22 unacked_durable=4 ssts= 8 deepest=L2 replayed=26  pass=225 fail=0
+trial  250/500  kill@ 144ms acked=  124 unacked_durable=3 ssts= 8 deepest=L2 replayed=128  pass=250 fail=0
+trial  275/500  kill@  53ms acked=   36 unacked_durable=4 ssts= 9 deepest=L2 replayed=40  pass=275 fail=0
+trial  300/500  kill@ 126ms acked=  108 unacked_durable=4 ssts= 8 deepest=L2 replayed=112  pass=300 fail=0
+trial  325/500  kill@ 143ms acked=  126 unacked_durable=4 ssts= 7 deepest=L2 replayed=130  pass=325 fail=0
+trial  350/500  kill@   7ms acked=    0 unacked_durable=0 ssts= 8 deepest=L2 replayed=0  pass=350 fail=0
+trial  375/500  kill@ 325ms acked=  316 unacked_durable=4 ssts=10 deepest=L2 replayed=320  pass=375 fail=0
+trial  400/500  kill@ 135ms acked=  116 unacked_durable=4 ssts=10 deepest=L2 replayed=120  pass=400 fail=0
+trial  425/500  kill@ 352ms acked=  356 unacked_durable=0 ssts=10 deepest=L2 replayed=356  pass=425 fail=0
+trial  450/500  kill@ 996ms acked=  930 unacked_durable=4 ssts=10 deepest=L2 replayed=224  pass=450 fail=0
+trial  475/500  kill@ 162ms acked=  144 unacked_durable=4 ssts=10 deepest=L2 replayed=148  pass=475 fail=0
+trial  500/500  kill@ 233ms acked=  234 unacked_durable=4 ssts=10 deepest=L2 replayed=238  pass=500 fail=0
+
+500 trials: 500 passed, 0 failed; 154813 acked ops verified, 863465 values validated, 499 trials had data below L0, 49 trials killed before first ack, 0 torn WAL tails truncated (185s)
+wrote $HOME/projects/raftkv/results/audit/m0/b2-crash-seed20261101.json

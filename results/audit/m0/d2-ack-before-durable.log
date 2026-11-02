@@ -1,0 +1,4 @@
+trial 2 FAILED: writer 0: recovered state is not a prefix of the op stream (last ack op 431, 459 keys differ)
+
+2 trials: 1 passed, 1 failed; 1815 acked ops verified, 909 values validated, 0 trials had data below L0, 1 trials killed before first ack, 0 torn WAL tails truncated (0s)
+wrote $HOME/projects/raftkv/results/audit/m0/d2-ack-before-durable.json

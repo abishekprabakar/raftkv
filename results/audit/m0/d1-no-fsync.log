@@ -1,0 +1,7 @@
+trial   25/100  kill@   0ms acked=    0 unacked_durable=0 ssts=11 deepest=L2 replayed=0  pass=25 fail=0
+trial   50/100  kill@ 241ms acked= 3208 unacked_durable=0 ssts=12 deepest=L2 replayed=352  pass=50 fail=0
+trial   75/100  kill@ 928ms acked=13988 unacked_durable=0 ssts= 9 deepest=L2 replayed=1055  pass=75 fail=0
+trial  100/100  kill@ 225ms acked= 3013 unacked_durable=0 ssts=14 deepest=L2 replayed=556  pass=100 fail=0
+
+100 trials: 100 passed, 0 failed; 483888 acked ops verified, 172145 values validated, 99 trials had data below L0, 7 trials killed before first ack, 0 torn WAL tails truncated (42s)
+wrote $HOME/projects/raftkv/results/audit/m0/d1-no-fsync.json

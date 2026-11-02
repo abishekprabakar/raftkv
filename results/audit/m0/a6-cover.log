@@ -1,0 +1,9 @@
+	github.com/abishekprabakar/raftkv/cmd/crashtest		coverage: 0.0% of statements
+	github.com/abishekprabakar/raftkv/cmd/results		coverage: 0.0% of statements
+	github.com/abishekprabakar/raftkv/cmd/storagebench		coverage: 0.0% of statements
+	github.com/abishekprabakar/raftkv/internal/hwinfo		coverage: 0.0% of statements
+ok  	github.com/abishekprabakar/raftkv/internal/storage/engine	5.298s	coverage: 84.2% of statements
+ok  	github.com/abishekprabakar/raftkv/internal/storage/ikey	0.305s	coverage: 87.5% of statements
+ok  	github.com/abishekprabakar/raftkv/internal/storage/memtable	0.463s	coverage: 93.6% of statements
+ok  	github.com/abishekprabakar/raftkv/internal/storage/sstable	0.829s	coverage: 78.2% of statements
+ok  	github.com/abishekprabakar/raftkv/internal/storage/wal	1.788s	coverage: 81.2% of statements

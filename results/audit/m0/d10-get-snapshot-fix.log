@@ -1,0 +1,7 @@
+=== RUN   TestAuditGetSnapshotOrderingInjected
+--- PASS: TestAuditGetSnapshotOrderingInjected (0.03s)
+=== RUN   TestAuditGetStress
+    audit_test.go:104: AUDIT reads=307570031 writes=105840 flushes=1259 not_found=0 stale=0
+--- PASS: TestAuditGetStress (60.12s)
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/storage/engine	60.355s

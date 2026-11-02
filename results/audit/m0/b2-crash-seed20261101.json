@@ -1,0 +1,38 @@
+{
+  "generated_at": "2026-11-02T04:41:41Z",
+  "hardware": {
+    "collected_at": "2026-11-02T04:41:41Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "On macOS, Go's File.Sync issues fcntl(F_FULLFSYNC), which forces the drive to flush its cache; fsync costs here are higher than Linux ext4 fsync on the same hardware."
+  },
+  "config": {
+    "keys_per_writer": 500,
+    "kill_delay_ms": "30% in [0,60), 45% in [60,400), 25% in [400,1500)",
+    "kill_signal": "SIGKILL",
+    "l0_compaction_trigger": 2,
+    "memtable_bytes": 65536,
+    "seed": 20261101,
+    "sync_mode": "group_commit",
+    "trials": 500,
+    "writers": 4
+  },
+  "trials": 500,
+  "passed": 500,
+  "failed": 0,
+  "total_acked_ops": 154813,
+  "total_values_validated": 863465,
+  "trials_killed_before_first_ack": 49,
+  "trials_with_sstables": 500,
+  "trials_with_data_below_l0": 499,
+  "trials_with_truncated_wal_tail": 0,
+  "max_unacked_durable_ops": 4,
+  "total_unacked_durable_ops": 1525,
+  "wall_seconds": 184.691726708
+}

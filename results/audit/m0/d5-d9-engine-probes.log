@@ -1,0 +1,22 @@
+=== RUN   TestAuditGetSnapshotOrderingInjected
+    audit_test.go:38: key has existed the whole time, but Get returned "", engine: key not found
+--- FAIL: TestAuditGetSnapshotOrderingInjected (0.02s)
+=== RUN   TestAuditGetStress
+    audit_test.go:104: AUDIT reads=331762580 writes=103488 flushes=1230 not_found=633 stale=10
+    audit_test.go:106: 633 not-found and 10 stale reads out of 331762580
+--- FAIL: TestAuditGetStress (60.14s)
+=== RUN   TestAuditScanNextAfterEnd
+    audit_test.go:118: second Next on an exhausted iterator panicked: runtime error: index out of range [0] with length 0
+--- FAIL: TestAuditScanNextAfterEnd (0.00s)
+=== RUN   TestAuditOversizeValueNotLostAfterAck
+    audit_test.go:143: Put returned nil, but after reopen Get returned engine: key not found
+--- FAIL: TestAuditOversizeValueNotLostAfterAck (0.08s)
+=== RUN   TestAuditBloomProbeCount
+    audit_test.go:151: docs say k = 7, code built k = 6
+--- FAIL: TestAuditBloomProbeCount (0.00s)
+=== RUN   TestAuditWALMidSegmentCorruptionIsReported
+    audit_test.go:190: Open returned no error with 0 of 100 acknowledged keys left (WALTruncatedBytes=3000)
+--- FAIL: TestAuditWALMidSegmentCorruptionIsReported (0.01s)
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/storage/engine	60.455s
+FAIL
