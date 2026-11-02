@@ -1,0 +1,14 @@
+diff --git a/internal/raft/election.go b/internal/raft/election.go
+index b2a1a8d..ecbc87b 100644
+--- a/internal/raft/election.go
++++ b/internal/raft/election.go
+@@ -48,8 +48,7 @@ func (n *Node) handleRequestVote(from NodeID, m RequestVoteArgs) {
+ 	// currentTerm here. Granting again to the same candidate is harmless and
+ 	// necessary: the first reply may have been lost.
+ 	grant := m.Term == n.currentTerm &&
+-		(n.votedFor == None || n.votedFor == m.CandidateID) &&
+-		n.candidateLogUpToDate(m.LastLogIndex, m.LastLogTerm)
++		(n.votedFor == None || n.votedFor == m.CandidateID)
+ 	if grant {
+ 		if n.votedFor == None {
+ 			n.votedFor = m.CandidateID

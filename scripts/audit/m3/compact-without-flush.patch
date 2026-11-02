@@ -1,0 +1,14 @@
+diff --git a/internal/kv/server.go b/internal/kv/server.go
+index fdc7240..329193a 100644
+--- a/internal/kv/server.go
++++ b/internal/kv/server.go
+@@ -227,9 +227,6 @@ func (s *Server) maybeCompact() error {
+ 		return nil
+ 	}
+ 	index := st.LastApplied - s.cfg.TrailingEntries
+-	if err := s.store.Flush(); err != nil {
+-		return err
+-	}
+ 	if err := s.node.CompactLog(index); err != nil {
+ 		return err
+ 	}

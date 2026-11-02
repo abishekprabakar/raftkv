@@ -1,0 +1,18 @@
+diff --git a/internal/raft/snapshot.go b/internal/raft/snapshot.go
+index 496f2ca..4eabc64 100644
+--- a/internal/raft/snapshot.go
++++ b/internal/raft/snapshot.go
+@@ -105,6 +105,13 @@ func (n *Node) handleInstallSnapshot(from NodeID, m InstallSnapshotArgs) {
+ 	// holds committed data that the log has not caught up with, and
+ 	// adoptStateMachinePosition recovers. The other order could leave a log that
+ 	// says the entries are gone, with a state machine that never received them.
++	if m.LastIncludedIndex > n.log.lastIndex() || n.log.term(m.LastIncludedIndex) != m.LastIncludedTerm {
++		n.log.reset(m.LastIncludedIndex, m.LastIncludedTerm)
++		n.snapshotDirty = true
++	}
++	if err := n.finish(); err != nil {
++		return
++	}
+ 	n.cfg.StateMachine.Restore(m.LastIncludedIndex, m.LastIncludedTerm, m.Data)
+ 	n.lastApplied, n.commitIndex = m.LastIncludedIndex, m.LastIncludedIndex
+ 

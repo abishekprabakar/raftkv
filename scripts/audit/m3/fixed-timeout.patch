@@ -1,0 +1,13 @@
+diff --git a/internal/raft/node.go b/internal/raft/node.go
+index 95ffe41..a9710ca 100644
+--- a/internal/raft/node.go
++++ b/internal/raft/node.go
+@@ -174,7 +174,7 @@ func (n *Node) quorum() int { return (len(n.peers)+1)/2 + 1 }
+ 
+ func (n *Node) resetElectionTimer() {
+ 	n.electionElapsed = 0
+-	n.electionTimeout = n.cfg.ElectionTicks + n.rnd.IntN(n.cfg.ElectionTicks)
++	n.electionTimeout = n.cfg.ElectionTicks
+ }
+ 
+ // ---- inputs ----------------------------------------------------------------

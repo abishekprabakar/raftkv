@@ -1,0 +1,15 @@
+diff --git a/internal/raft/snapshot.go b/internal/raft/snapshot.go
+index 496f2ca..b703984 100644
+--- a/internal/raft/snapshot.go
++++ b/internal/raft/snapshot.go
+@@ -96,10 +96,6 @@ func (n *Node) handleInstallSnapshot(from NodeID, m InstallSnapshotArgs) {
+ 	// A delayed or repeated snapshot must not move the state machine backwards.
+ 	// Everything through commitIndex already matches the leader, so this node can
+ 	// say so without doing anything.
+-	if m.LastIncludedIndex <= n.commitIndex {
+-		n.send(from, InstallSnapshotReply{Term: n.currentTerm, MatchIndex: m.LastIncludedIndex, ReadSeq: m.ReadSeq})
+-		return
+-	}
+ 
+ 	// Restore before saving. If the crash comes between them, the state machine
+ 	// holds committed data that the log has not caught up with, and

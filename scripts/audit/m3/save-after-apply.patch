@@ -1,0 +1,12 @@
+diff --git a/internal/raft/node.go b/internal/raft/node.go
+index 8defd8a..920e9ad 100644
+--- a/internal/raft/node.go
++++ b/internal/raft/node.go
+@@ -289,6 +289,7 @@ func (n *Node) Propose(data []byte) (index, term uint64, err error) {
+ // Save fails the node's memory is ahead of its disk and nothing it says can be
+ // trusted, so it stops permanently.
+ func (n *Node) finish() error {
++	n.applyCommitted()
+ 	u := n.pendingUpdate()
+ 	if !u.empty() {
+ 		if err := n.cfg.Storage.Save(u); err != nil {

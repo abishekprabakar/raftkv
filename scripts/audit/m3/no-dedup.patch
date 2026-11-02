@@ -1,0 +1,13 @@
+diff --git a/internal/kv/store.go b/internal/kv/store.go
+index 6a36a50..5d70c3f 100644
+--- a/internal/kv/store.go
++++ b/internal/kv/store.go
+@@ -87,7 +87,7 @@ func (s *Store) Apply(e raft.Entry) (cmd Command, duplicate bool) {
+ 		if cmd, err = decodeCommand(e.Data); err != nil {
+ 			panic(fmt.Sprintf("kv: committed entry %d: %v", e.Index, err))
+ 		}
+-		if cmd.Seq <= s.sessions[cmd.ClientID] {
++		if false {
+ 			duplicate = true
+ 		} else {
+ 			batch = append(batch, s.dataWrite(cmd), Write{Key: sessionKey(cmd.ClientID), Value: binary.BigEndian.AppendUint64(nil, cmd.Seq)})

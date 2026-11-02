@@ -1,0 +1,13 @@
+diff --git a/internal/raft/replication.go b/internal/raft/replication.go
+index d656177..1b393ef 100644
+--- a/internal/raft/replication.go
++++ b/internal/raft/replication.go
+@@ -92,7 +92,7 @@ func (n *Node) handleAppendEntries(from NodeID, m AppendEntriesArgs) {
+ 		// Figure 2 says min(leaderCommit, lastNew). The max is needed because
+ 		// with messages reordered, lastNew can be below a commit index learned
+ 		// from a newer message, and commitIndex must never go backwards.
+-		n.commitIndex = max(n.commitIndex, min(m.LeaderCommit, lastNew))
++		n.commitIndex = max(n.commitIndex, min(m.LeaderCommit, n.log.lastIndex()))
+ 	}
+ 	n.send(from, AppendEntriesReply{Term: n.currentTerm, Success: true, MatchIndex: lastNew, ReadSeq: m.ReadSeq})
+ }

@@ -1,0 +1,13 @@
+diff --git a/internal/kv/store.go b/internal/kv/store.go
+index 6a36a50..668bb71 100644
+--- a/internal/kv/store.go
++++ b/internal/kv/store.go
+@@ -181,7 +181,7 @@ func (s *Store) Restore(index, term uint64, data []byte) {
+ 	if err != nil {
+ 		panic(fmt.Sprintf("kv: restoring snapshot at %d: %v", index, err))
+ 	}
+-	if err := s.backend.Replace(append(contents, positionWrite(index, term))); err != nil {
++	if err := s.backend.Replace(contents); err != nil {
+ 		panic(fmt.Sprintf("kv: restoring snapshot at %d: %v", index, err))
+ 	}
+ 	if err := s.load(); err != nil {

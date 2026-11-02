@@ -1,0 +1,13 @@
+diff --git a/internal/kv/store.go b/internal/kv/store.go
+index 6a36a50..0c0d2ba 100644
+--- a/internal/kv/store.go
++++ b/internal/kv/store.go
+@@ -132,7 +132,7 @@ func (s *Store) Flush() error { return s.backend.Flush() }
+ func (s *Store) Snapshot() []byte {
+ 	var buf []byte
+ 	err := s.backend.Scan(nil, nil, func(key, value []byte) error {
+-		if string(key) == string(positionKey) {
++		if string(key) == string(positionKey) || key[0] == prefixSession {
+ 			return nil
+ 		}
+ 		buf = binary.AppendUvarint(buf, uint64(len(key)))

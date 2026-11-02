@@ -1,0 +1,13 @@
+diff --git a/internal/raft/snapshot.go b/internal/raft/snapshot.go
+index 496f2ca..f9b45a2 100644
+--- a/internal/raft/snapshot.go
++++ b/internal/raft/snapshot.go
+@@ -111,7 +111,7 @@ func (n *Node) handleInstallSnapshot(from NodeID, m InstallSnapshotArgs) {
+ 	// Figure 13 step 6: if the log already holds the last included entry, what
+ 	// follows it is still good and nothing on disk has to change. Step 7: otherwise
+ 	// the log disagrees with committed data, so all of it goes.
+-	if m.LastIncludedIndex > n.log.lastIndex() || n.log.term(m.LastIncludedIndex) != m.LastIncludedTerm {
++	if m.LastIncludedIndex > n.log.lastIndex() {
+ 		n.log.reset(m.LastIncludedIndex, m.LastIncludedTerm)
+ 		n.snapshotDirty = true
+ 	}

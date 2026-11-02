@@ -1,0 +1,13 @@
+diff --git a/internal/raft/read.go b/internal/raft/read.go
+index 021e7bb..db7cfc2 100644
+--- a/internal/raft/read.go
++++ b/internal/raft/read.go
+@@ -66,7 +66,7 @@ func (n *Node) confirmedSeq() uint64 {
+ 		acks = append(acks, n.ackedSeq[p])
+ 	}
+ 	slices.Sort(acks)
+-	return acks[len(acks)-n.quorum()]
++	return n.readSeq
+ }
+ 
+ // deliverReads releases reads in arrival order, after the apply in finish. The

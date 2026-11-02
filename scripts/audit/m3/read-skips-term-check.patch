@@ -1,0 +1,14 @@
+diff --git a/internal/raft/read.go b/internal/raft/read.go
+index 021e7bb..03c3fb3 100644
+--- a/internal/raft/read.go
++++ b/internal/raft/read.go
+@@ -41,9 +41,6 @@ func (n *Node) ReadIndex(id uint64) error {
+ 	if n.role != Leader {
+ 		return ErrNotLeader
+ 	}
+-	if n.log.term(n.commitIndex) != n.currentTerm {
+-		return ErrNotReady
+-	}
+ 	n.readSeq++
+ 	n.reads = append(n.reads, pendingRead{id: id, index: n.commitIndex, seq: n.readSeq, tick: n.ticks})
+ 	n.broadcastAppend()

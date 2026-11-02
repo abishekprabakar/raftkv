@@ -1,0 +1,13 @@
+diff --git a/internal/raft/node.go b/internal/raft/node.go
+index 8defd8a..46b0d83 100644
+--- a/internal/raft/node.go
++++ b/internal/raft/node.go
+@@ -312,7 +312,7 @@ func (n *Node) finish() error {
+ // pendingUpdate gathers what this call changed. A snapshot update stands for the
+ // whole durable state, so it carries the hard state and every entry after it.
+ func (n *Node) pendingUpdate() Update {
+-	hard := &HardState{CurrentTerm: n.currentTerm, VotedFor: n.votedFor}
++	hard := &HardState{CurrentTerm: n.currentTerm}
+ 	if n.snapshotDirty {
+ 		return Update{HardState: hard, Snapshot: &Snapshot{n.log.snapIndex, n.log.snapTerm}, Entries: n.log.tail()}
+ 	}

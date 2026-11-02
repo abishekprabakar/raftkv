@@ -1,0 +1,13 @@
+diff --git a/internal/raft/replication.go b/internal/raft/replication.go
+index 085c887..5cdfdc3 100644
+--- a/internal/raft/replication.go
++++ b/internal/raft/replication.go
+@@ -147,7 +147,7 @@ func (n *Node) advanceCommit() {
+ 	}
+ 	slices.Sort(match)
+ 	index := match[len(match)-n.quorum()]
+-	if index > n.commitIndex && n.log.term(index) == n.currentTerm {
++	if index > n.commitIndex {
+ 		n.commitIndex = index
+ 	}
+ }
