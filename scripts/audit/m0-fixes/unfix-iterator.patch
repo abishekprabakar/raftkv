@@ -1,0 +1,29 @@
+diff --git a/internal/storage/engine/iterator.go b/internal/storage/engine/iterator.go
+index c44839f..fb8d055 100644
+--- a/internal/storage/engine/iterator.go
++++ b/internal/storage/engine/iterator.go
+@@ -261,7 +261,7 @@ func (db *DB) Scan(start, end []byte) *Iterator {
+ // Next advances to the next live key. It returns false at the end or on
+ // error.
+ func (it *Iterator) Next() bool {
+-	if it.err != nil || it.merge == nil || it.done {
++	if it.err != nil || it.merge == nil {
+ 		return false
+ 	}
+ 	if it.started {
+@@ -280,7 +280,6 @@ func (it *Iterator) Next() bool {
+ 			it.lastKey = append(it.lastKey[:0], user...)
+ 			if it.end != nil && bytes.Compare(user, it.end) >= 0 {
+ 				it.valid = false
+-				it.done = true
+ 				return false
+ 			}
+ 			if kind == ikey.KindValue {
+@@ -294,7 +293,6 @@ func (it *Iterator) Next() bool {
+ 	}
+ 	it.err = it.merge.Err()
+ 	it.valid = false
+-	it.done = true
+ 	return false
+ }
+ 

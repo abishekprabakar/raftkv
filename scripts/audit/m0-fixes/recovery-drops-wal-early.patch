@@ -1,0 +1,16 @@
+diff --git a/internal/storage/engine/db.go b/internal/storage/engine/db.go
+index d2d9d75..e41f049 100644
+--- a/internal/storage/engine/db.go
++++ b/internal/storage/engine/db.go
+@@ -236,6 +236,11 @@ func (db *DB) recover() error {
+ 	// Flush recovered data right away so the old segments can go and the
+ 	// next recovery starts from the tables.
+ 	if db.mem.Count() > 0 {
++		for _, s := range oldSegs { // AUDIT MUTANT: the data is not in a table yet
++			if err := db.wal.Remove(s); err != nil {
++				return err
++			}
++		}
+ 		db.imm = append(db.imm, &immTable{table: db.mem, maxSeq: maxSeq, segs: oldSegs})
+ 		db.mem = memtable.New()
+ 		if err := db.flushOne(); err != nil {

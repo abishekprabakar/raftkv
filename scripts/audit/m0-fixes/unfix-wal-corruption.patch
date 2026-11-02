@@ -1,0 +1,18 @@
+diff --git a/internal/storage/wal/wal.go b/internal/storage/wal/wal.go
+index f7c546c..7f6dc0b 100644
+--- a/internal/storage/wal/wal.go
++++ b/internal/storage/wal/wal.go
+@@ -224,13 +224,6 @@ func (l *Log) replaySegment(seg uint64, last bool, fn func(uint64, []byte) error
+ 			if !last {
+ 				return fmt.Errorf("%w: segment %d offset %d: %v", ErrCorrupt, seg, off, err)
+ 			}
+-			after, aerr := validRecordAfter(path, off)
+-			if aerr != nil {
+-				return aerr
+-			}
+-			if after {
+-				return fmt.Errorf("%w: segment %d offset %d: %v, and valid records follow it", ErrCorrupt, seg, off, err)
+-			}
+ 			l.stats.TruncatedBytes.Add(size - off)
+ 			f.Close()
+ 			return truncateDurably(path, off)

@@ -1,0 +1,13 @@
+diff --git a/internal/storage/wal/wal.go b/internal/storage/wal/wal.go
+index f7c546c..80b60ae 100644
+--- a/internal/storage/wal/wal.go
++++ b/internal/storage/wal/wal.go
+@@ -233,7 +233,7 @@ func (l *Log) replaySegment(seg uint64, last bool, fn func(uint64, []byte) error
+ 			}
+ 			l.stats.TruncatedBytes.Add(size - off)
+ 			f.Close()
+-			return truncateDurably(path, off)
++			return nil // AUDIT MUTANT: leave the torn tail in place
+ 		}
+ 		if err := fn(seg, payload); err != nil {
+ 			return err

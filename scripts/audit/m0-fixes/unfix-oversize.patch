@@ -1,0 +1,32 @@
+diff --git a/internal/storage/engine/db.go b/internal/storage/engine/db.go
+index d2d9d75..70a1f02 100644
+--- a/internal/storage/engine/db.go
++++ b/internal/storage/engine/db.go
+@@ -297,11 +297,6 @@ func (db *DB) Delete(key []byte) error {
+ }
+ 
+ func (db *DB) write(kind ikey.Kind, key, value []byte) error {
+-	// Reject this before it gets a sequence number. Recovery cannot replay a
+-	// record above the WAL's limit, so acknowledging one would lose it later.
+-	if recordHeader+len(key)+len(value) > wal.MaxRecordBytes {
+-		return ErrTooLarge
+-	}
+ 	db.writeMu.Lock()
+ 	if db.closing.Load() {
+ 		db.writeMu.Unlock()
+diff --git a/internal/storage/wal/wal.go b/internal/storage/wal/wal.go
+index f7c546c..dae12b9 100644
+--- a/internal/storage/wal/wal.go
++++ b/internal/storage/wal/wal.go
+@@ -389,11 +389,6 @@ func (l *Log) CurrentSegment() uint64 {
+ // order.
+ func (l *Log) Append(payload []byte) *Future {
+ 	fut := &Future{done: make(chan struct{})}
+-	if len(payload) > MaxRecordBytes {
+-		fut.err = ErrTooLarge
+-		close(fut.done)
+-		return fut
+-	}
+ 	l.mu.Lock()
+ 	if l.closed || l.err != nil {
+ 		err := l.err
