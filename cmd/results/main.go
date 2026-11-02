@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"strings"
@@ -208,6 +209,11 @@ func storageSection(w *strings.Builder, d doc, full bool) {
 	})
 }
 
+// roughly rounds down to a figure that holds across runs. The acknowledged-write
+// count depends on OS scheduling, so the README must not present one run's exact
+// count as a property of the system. RESULTS.md keeps the exact record.
+func roughly(v float64) string { return commas(math.Floor(v/10000) * 10000) }
+
 func crashSection(w *strings.Builder, d doc, full bool) {
 	w.WriteString("## Crash recovery harness (`make crash-test` -> `results/crash.json`)\n\n")
 	if full {
@@ -218,10 +224,14 @@ func crashSection(w *strings.Builder, d doc, full bool) {
 			d.str("config.torn_tail_chance"), d.str("config.recovery_kills_per_trial"), d.str("config.recovery_kill_delay_ms"), d.str("config.seed")))
 		w.WriteString("SIGKILL leaves the OS page cache intact, so this harness cannot detect a missing fsync and says nothing about power loss.\n\n")
 	}
+	ackedWrites := commas(d.num("total_acked_ops"))
+	if !full {
+		ackedWrites = "more than " + roughly(d.num("total_acked_ops")) + " per run; the exact count varies with OS scheduling"
+	}
 	table(w, []string{"Metric", "Value", "JSON field"}, [][]string{
 		{"Trials (SIGKILL at a random point)", commas(d.num("trials")), "trials"},
 		{"Passed / failed", commas(d.num("passed")) + " / " + commas(d.num("failed")), "passed, failed"},
-		{"Acknowledged writes checked against the recovered state", commas(d.num("total_acked_ops")), "total_acked_ops"},
+		{"Acknowledged writes checked against the recovered state", ackedWrites, "total_acked_ops"},
 		{"Stored values checksum-validated", commas(d.num("total_values_validated")), "total_values_validated"},
 		{"Trials with data already compacted below L0 at the kill", commas(d.num("trials_with_data_below_l0")), "trials_with_data_below_l0"},
 		{"Trials killed before the first ack", commas(d.num("trials_killed_before_first_ack")), "trials_killed_before_first_ack"},

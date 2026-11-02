@@ -76,6 +76,9 @@ is decided by these rules, fixed now:
   OS scheduler, so it cannot repeat exactly. It stays a true record of the
   2026-10-19 run, and the number to quote from now on is the H1 count.
 
+Superseded on 2026-11-02: no exact count is quoted any more, because it varies by
+run. The README and `LEARNING.md` say more than 150,000 per run.
+
 ## Left alone
 
 The bloom benchmark shares one `rand.Rand` across goroutines, and `db.mu` is

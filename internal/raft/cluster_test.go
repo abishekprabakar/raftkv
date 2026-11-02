@@ -24,6 +24,8 @@ type cluster struct {
 	isolated map[NodeID]bool
 	restarts uint64
 
+	maxEntries int // MaxEntriesPerMessage for every node; 0 means the default
+
 	// Facts every node must agree on, recorded as they are first observed.
 	leaderOfTerm map[uint64]NodeID
 	entryAt      map[uint64]Entry
@@ -74,8 +76,13 @@ func (m *checkedMachine) commands() []string {
 
 func newCluster(t *testing.T, seed uint64, size int, open func(NodeID) Storage) *cluster {
 	t.Helper()
+	return buildCluster(t, seed, size, 0, open)
+}
+
+func buildCluster(t *testing.T, seed uint64, size, maxEntries int, open func(NodeID) Storage) *cluster {
+	t.Helper()
 	c := &cluster{
-		t: t, seed: seed, rnd: rand.New(rand.NewPCG(seed, 0xC1)),
+		t: t, seed: seed, rnd: rand.New(rand.NewPCG(seed, 0xC1)), maxEntries: maxEntries,
 		nodes: map[NodeID]*Node{}, stores: map[NodeID]Storage{}, machines: map[NodeID]*checkedMachine{},
 		isolated: map[NodeID]bool{}, leaderOfTerm: map[uint64]NodeID{}, entryAt: map[uint64]Entry{},
 	}
@@ -101,7 +108,7 @@ func (c *cluster) start(id NodeID) {
 	c.restarts++
 	c.machines[id] = &checkedMachine{c: c, id: id}
 	n, err := NewNode(Config{
-		ID: id, Peers: c.ids, Seed: c.seed*1000 + c.restarts,
+		ID: id, Peers: c.ids, Seed: c.seed*1000 + c.restarts, MaxEntriesPerMessage: c.maxEntries,
 		Storage: c.stores[id], Transport: clusterTransport{c, id}, StateMachine: c.machines[id],
 	})
 	if err != nil {

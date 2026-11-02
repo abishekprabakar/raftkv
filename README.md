@@ -131,7 +131,7 @@ Bloom filters cut disk block reads for missing keys by 116.3x (`bloom.disk_read_
 |---|---|---|
 | Trials (SIGKILL at a random point) | 500 | trials |
 | Passed / failed | 500 / 0 | passed, failed |
-| Acknowledged writes checked against the recovered state | 155,462 | total_acked_ops |
+| Acknowledged writes checked against the recovered state | more than 150,000 per run; the exact count varies with OS scheduling | total_acked_ops |
 | Stored values checksum-validated | 864,802 | total_values_validated |
 | Trials with data already compacted below L0 at the kill | 499 | trials_with_data_below_l0 |
 | Trials killed before the first ack | 49 | trials_killed_before_first_ack |
