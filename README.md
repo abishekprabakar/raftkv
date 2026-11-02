@@ -4,9 +4,10 @@ A replicated key-value store written from scratch in Go: a log-structured
 merge-tree storage engine on every node, replicated with Raft, deployed on
 AWS. No external storage engine or consensus library is used.
 
-Status: **the storage engine, Raft and the replicated KV store are built and
-connected, but only in tests and a deterministic simulator.** Nothing runs on a
-real network yet. gRPC, a CLI client and an AWS deployment are still to come.
+Status: **the storage engine, Raft and the replicated KV store run as a real
+cluster over gRPC**, locally on Docker Compose, with a CLI client that follows leader
+redirects. Linearizability checking of real runs, benchmarks of the cluster and an
+AWS deployment are still to come.
 
 ## Architecture
 
@@ -41,6 +42,9 @@ Failure modes, alternatives, and questions with answers: [docs/NOTES.md](docs/NO
 
 | Path | What |
 |---|---|
+| `internal/server` | one node as a process: the single-goroutine loop, gRPC services, a stream per peer |
+| `internal/client` | client library: follows leader redirects, retries writes under the same session |
+| `internal/pb` | the wire format, `raftkv.proto`, and the code generated from it |
 | `internal/kv` | replicated store: sessions for exactly-once writes, ReadIndex reads, snapshots |
 | `internal/raft` | Raft from Figure 2: election, replication, commit, durable state, snapshots, ReadIndex |
 | `internal/raft/sim` | deterministic simulator: faults, crash points, clients and safety checks, all from one seed |
@@ -49,6 +53,8 @@ Failure modes, alternatives, and questions with answers: [docs/NOTES.md](docs/NO
 | `internal/storage/sstable` | immutable tables: 4 KiB checksummed blocks, sparse index, bloom filter, properties |
 | `internal/storage/engine` | the DB: write/read paths, flush, leveled compaction, manifest, recovery, iterators |
 | `internal/storage/ikey` | internal key encoding (user key, sequence, kind) |
+| `cmd/raftkvd` | the node process |
+| `cmd/raftkv` | the command-line client |
 | `cmd/storagebench` | benchmarks -> `results/storage.json` |
 | `cmd/crashtest` | SIGKILL crash-recovery harness -> `results/crash.json` |
 | `cmd/raftsim` | seeded simulation schedules -> `results/sim.json` |
@@ -66,7 +72,19 @@ make sim             # 10,000 simulated Raft schedules, writes results/sim.json
 make results         # regenerate results/RESULTS.md and the table below
 ```
 
-Requirements: Go 1.27 or newer.
+A 3-node cluster on Docker Compose:
+
+```sh
+docker compose up -d --build --wait               # start three nodes
+docker compose run --rm cli put greeting hello    # the CLI runs inside the Compose network
+docker compose run --rm cli --addr node2:7000 -v get greeting   # any node; -v shows the redirect
+docker compose run --rm cli status                # each node's view: role, term, leader, indexes
+docker compose kill node1                         # kill a node; if it led, writes move to a new leader
+docker compose down -v                            # stop and delete the data
+```
+
+Requirements: Go 1.27 or newer. Docker for the cluster. `make proto` needs `protoc`;
+the generated code is committed, so building doesn't.
 
 ## Results
 

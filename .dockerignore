@@ -1,0 +1,8 @@
+# Only go.mod, go.sum, cmd/ and internal/ are copied into the build.
+.git
+results
+docs
+scripts
+bin
+tmp
+*.md

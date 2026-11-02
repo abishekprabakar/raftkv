@@ -328,7 +328,7 @@ fsyncs.
 
 ### Not implemented yet
 
-The real network (M4). Membership changes. Figure 13's chunked snapshots: a snapshot
+Membership changes. Figure 13's chunked snapshots: a snapshot
 travels as one message and is built in memory. Pre-vote and check-quorum, which are
 not in Figure 2: a node returning from a partition with a high term forces an
 election, and a partitioned leader keeps believing it leads until it hears a higher
@@ -387,6 +387,61 @@ of the log, and startup finishes the job. In the other order, the log would clai
 entries the state machine never received. `Replace` builds a new engine generation
 beside the old one and switches with an atomic rename, so a crash leaves one or the
 other.
+
+## Network and processes
+
+`internal/server` runs one node as a real process, `cmd/raftkvd`. `internal/client`
+and `cmd/raftkv` are the client side. The wire format is `internal/pb/raftkv.proto`.
+
+```
+            peers' streams              clients (gRPC)
+                 │                            │
+      Raft.Stream handler           KV.Write / Get / Status handlers
+                 │ inbox (buffered)           │ calls (unbuffered)
+                 └──────────────┬─────────────┘
+                                ▼
+   ticker ──► the loop: one goroutine, one select, one input at a time
+                                │  kv.Server ─► raft.Node ─► FileStorage (fsync)
+                                │                         └► Store ─► LSM
+                                ▼ raft.Transport.Send (never blocks)
+                 one queue + one goroutine + one stream per peer
+```
+
+**One goroutine owns the core.** `raft.Node` and `kv.Server` are not thread-safe on
+purpose: that is what makes the simulator deterministic. The server keeps them that
+way. gRPC handlers never call them; they hand a closure to the loop and wait for the
+callback's answer on a buffered channel, so the loop never waits on a handler. The
+code that runs in production is the code the simulator tested, with no locks added.
+
+**Sending never blocks the loop.** `Send` drops the message into the peer's queue,
+or drops it outright if the queue is full. Each peer has its own goroutine and one
+long-lived client stream. A dead peer fills its queue and costs nothing else. Raft
+already survives lost messages, so dropping is safe, and it bounds memory.
+
+**Replies are messages.** The `Raft` service has a single client-streaming method.
+Requests and replies are both one-way `Envelope`s, and a reply travels on the
+replier's own stream. That matches `internal/raft`, which never pairs a reply with a
+request.
+
+**Redirects in the response body.** A node that isn't the leader answers `Write` and
+`Get` with `NotLeader{leader_id, leader_address}`, where the address comes from the
+fixed membership list. The client goes there at once. If nobody knows the leader, or
+a node can't be reached, it moves on to the next address it knows, pausing 20 ms and
+doubling up to 500 ms. Errors that mean "the outcome is unknown" are gRPC
+`Unavailable` or `DeadlineExceeded`, and the client retries the write under the same
+`(client_id, seq)`; the session table makes that safe. `InvalidArgument` is never
+retried.
+
+**Timeouts that matter on a real network.** gRPC's default reconnect backoff grows
+to two minutes, which would keep a restarted node cut off, so it is capped at one
+second. A node killed outright never closes its TCP connections, so peers send
+keepalive pings every 2 s and the server allows them. One message can be up to 256
+MiB, because a snapshot travels whole.
+
+**Docker Compose.** `compose.yaml` runs three nodes from one distroless image, each
+with a named volume for its files. The CLI runs inside the Compose network
+(`docker compose run --rm cli ...`), because the addresses in redirects are Compose
+service names, which don't resolve on the host.
 
 ## Tradeoffs
 

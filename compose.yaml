@@ -1,0 +1,55 @@
+# A 3-node raftkv cluster. Start it with one command:
+#
+#   docker compose up -d --build --wait
+#
+# and talk to it with the CLI from inside the Compose network, where the node
+# names resolve:
+#
+#   docker compose run --rm cli put greeting hello
+#   docker compose run --rm cli --addr node2:7000 -v get greeting
+#   docker compose run --rm cli status
+#
+# `docker compose down -v` stops it and deletes the data.
+name: raftkv
+
+x-node: &node
+  build: .
+  image: raftkv:dev
+  healthcheck:
+    # Healthy means the node answers; it says nothing about a leader.
+    test: ["CMD", "/usr/local/bin/raftkv", "--addr", "localhost:7000", "--timeout", "2s", "status"]
+    interval: 2s
+    timeout: 3s
+    retries: 15
+    start_period: 2s
+
+# Every node gets the same --peers list: the membership is fixed.
+services:
+  node1:
+    <<: *node
+    hostname: node1
+    command: ["--id=1", "--peers=1=node1:7000,2=node2:7000,3=node3:7000", "--data=/data"]
+    volumes: ["node1-data:/data"]
+  node2:
+    <<: *node
+    hostname: node2
+    command: ["--id=2", "--peers=1=node1:7000,2=node2:7000,3=node3:7000", "--data=/data"]
+    volumes: ["node2-data:/data"]
+  node3:
+    <<: *node
+    hostname: node3
+    command: ["--id=3", "--peers=1=node1:7000,2=node2:7000,3=node3:7000", "--data=/data"]
+    volumes: ["node3-data:/data"]
+
+  # The CLI, for `docker compose run`. The tools profile keeps `up` from starting it.
+  cli:
+    image: raftkv:dev
+    profiles: ["tools"]
+    entrypoint: ["/usr/local/bin/raftkv"]
+    environment:
+      RAFTKV_ADDR: node1:7000,node2:7000,node3:7000
+
+volumes:
+  node1-data:
+  node2-data:
+  node3-data:

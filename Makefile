@@ -1,6 +1,6 @@
 GO ?= go
 
-.PHONY: all build test vet race fmt bench-storage bench-storage-quick crash-test crash-test-quick sim results clean
+.PHONY: all build test vet race fmt proto cluster-up cluster-down bench-storage bench-storage-quick crash-test crash-test-quick sim results clean
 
 all: vet test
 
@@ -18,6 +18,23 @@ race:
 
 fmt:
 	gofmt -l -w ./cmd ./internal
+
+# Regenerate the gRPC code from internal/pb/raftkv.proto. Needs protoc on PATH; the
+# two Go plugins are pinned in go.mod and built by `go tool`.
+proto:
+	protoc --plugin=protoc-gen-go=$$($(GO) tool -n protoc-gen-go) \
+		--plugin=protoc-gen-go-grpc=$$($(GO) tool -n protoc-gen-go-grpc) \
+		--go_out=. --go_opt=paths=source_relative \
+		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+		internal/pb/raftkv.proto
+
+# A 3-node cluster on Docker Compose. Use the CLI from inside the Compose network:
+#   docker compose run --rm cli put k v
+cluster-up:
+	docker compose up -d --build --wait
+
+cluster-down:
+	docker compose down -v
 
 # Storage engine benchmarks -> results/storage.json
 bench-storage:
