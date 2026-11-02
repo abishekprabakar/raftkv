@@ -1,0 +1,4 @@
+sr1 exit=0 passed=100 failed=0
+sr2 exit=1 passed=0 failed=100 runs_serving_old_after_new_was_acknowledged=100
+sr3 exit=0 gofmt: []
+record exit=1 passed=0 failed=100

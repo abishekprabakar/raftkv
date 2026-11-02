@@ -25,7 +25,8 @@ three nodes: A leads and holds k=old. A gets cut off. B and C elect B, and B com
 k=new and tells the client. Nobody told A, so A still calls itself leader. If the
 client now reads from A, it gets k=old, a value older than one it has already seen
 acknowledged. `TestPlainLeaderReadIsStale` builds exactly this and shows the stale
-value.
+value. `TestPartitionedLeaderRefusesStaleRead` then plays the same story on five
+nodes, one message at a time, and checks the cut-off leader refuses the read.
 
 **ReadIndex.** When a read arrives, the leader notes its commit index, then checks
 that a majority still answers to it, using messages sent after the read arrived. A
@@ -128,6 +129,21 @@ snapshot, so those entries were gone, and it would not start. That is the node
 detecting the damage, and failing loudly is the right behavior. `plain-leader-read`
 failed only 16 times, because it needs a cut-off leader, a write on the other side
 and a read that lands on the stale node, all at once.
+
+So, as with Figure 8, a scripted test now builds that case by hand
+(`docs/acceptance/stale-read.md`). In `TestPartitionedLeaderRefusesStaleRead`, five
+nodes split into {S1, S2} and {S3, S4, S5}. S3 commits `k=new` while S1 still
+believes it leads and still stores `old`. A read through S1 gets an answer from S2
+only, which is 2 of 5, so it must be refused. The test passed 100 of 100 runs on
+correct code and failed 100 of 100 with the bug, every failure being S1 returning
+`old` after `new` was acknowledged (`results/audit/stale-read/`). Five nodes rather
+than three, so the stale leader still hears from one follower: the check has to
+count a majority, not just "someone answered".
+
+One thing that run turned up about M3 itself: the older scripted test,
+`TestReadIndexRefusesDeposedLeader`, also fails 100 of 100 with this bug. M3 ran the
+patch only against the simulator, so I never measured that. The bug was always
+caught by a deterministic test; I just hadn't checked.
 
 ### What this does not show
 

@@ -369,7 +369,9 @@ expire, so the table grows with the number of clients ever seen.
 
 **Linearizable reads.** A leader can't trust its own belief that it leads: a newer
 leader may exist behind a partition. See `internal/raft/read.go` for the ReadIndex
-steps, and `TestPlainLeaderReadIsStale` for the failure it prevents. Reads go through
+steps, `TestPlainLeaderReadIsStale` for the failure it prevents, and
+`TestPartitionedLeaderRefusesStaleRead` for a cut-off leader refusing the read, step
+by step on five nodes. Reads go through
 the leader and cost one round of messages, but no fsync.
 
 **Snapshots.** The store's durable contents are the snapshot, so Raft stores only a

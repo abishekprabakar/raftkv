@@ -1,0 +1,303 @@
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+=== RUN   TestPartitionedLeaderRefusesStaleRead
+    staleread_test.go:183: step (c): S1 served k = "old" after k = "new" was acknowledged in term 2
+--- FAIL: TestPartitionedLeaderRefusesStaleRead (0.00s)
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/kv	0.167s
+FAIL

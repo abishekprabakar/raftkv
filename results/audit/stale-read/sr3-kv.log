@@ -1,0 +1,3 @@
+gofmt: []
+vet ok
+ok  	github.com/abishekprabakar/raftkv/internal/kv	1.156s

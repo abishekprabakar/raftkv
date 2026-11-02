@@ -1,0 +1,303 @@
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+=== RUN   TestReadIndexRefusesDeposedLeader
+    cluster_test.go:226: a deposed leader served a read: "old"
+--- FAIL: TestReadIndexRefusesDeposedLeader (0.00s)
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/kv	0.151s
+FAIL
