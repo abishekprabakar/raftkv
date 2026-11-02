@@ -59,13 +59,11 @@ step t3-test go test -count=1 ./...
 step t4-race-x5 go test -race -count=5 ./...
 
 # ---- R: regression tests fail without their fix ------------------------------
+run_tests() { (cd "$1" && go test -count=1 -v -run "$2" ./internal/storage/...); }
 regression() {
 	name=$1
-	tests=$2
 	d=$(copy "$name" HEAD "$patches/$name.patch")
-	# The run goes in a function so step can log it.
-	eval "run_$name() { (cd '$d' && go test -count=1 -v -run '$tests' ./internal/storage/...); }"
-	step "$name" "run_$name"
+	step "$name" run_tests "$d" "$2"
 }
 regression unfix-snapshot-order 'TestGetSnapshotOrder|TestScanSnapshotOrder'
 regression unfix-oversize 'TestOversizeRecordRejected'
