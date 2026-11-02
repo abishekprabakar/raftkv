@@ -1,0 +1,13 @@
+diff --git a/internal/raft/node.go b/internal/raft/node.go
+index 95ffe41..2cdb01f 100644
+--- a/internal/raft/node.go
++++ b/internal/raft/node.go
+@@ -263,7 +263,7 @@ func (n *Node) Propose(data []byte) (index, term uint64, err error) {
+ func (n *Node) finish() error {
+ 	u := Update{TruncateFrom: n.truncateFrom, Entries: n.unsaved}
+ 	if n.hardDirty {
+-		u.HardState = &HardState{CurrentTerm: n.currentTerm, VotedFor: n.votedFor}
++		u.HardState = &HardState{CurrentTerm: n.currentTerm}
+ 	}
+ 	if !u.empty() {
+ 		if err := n.cfg.Storage.Save(u); err != nil {

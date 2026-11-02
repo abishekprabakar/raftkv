@@ -1,0 +1,24 @@
+diff --git a/internal/raft/replication.go b/internal/raft/replication.go
+index 085c887..6b19989 100644
+--- a/internal/raft/replication.go
++++ b/internal/raft/replication.go
+@@ -68,16 +68,10 @@ func (n *Node) handleAppendEntries(from NodeID, m AppendEntriesArgs) {
+ 	// carry fewer entries than the log already holds, and everything past its
+ 	// end may be committed, so "replace everything after PrevLogIndex" would
+ 	// lose committed entries.
+-	for i, e := range m.Entries {
+-		if e.Index <= n.log.lastIndex() {
+-			if n.log.term(e.Index) == e.Term {
+-				continue
+-			}
+-			n.truncateLog(e.Index)
+-		}
+-		n.appendToLog(m.Entries[i:]...)
+-		break
++	if len(m.Entries) > 0 && m.PrevLogIndex < n.log.lastIndex() {
++		n.truncateLog(m.PrevLogIndex + 1)
+ 	}
++	n.appendToLog(m.Entries...)
+ 
+ 	// Only entries up to lastNew are known to match the leader. Anything past
+ 	// that in this log may be stale, even at an index the leader has committed.
