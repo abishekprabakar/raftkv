@@ -30,9 +30,14 @@ func newScripted(t *testing.T) *scripted {
 // first, and leaves everything else in flight.
 func (s *scripted) deliver(from, to NodeID) {
 	s.t.Helper()
+	s.deliverOnly(from, to, func(Message) bool { return true })
+}
+
+func (s *scripted) deliverOnly(from, to NodeID, wanted func(Message) bool) {
+	s.t.Helper()
 	var matching, rest []delivery
 	for _, d := range s.queue {
-		if d.from == from && d.to == to {
+		if d.from == from && d.to == to && wanted(d.msg) {
 			matching = append(matching, d)
 		} else {
 			rest = append(rest, d)
@@ -76,8 +81,16 @@ func (s *scripted) timeout(id NodeID) {
 func (s *scripted) win(id NodeID, voters ...NodeID) {
 	s.t.Helper()
 	s.timeout(id)
+	isVote := func(m Message) bool {
+		switch m.(type) {
+		case RequestVoteArgs, RequestVoteReply:
+			return true
+		}
+		return false
+	}
 	for _, v := range voters {
-		s.exchange(id, v)
+		s.deliverOnly(id, v, isVote)
+		s.deliverOnly(v, id, isVote)
 	}
 	if st := s.nodes[id].Status(); st.Role != Leader {
 		s.t.Fatalf("node %d should have won with votes from %v: %+v", id, voters, st)
