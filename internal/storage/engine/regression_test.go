@@ -163,6 +163,7 @@ func TestExhaustedIteratorStaysExhausted(t *testing.T) {
 func TestMidSegmentCorruptionRefusesOpen(t *testing.T) {
 	dir := t.TempDir()
 	opts := smallOpts()
+	opts.SyncMode = wal.GroupCommit
 	opts.NoFlushOnClose = true
 	opts.MemtableBytes = 1 << 30
 	db := mustOpen(t, dir, opts)
@@ -183,7 +184,8 @@ func TestMidSegmentCorruptionRefusesOpen(t *testing.T) {
 	data[20] ^= 0x01 // inside the first of 100 records
 	os.WriteFile(path, data, 0o644)
 
-	db, err := Open(dir, smallOpts())
+	opts.MemtableBytes = smallOpts().MemtableBytes
+	db, err := Open(dir, opts)
 	if err == nil {
 		defer db.Close()
 		t.Fatalf("Open succeeded and dropped acknowledged records (WALTruncatedBytes=%d)", db.Stats().WALTruncatedBytes)

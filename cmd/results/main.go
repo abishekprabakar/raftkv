@@ -243,11 +243,14 @@ func crashSection(w *strings.Builder, d doc, full bool) {
 	})
 }
 
-// plantedBugs are the rules broken on purpose in scripts/audit/m1, in the order
-// docs/acceptance/M2.md lists them.
+// plantedBugs are the rules broken on purpose in scripts/audit/m3, in the order
+// docs/acceptance/M2.md and M3.md list them.
 var plantedBugs = []string{
 	"send-before-save", "forget-voted-for", "count-old-terms", "always-truncate", "commit-to-last-index",
 	"no-up-to-date-check", "commit-can-decrease", "fixed-timeout", "save-after-apply",
+	"plain-leader-read", "read-skips-term-check", "no-dedup", "sessions-not-in-snapshot", "session-outside-batch",
+	"compact-without-flush", "install-keeps-conflicting-log", "stale-snapshot-rolls-back", "restore-position-lost",
+	"save-before-restore",
 }
 
 // checksFired lists which checks fired in a raftsim report, most frequent first.
@@ -268,7 +271,7 @@ func simSection(w *strings.Builder, d doc, full bool) {
 	w.WriteString("## Raft simulation (`make sim` -> `results/sim.json`)\n\n")
 	if full {
 		hardware(w, d)
-		w.WriteString("Each schedule runs real Raft nodes on a simulated network with a virtual clock, so one seed fixes the whole run and any failure replays exactly. After the faults stop, every schedule must elect a leader and bring every node up to date. The simulator stands in for the disk and models a crash during a save, so this says nothing about real fsync behavior.\n\n")
+		w.WriteString("Each schedule runs real Raft nodes and KV servers on a simulated network with a virtual clock, with simulated clients reading and writing, so one seed fixes the whole run and any failure replays exactly. After the faults stop, every schedule must elect a leader, bring every node up to date and end with identical state machines. The simulator stands in for both disks and models crashes during a save and power cuts, so this says nothing about real fsync behavior.\n\n")
 	}
 	table(w, []string{"Metric", "Value", "JSON field"}, [][]string{
 		{"Schedules (first seed " + d.str("first_seed") + ")", commas(d.num("schedules")), "schedules"},
@@ -280,22 +283,27 @@ func simSection(w *strings.Builder, d doc, full bool) {
 		{"Messages reordered", commas(d.num("totals.messages_reordered")), "totals.messages_reordered"},
 		{"Partitions (one-way cuts among them)", commas(d.num("totals.partitions")) + " (" + commas(d.num("totals.one_way_cuts")) + ")", "totals.partitions, one_way_cuts"},
 		{"Crash-restarts (during a save / after a save, before sending)", commas(d.num("totals.crashes")) + " (" + commas(d.num("totals.crashes_during_save")) + " / " + commas(d.num("totals.crashes_after_save")) + ")", "totals.crashes, crashes_during_save, crashes_after_save"},
+		{"Power-loss crashes", commas(d.num("totals.power_loss_crashes")), "totals.power_loss_crashes"},
 		{"Leaders elected", commas(d.num("totals.leaders_elected")), "totals.leaders_elected"},
 		{"Entries committed", commas(d.num("totals.entries_committed")), "totals.entries_committed"},
+		{"Writes acknowledged to clients", commas(d.num("totals.writes_acknowledged")), "totals.writes_acknowledged"},
+		{"Retried writes dropped by a session", commas(d.num("totals.retried_writes_dropped")), "totals.retried_writes_dropped"},
+		{"Reads served through ReadIndex", commas(d.num("totals.reads_served")), "totals.reads_served"},
+		{"Reads refused", commas(d.num("totals.reads_refused")), "totals.reads_refused"},
+		{"Log compactions", commas(d.num("totals.log_compactions")), "totals.log_compactions"},
+		{"Snapshots installed", commas(d.num("totals.snapshots_installed")), "totals.snapshots_installed"},
 		{"Wall time", fmt.Sprintf("%.0f s", d.num("wall_seconds")), "wall_seconds"},
 	})
 
 	var rows [][]string
 	for _, bug := range plantedBugs {
-		all, haveAll := load(filepath.Join(*resultsDir, "audit", "m2", "q-"+bug+".json"))
-		props, haveProps := load(filepath.Join(*resultsDir, "audit", "m2", "r-"+bug+".json"))
-		if haveAll && haveProps {
-			rows = append(rows, []string{bug, checksFired(all), checksFired(props)})
+		if all, ok := load(filepath.Join(*resultsDir, "audit", "m3", "q-"+bug+".json")); ok {
+			rows = append(rows, []string{bug, checksFired(all)})
 		}
 	}
 	if len(rows) > 0 {
 		w.WriteString("### Planted bugs: which check caught each one (schedules failed, out of 2,000)\n\n")
-		table(w, []string{"Bug", "All checks", "Properties only, monitors off"}, rows)
+		table(w, []string{"Bug", "Checks that fired"}, rows)
 	}
 }
 

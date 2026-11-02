@@ -47,8 +47,11 @@ const (
 	GroupCommit SyncMode = iota
 	// SyncEach performs a write and an fsync for every single record.
 	SyncEach
-	// NoSync writes records to the OS page cache and never calls fsync.
-	// Acknowledged records survive a process crash but not a power loss.
+	// NoSync writes records to the OS page cache, and only calls fsync when a
+	// segment is finished. Acknowledged records survive a process crash, but a
+	// power loss can take the tail of the newest segment. What is left is always a
+	// prefix of what was written, so a caller that can replay the rest, as the
+	// replicated store can from its Raft log, loses nothing.
 	NoSync
 )
 
@@ -224,12 +227,17 @@ func (l *Log) replaySegment(seg uint64, last bool, fn func(uint64, []byte) error
 			if !last {
 				return fmt.Errorf("%w: segment %d offset %d: %v", ErrCorrupt, seg, off, err)
 			}
-			after, aerr := validRecordAfter(path, off)
-			if aerr != nil {
-				return aerr
-			}
-			if after {
-				return fmt.Errorf("%w: segment %d offset %d: %v, and valid records follow it", ErrCorrupt, seg, off, err)
+			// Without fsync, a power cut can keep later pages of the file and lose
+			// earlier ones, so a valid record after the damage proves nothing, and
+			// keeping it would leave a hole. Everything from the damage on goes.
+			if l.mode != NoSync {
+				after, aerr := validRecordAfter(path, off)
+				if aerr != nil {
+					return aerr
+				}
+				if after {
+					return fmt.Errorf("%w: segment %d offset %d: %v, and valid records follow it", ErrCorrupt, seg, off, err)
+				}
 			}
 			l.stats.TruncatedBytes.Add(size - off)
 			f.Close()
@@ -551,6 +559,15 @@ func (l *Log) Rotate() (closedSeg uint64, err error) {
 		return 0, l.err
 	}
 	old, oldSeg := l.cur, l.curSeg
+	// A finished segment must be whole on disk, even without fsync on each write.
+	// Otherwise a power cut could keep the next segment and lose the end of this
+	// one, leaving a hole in the middle of the log.
+	if l.mode == NoSync {
+		l.stats.Syncs.Add(1)
+		if err := old.Sync(); err != nil {
+			return 0, err
+		}
+	}
 	if err := old.Close(); err != nil {
 		return 0, err
 	}

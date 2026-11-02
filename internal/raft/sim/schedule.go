@@ -144,6 +144,13 @@ func NewSchedule(seed uint64) Schedule {
 		s.CrashDuringSave = rate(r, 0, 0.01)
 		s.CrashAfterSave = rate(r, 0, 0.01)
 		s.ChaosLen = between(r, 6, 15) * Second
+		// Busy clients that find the new leader fast, so each leader takes commands
+		// before it is crashed, and a log kept whole, so old entries stay in play.
+		s.Clients = 5
+		s.ReadRate = 0.05
+		s.ThinkTime = between(r, 1, 5) * Millisecond
+		s.ClientTimeout = between(r, 20, 60) * Millisecond
+		s.SnapshotEvery = 0
 	case "solo":
 		s.Nodes = 1
 		s.CrashDuringSave = rate(r, 0.01, 0.1)

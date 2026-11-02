@@ -183,6 +183,54 @@ func TestDamagedLastRecordIsTreatedAsTornTail(t *testing.T) {
 	}
 }
 
+// Without fsync, nothing after the damage was promised, and keeping it would
+// leave a hole. The caller replays what is missing from somewhere else.
+func TestNoSyncLogKeepsThePrefixBeforeDamage(t *testing.T) {
+	dir := t.TempDir()
+	l, _ := Open(dir, Options{Mode: NoSync})
+	l.Start()
+	for _, p := range []string{"first", "second", "third"} {
+		if err := l.Append([]byte(p)).Wait(); err != nil {
+			t.Fatal(err)
+		}
+	}
+	l.Close()
+	path := filepath.Join(dir, fmt.Sprintf("%020d.wal", 1))
+	data, _ := os.ReadFile(path)
+	data[8+len("first")+8+1] ^= 0x01 // inside "second"
+	os.WriteFile(path, data, 0o644)
+
+	l2, _ := Open(dir, Options{Mode: NoSync})
+	var got []string
+	if err := l2.Replay(func(_ uint64, p []byte) error {
+		got = append(got, string(p))
+		return nil
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if fmt.Sprint(got) != "[first]" {
+		t.Fatalf("got %v, want only the prefix before the damage", got)
+	}
+}
+
+// A finished segment must not depend on the page cache, or a power cut could keep
+// the next segment and lose the end of this one.
+func TestNoSyncRotateMakesTheSegmentDurable(t *testing.T) {
+	l, _ := Open(t.TempDir(), Options{Mode: NoSync})
+	l.Start()
+	defer l.Close()
+	l.Append([]byte("x")).Wait()
+	if n := l.Stats().Syncs.Load(); n != 0 {
+		t.Fatalf("%d fsyncs before rotating", n)
+	}
+	if _, err := l.Rotate(); err != nil {
+		t.Fatal(err)
+	}
+	if n := l.Stats().Syncs.Load(); n != 1 {
+		t.Fatalf("%d fsyncs after rotating, want 1", n)
+	}
+}
+
 func TestOversizeRecordRejected(t *testing.T) {
 	dir := t.TempDir()
 	l, _ := Open(dir, Options{Mode: GroupCommit})

@@ -366,6 +366,18 @@ func TestLaggingFollowerInstallsSnapshot(t *testing.T) {
 	}
 }
 
+func TestOversizeWriteIsRefusedNotFatal(t *testing.T) {
+	c := newCluster(t, 3, 0, memOpener())
+	var got error
+	cmd := Command{ClientID: 1, Seq: 1, Kind: Put, Key: []byte("k"), Value: make([]byte, 1<<20)}
+	if err := c.servers[c.leader()].Submit(cmd, func(err error) { got = err }); err != nil {
+		t.Fatalf("a client's mistake must not stop the node: %v", err)
+	}
+	if !errors.Is(got, raft.ErrEntryTooLarge) {
+		t.Fatalf("got %v", got)
+	}
+}
+
 func TestCompactionKeepsRecentEntries(t *testing.T) {
 	c := newCluster(t, 1, 0, memOpener())
 	s := c.servers[1]

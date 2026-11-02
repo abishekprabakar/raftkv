@@ -102,12 +102,16 @@ func (s *Server) Receive(from raft.NodeID, msg raft.Message) error {
 }
 
 // Submit proposes a write. done runs with nil once it is applied, or with an error
-// saying what to do. The returned error means the node itself has failed.
+// saying what to do: ErrNotLeader, ErrUnknown or raft.ErrEntryTooLarge. The returned
+// error means the node itself has failed.
 func (s *Server) Submit(cmd Command, done func(error)) error {
 	index, _, err := s.node.Propose(encodeCommand(cmd))
 	switch {
 	case errors.Is(err, raft.ErrNotLeader):
 		done(ErrNotLeader)
+		return nil
+	case errors.Is(err, raft.ErrEntryTooLarge):
+		done(err)
 		return nil
 	case err != nil:
 		return err

@@ -2,9 +2,9 @@
 
 raftkv is a replicated key-value store written in Go with no external
 storage or consensus libraries. Built so far: the single-node storage engine,
-a log-structured merge tree in `internal/storage`, and the Raft core in
-`internal/raft`. The two are not connected yet. That comes in M3, and the real
-network and AWS deployment come after it.
+a log-structured merge tree in `internal/storage`, the Raft core in `internal/raft`,
+and the replicated store that joins them in `internal/kv`. The real network and AWS
+deployment come next.
 
 ## Package layout
 
@@ -16,7 +16,9 @@ raftkv/
     results/           make results        -> results/RESULTS.md and the README block
   internal/
     hwinfo/            records CPU, memory, OS, filesystem for every results file
+    kv/                replicated store: sessions, reads, snapshots, backends
     raft/              consensus: election, replication, commit, durable state
+      sim/             deterministic simulator and its safety checks
     storage/
       ikey/            internal key encoding and ordering (user key + seq + kind)
       wal/             segmented write-ahead log, CRC32C per record, group commit
@@ -326,11 +328,63 @@ fsyncs.
 
 ### Not implemented yet
 
-Snapshots and log compaction, so the log and its file only grow (M3). The real
-network (M4). Membership changes. Pre-vote and check-quorum, which are not in
-Figure 2: a node returning from a partition with a high term forces an election,
-and a partitioned leader keeps believing it leads until it hears a higher term.
-Safety is unaffected, and M3's ReadIndex covers the stale-leader read problem.
+The real network (M4). Membership changes. Figure 13's chunked snapshots: a snapshot
+travels as one message and is built in memory. Pre-vote and check-quorum, which are
+not in Figure 2: a node returning from a partition with a high term forces an
+election, and a partitioned leader keeps believing it leads until it hears a higher
+term. Safety is unaffected, and ReadIndex covers the stale-leader read problem.
+
+## Replicated KV
+
+`internal/kv` is the state machine Raft drives.
+
+```
+ client ─► Server.Submit ─► raft.Propose ─► replicate ─► commit
+                                                           │
+                       one atomic engine batch ◄── Store.Apply
+                       ├─ the data write
+                       ├─ the client's session (highest Seq applied)
+                       └─ the position (last index and term applied)
+
+ client ─► Server.Read ─► raft.ReadIndex ─► majority confirms ─► Store.Get
+```
+
+**One durable record.** The engine runs without fsync on its own WAL, because Raft's
+log already makes every entry durable before it can be applied. Writing the same
+data durably twice would add a second fsync per write and nothing else. After a
+power cut, the store's recorded position says how far it got, and Raft replays the
+rest from its log.
+
+That depends on one promise from the engine: a crash loses only the newest writes,
+never one from the middle. So the WAL fsyncs each finished segment even in `NoSync`
+mode, and `NoSync` replay stops at the first damage rather than skipping past it.
+
+**Exactly-once writes.** A client that gets no answer can't know if its write
+happened, so it retries under the same `(client, seq)`. The store keeps the highest
+`seq` applied per client and drops repeats. The session update is in the same atomic
+batch as the write, because a crash between them would apply the write twice. Keeping
+sessions in the store also means they're replicated, snapshotted and identical on
+every node, so a retry that lands on a new leader is still recognized. Sessions never
+expire, so the table grows with the number of clients ever seen.
+
+**Linearizable reads.** A leader can't trust its own belief that it leads: a newer
+leader may exist behind a partition. See `internal/raft/read.go` for the ReadIndex
+steps, and `TestPlainLeaderReadIsStale` for the failure it prevents. Reads go through
+the leader and cost one round of messages, but no fsync.
+
+**Snapshots.** The store's durable contents are the snapshot, so Raft stores only a
+marker of where its log starts. Compaction flushes the engine, then cuts the log.
+That order matters: once the log is cut it can't rebuild anything the engine might
+lose. On disk, a snapshot record holds the complete Raft state in a new WAL segment,
+and older segments are then deleted, newest first, so a crash always leaves something
+that replays.
+
+Bytes are only built when a lagging follower needs them. The follower restores
+before it saves the marker. If it crashes between the two, the state machine is ahead
+of the log, and startup finishes the job. In the other order, the log would claim
+entries the state machine never received. `Replace` builds a new engine generation
+beside the old one and switches with an atomic rename, so a crash leaves one or the
+other.
 
 ## Tradeoffs
 

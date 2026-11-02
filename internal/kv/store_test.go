@@ -205,6 +205,45 @@ func TestPowerLossKeepsOnlyWholeBatches(t *testing.T) {
 	wantValue(t, s, "a", "123")
 }
 
+// The real engine has to honor the same promise as MemBackend: losing the end of
+// its WAL leaves an earlier position, with no hole.
+func TestLSMPowerLossLeavesAPrefix(t *testing.T) {
+	dir := t.TempDir()
+	l, err := OpenLSM(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := openStore(t, l)
+	for i := uint64(1); i <= 3; i++ {
+		s.Apply(entry(i, Command{ClientID: 1, Seq: i, Kind: Append, Key: []byte("a"), Value: []byte(fmt.Sprint(i))}))
+	}
+	l.Close()
+
+	segs, _ := filepath.Glob(filepath.Join(l.genDir(l.gen), "*.wal"))
+	var path string
+	for _, seg := range segs {
+		if info, _ := os.Stat(seg); info.Size() > 0 {
+			path = seg
+		}
+	}
+	data, _ := os.ReadFile(path)
+	// Damage the middle: the page cache can lose earlier pages and keep later ones.
+	data[len(data)/2] ^= 0x01
+	os.WriteFile(path, data, 0o644)
+
+	l, err = OpenLSM(dir)
+	if err != nil {
+		t.Fatalf("damage to unsynced data must not stop a restart: %v", err)
+	}
+	defer l.Close()
+	s = openStore(t, l)
+	i, _ := s.Position()
+	if i != 1 {
+		t.Fatalf("position %d, want 1: the store must stop at the damage", i)
+	}
+	wantValue(t, s, "a", "1")
+}
+
 func TestReplaceSurvivesRestart(t *testing.T) {
 	dir := t.TempDir()
 	l, err := OpenLSM(dir)

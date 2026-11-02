@@ -4,10 +4,9 @@ A replicated key-value store written from scratch in Go: a log-structured
 merge-tree storage engine on every node, replicated with Raft, deployed on
 AWS. No external storage engine or consensus library is used.
 
-Status: **the storage engine and the Raft core are built, but they are not
-connected yet.** Raft runs only in tests and in a deterministic simulator, not
-on a real network. A replicated KV service, a real network and an AWS deployment
-are still to come.
+Status: **the storage engine, Raft and the replicated KV store are built and
+connected, but only in tests and a deterministic simulator.** Nothing runs on a
+real network yet. gRPC, a CLI client and an AWS deployment are still to come.
 
 ## Architecture
 
@@ -42,8 +41,9 @@ Failure modes, alternatives, and questions with answers: [docs/NOTES.md](docs/NO
 
 | Path | What |
 |---|---|
-| `internal/raft` | Raft from Figure 2: election, replication, commit, durable state, transport interface |
-| `internal/raft/sim` | deterministic simulator: faults, crash points and safety checks, all from one seed |
+| `internal/kv` | replicated store: sessions for exactly-once writes, ReadIndex reads, snapshots |
+| `internal/raft` | Raft from Figure 2: election, replication, commit, durable state, snapshots, ReadIndex |
+| `internal/raft/sim` | deterministic simulator: faults, crash points, clients and safety checks, all from one seed |
 | `internal/storage/wal` | segmented write-ahead log, CRC32C per record, group commit with a straggler window |
 | `internal/storage/memtable` | skiplist with lock-free readers and a single writer |
 | `internal/storage/sstable` | immutable tables: 4 KiB checksummed blocks, sparse index, bloom filter, properties |

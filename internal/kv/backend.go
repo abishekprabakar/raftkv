@@ -27,7 +27,9 @@ type Backend interface {
 	Get(key []byte) (value []byte, found bool, err error)
 	// Apply makes a batch take effect atomically. It need not be durable yet. A
 	// crash may lose the newest batches, but only whole batches, and only from the
-	// end: what survives is always a prefix of what was applied.
+	// end: what survives is always a prefix of what was applied. The store's
+	// recorded position depends on this, and it is why the WAL syncs each finished
+	// segment even with fsync off.
 	Apply(batch []Write) error
 	// Flush makes everything applied so far durable.
 	Flush() error
