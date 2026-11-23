@@ -1,6 +1,7 @@
 package kube
 
 import (
+	"strings"
 	"testing"
 	"time"
 
@@ -199,5 +200,39 @@ func TestStatsCountsFailedRequestsAndRetries(t *testing.T) {
 	if s.Requests != 4 || s.Failed != 2 || s.WritesAcked != 1 || s.WritesUnknown != 1 || s.ReadsServed != 1 || s.ReadsFailed != 1 ||
 		s.Retries != 7 || s.RequestsWithRetries != 2 {
 		t.Errorf("%+v", s)
+	}
+}
+
+// Terraform prints the cluster's client key when it destroys the cluster. None
+// of it may reach a log.
+func TestRedactHidesCredentials(t *testing.T) {
+	output := `  # kind_cluster.this will be destroyed
+      - client_key             = <<-EOT
+            -----BEGIN RSA PRIVATE KEY-----
+            MIIEowIBAAKCAQEAsecretsecretsecret
+            moresecretmoresecret==
+            -----END RSA PRIVATE KEY-----
+        EOT -> null
+      - kubeconfig             = <<-EOT
+                client-certificate-data: LS0tLS1CRUdJTiBDRVJU
+                client-key-data: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVk=
+                certificate-authority-data: LS0tLS1CRUdJTg==
+        EOT -> null
+      - name                   = "raftkv" -> null
+`
+	got := string(Redact([]byte(output)))
+	for _, secret := range []string{"MIIEow", "moresecret", "PRIVATE KEY", "LS0tLS1"} {
+		if strings.Contains(got, secret) {
+			t.Errorf("%q survived redaction:\n%s", secret, got)
+		}
+	}
+	for _, kept := range []string{"kind_cluster.this will be destroyed", "client_key", "client-key-data: [redacted]", `name                   = "raftkv"`, "[redacted]"} {
+		if !strings.Contains(got, kept) {
+			t.Errorf("%q was lost in redaction:\n%s", kept, got)
+		}
+	}
+	plain := "Apply complete! Resources: 11 added, 0 changed, 0 destroyed.\n"
+	if string(Redact([]byte(plain))) != plain {
+		t.Error("output with no credentials was changed")
 	}
 }

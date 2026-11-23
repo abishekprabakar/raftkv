@@ -62,7 +62,9 @@ binaries_use_allowed_modules() {
 	test -z "$bad"
 }
 
-terraform_() { terraform -chdir="$tf" "$@"; }
+# Terraform through the wrapper that hides the cluster's credentials: a destroy
+# prints the client key, and these logs are committed.
+terraform_() { "$repo/scripts/k8s/terraform.sh" "$@"; }
 apply() { terraform_ apply -auto-approve -input=false -no-color; }
 
 # A3: exact provider versions, a node image pinned by digest, and a lock file
@@ -94,6 +96,13 @@ nothing_left() {
 
 destroy_all() {
 	terraform_ destroy -auto-approve -input=false -no-color && nothing_left
+}
+
+# S1: nothing the run recorded holds a private key or a kubeconfig's credentials.
+no_credentials() {
+	found=$(grep -r -l -E 'PRIVATE KEY|(client-key|client-certificate|certificate-authority)-data: *[A-Za-z0-9+/=]{16,}' "$out" "$repo"/results/k8s-*.json)
+	echo "files holding credentials: [$found]"
+	test -z "$found"
 }
 
 # Reads the reports and prints one line per criterion.
@@ -234,5 +243,6 @@ step p3-planted-emptydir planted_emptydir
 step x1-destroy destroy_all
 docker image rm raftkv:no-dedup >>"$out/x1-destroy.log" 2>&1
 
+step s1-no-credentials no_credentials
 step z-criteria criteria
 echo "finished: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >>"$out/env.txt"

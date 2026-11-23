@@ -1,6 +1,7 @@
 GO ?= go
 
-TF ?= terraform -chdir=deploy/terraform
+# terraform in deploy/terraform, with the cluster's credentials hidden in its output.
+TF ?= scripts/k8s/terraform.sh
 
 .PHONY: all build test vet race fmt proto cluster-up cluster-down kube-up kube-down kube-smoke kube-audit chaos bench-storage bench-storage-quick crash-test crash-test-quick sim results clean
 

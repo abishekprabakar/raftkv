@@ -18,6 +18,7 @@ import (
 	"net"
 	"os"
 	"os/exec"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -98,12 +99,28 @@ func (t *Target) exec(ctx context.Context, logged bool, name string, args ...str
 	cmd.Stdout, cmd.Stderr = &stdout, &stderr
 	err := cmd.Run()
 	if t.Log != nil && logged {
-		fmt.Fprintf(t.Log, "$ %s %s\n%s%s", name, strings.Join(args, " "), stdout.Bytes(), stderr.Bytes())
+		fmt.Fprintf(t.Log, "$ %s %s\n%s%s", name, strings.Join(args, " "), Redact(stdout.Bytes()), Redact(stderr.Bytes()))
 	}
 	if err != nil {
-		return stdout.Bytes(), fmt.Errorf("%s %s: %w: %s", name, strings.Join(args, " "), err, strings.TrimSpace(stderr.String()))
+		return stdout.Bytes(), fmt.Errorf("%s %s: %w: %s", name, strings.Join(args, " "), err, strings.TrimSpace(string(Redact(stderr.Bytes()))))
 	}
 	return stdout.Bytes(), nil
+}
+
+var (
+	pemBlock       = regexp.MustCompile(`(?s)-----BEGIN [A-Z ]+-----.*?-----END [A-Z ]+-----`)
+	kubeconfigData = regexp.MustCompile(`((?:client-key|client-certificate|certificate-authority)-data:)[ \t]*\S+`)
+)
+
+// Redact hides credentials in a command's output before it is written anywhere.
+// The kind provider does not mark the cluster's client key as sensitive, so
+// `terraform destroy` prints it, and the kubeconfig with it, when it lists what
+// it is about to remove. The first acceptance run wrote that into four logs.
+// The key only opens a local cluster that no longer exists, but a private key
+// must not end up in a file that gets committed.
+func Redact(output []byte) []byte {
+	output = pemBlock.ReplaceAll(output, []byte("[redacted]"))
+	return kubeconfigData.ReplaceAll(output, []byte("$1 [redacted]"))
 }
 
 // Terraform runs terraform in the target's directory. Variables set in the
