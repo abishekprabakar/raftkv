@@ -334,12 +334,194 @@ func chaosSection(w *strings.Builder, d doc, full bool) {
 	}
 }
 
+// k8sDocs are the reports cmd/kubebench writes, one per measurement.
+type k8sDocs struct {
+	checks, failover, restart, rollout, cold doc
+}
+
+func loadK8s() (k8sDocs, bool) {
+	var k k8sDocs
+	found := false
+	for name, dst := range map[string]*doc{
+		"k8s-checks.json": &k.checks, "k8s-failover.json": &k.failover, "k8s-restart.json": &k.restart,
+		"k8s-rollout.json": &k.rollout, "k8s-coldstart.json": &k.cold,
+	} {
+		if d, ok := load(filepath.Join(*resultsDir, name)); ok {
+			*dst, found = d, true
+		}
+	}
+	return k, found
+}
+
+func k8sSection(w *strings.Builder, k k8sDocs, full bool) {
+	w.WriteString("## Kubernetes on kind, deployed with Terraform (`make kube-audit` -> `results/k8s-*.json`)\n\n")
+	msOf := func(d doc, path string, parts ...string) string {
+		vals := make([]string, len(parts))
+		for i, part := range parts {
+			vals[i] = fmt.Sprintf("%.0f ms", d.num(path+"."+part))
+		}
+		return strings.Join(vals, " / ")
+	}
+	secondsOf := func(d doc, path string, parts ...string) string {
+		vals := make([]string, len(parts))
+		for i, part := range parts {
+			vals[i] = fmt.Sprintf("%.1f s", d.num(path+"."+part))
+		}
+		return strings.Join(vals, " / ")
+	}
+	of := func(d doc, a, b string) string { return commas(d.num(a)) + " of " + commas(d.num(b)) }
+
+	if f := k.failover; f != nil {
+		if full {
+			hardware(w, f)
+			fmt.Fprintf(w, "Versions: Docker %s with %s CPUs and %.1f GB for its VM, Kubernetes %s (`%s`), kubectl %s, Terraform %s. Source commit `%s`.\n\n",
+				f.str("versions.docker"), f.str("versions.docker_cpus"), f.num("versions.docker_memory_bytes")/(1<<30),
+				f.str("versions.kubernetes"), f.str("versions.kind_node_image"), f.str("versions.kubectl"), f.str("versions.terraform"),
+				f.str("versions.source_commit"))
+			w.WriteString("One `terraform apply` creates a one-node kind cluster inside Docker and deploys a StatefulSet of 3 raftkv pods, each with its own volume claim. All three pods share one Kubernetes node, one VM and one disk, so these numbers describe this laptop setup and nothing larger. " +
+				"`cmd/kubebench` runs on the host and reaches the pods through ports kind maps: it starts every `kubectl` and `terraform` command itself, polls each node's Status over gRPC (the measured interval is below), and runs 6 clients that append and read on 4 keys, replaced every 2 s. Every time is read from that one process's clock. " +
+				"A request fails when the client library gives up on it after 4 s of redirects and retries.\n\n")
+			w.WriteString("### Leader failover: `kubectl delete pod` on the leader, under load\n\n")
+			w.WriteString("Each trial waits for 3 Ready pods and an agreed leader, runs the load for 3 s, then deletes the leader's pod with a normal `kubectl delete pod --wait=false`. " +
+				"Both times start just before kubectl is started. The time to a new leader ends at the first poll in which any node reports itself leader in a higher term. " +
+				"The time to the first successful write ends when the first write is acknowledged in a higher term, which every acknowledgement carries. It includes the client library's retry pauses, which double up to 500 ms with no jitter.\n\n")
+		}
+		rows := [][]string{
+			{"Leader failover trials (`kubectl delete pod` on the leader, under load)", commas(f.num("summary.trials")), "k8s-failover: summary.trials"},
+			{"Trials that elected a new leader, took a write, and settled with 3 Ready pods", of(f, "summary.passed", "summary.trials"), "summary.passed"},
+			{"Time to a new leader: median / p95 / max", msOf(f, "summary.new_leader_ms", "median", "p95", "max"), "summary.new_leader_ms"},
+			{"Time to the first successful write: median / p95 / max", msOf(f, "summary.first_write_ms", "median", "p95", "max"), "summary.first_write_ms"},
+			{"Acknowledged writes lost", of(f, "durability.acknowledged_writes_lost", "durability.writes_acknowledged"), "durability.acknowledged_writes_lost"},
+			{"Writes applied twice / values nobody wrote", commas(f.num("durability.writes_duplicated")) + " / " + commas(f.num("durability.values_never_written")), "durability.writes_duplicated, values_never_written"},
+			{"Porcupine on the whole history (" + commas(f.num("load.requests")) + " requests, " + commas(f.num("durability.keys")) + " keys)", f.str("linearizable"), "linearizable"},
+			{"Failed client requests across the " + commas(f.num("summary.trials")) + " failovers", of(f, "load.failed_requests", "load.requests"), "load.failed_requests"},
+			{"Replacement pods that started from their own volume", fmt.Sprintf("%s of %s", commas(f.num("summary.replacement_pods")-f.num("summary.replacement_did_not_start_from_its_volume")), commas(f.num("summary.replacement_pods"))), "summary.replacement_did_not_start_from_its_volume"},
+		}
+		if full {
+			rows = append(rows, [][]string{
+				{"Time to a new leader: minimum", msOf(f, "summary.new_leader_ms", "min"), "summary.new_leader_ms.min"},
+				{"Time to the first successful write: minimum", msOf(f, "summary.first_write_ms", "min"), "summary.first_write_ms.min"},
+				{"The old leader's last Status answer after the delete: median / max", msOf(f, "summary.old_leader_last_answer_ms", "median", "max"), "summary.old_leader_last_answer_ms"},
+				{"`kubectl delete --wait=false` returned: median", msOf(f, "summary.kubectl_delete_returned_ms", "median"), "summary.kubectl_delete_returned_ms"},
+				{"All 3 pods Ready again: median / p95 / max", msOf(f, "summary.all_pods_ready_ms", "median", "p95", "max"), "summary.all_pods_ready_ms"},
+				{"Longest stretch with no write acknowledged, per trial: median / max", msOf(f, "summary.longest_write_gap_ms", "median", "max"), "summary.longest_write_gap_ms"},
+				{"Trials in which the rejoining pod forced another election", of(f, "summary.trials_with_extra_leader_changes", "summary.trials"), "summary.trials_with_extra_leader_changes"},
+				{"Requests that needed a retry / retries in all", commas(f.num("load.requests_that_retried")) + " / " + commas(f.num("load.retries")), "load.requests_that_retried, retries"},
+				{"Writes with an unknown outcome", commas(f.num("durability.writes_unknown")), "durability.writes_unknown"},
+				{"Status poll interval per node: median / p99", fmt.Sprintf("%.1f ms / %.1f ms", f.num("status_poll_interval_ms.median"), f.num("status_poll_interval_ms.p99")), "status_poll_interval_ms"},
+				{"Running time", fmt.Sprintf("%.0f s", f.num("wall_seconds")), "wall_seconds"},
+			}...)
+		}
+		table(w, []string{"Metric", "Value", "JSON field"}, rows)
+	}
+
+	if r := k.restart; r != nil {
+		if full {
+			w.WriteString("### Every pod deleted at once\n\n")
+			w.WriteString("A failover leaves two nodes holding the data, so it would pass even without volumes. Here one `kubectl delete pod` removes all three pods, and what comes back can only come from the volume claims.\n\n")
+		}
+		rows := [][]string{
+			{"Restarts of every pod at once that recovered, each pod from its volume", of(r, "summary.passed", "summary.trials"), "k8s-restart: summary.passed"},
+			{"Acknowledged writes lost across those restarts", of(r, "durability.acknowledged_writes_lost", "durability.writes_acknowledged"), "durability.acknowledged_writes_lost"},
+		}
+		if full {
+			rows = append(rows, [][]string{
+				{"Writes applied twice / Porcupine", commas(r.num("durability.writes_duplicated")) + " / " + r.str("linearizable"), "durability.writes_duplicated, linearizable"},
+				{"Time from the delete to a leader: median / max", msOf(r, "summary.new_leader_ms", "median", "max"), "summary.new_leader_ms"},
+				{"Time from the delete to the first successful write: median / max", msOf(r, "summary.first_write_ms", "median", "max"), "summary.first_write_ms"},
+				{"All 3 pods Ready again: median / max", msOf(r, "summary.all_pods_ready_ms", "median", "max"), "summary.all_pods_ready_ms"},
+				{"Failed client requests while no pod was up", of(r, "load.failed_requests", "load.requests"), "load.failed_requests"},
+			}...)
+		}
+		table(w, []string{"Metric", "Value", "JSON field"}, rows)
+	}
+
+	if u := k.rollout; u != nil {
+		if full {
+			w.WriteString("### Rolling update under load\n\n")
+			w.WriteString("Each round runs `terraform apply -var image_tag=...` to switch between two images built from the same source with different version strings. The StatefulSet controller replaces one pod at a time, highest ordinal first, and waits for each to be ready. " +
+				"The rollout time runs from the first watch event showing the new image in the StatefulSet to the first showing every replica updated and ready. The client numbers cover each round from that first event until the cluster is healthy again.\n\n")
+		}
+		rows := [][]string{
+			{"Rolling updates under load that finished on the new version", of(u, "summary.passed", "summary.rounds"), "k8s-rollout: summary.passed"},
+			{"Rollout time: median / min / max", secondsOf(u, "summary.rollout_seconds", "median", "min", "max"), "summary.rollout_seconds"},
+			{"Failed client requests during the rollouts", of(u, "summary.failed_requests", "summary.requests"), "summary.failed_requests"},
+			{"Longest any request took during a rollout", fmt.Sprintf("%.0f ms", u.num("summary.longest_request_ms")), "summary.longest_request_ms"},
+			{"Leader changes per rollout: median / max", fmt.Sprintf("%.0f / %.0f", u.num("summary.leader_changes_per_rollout.median"), u.num("summary.leader_changes_per_rollout.max")), "summary.leader_changes_per_rollout"},
+		}
+		if full {
+			rows = append(rows, [][]string{
+				{"Requests that needed a retry / retries in all", commas(u.num("summary.requests_that_retried")) + " / " + commas(u.num("summary.retries")), "summary.requests_that_retried, retries"},
+				{"Longest stretch with no write acknowledged, per rollout: median / max", msOf(u, "summary.longest_write_gap_ms", "median", "max"), "summary.longest_write_gap_ms"},
+				{"`terraform apply` for the change: median / max", secondsOf(u, "summary.terraform_apply_seconds", "median", "max"), "summary.terraform_apply_seconds"},
+				{"Acknowledged writes lost over the whole run", of(u, "durability.acknowledged_writes_lost", "durability.writes_acknowledged"), "durability.acknowledged_writes_lost"},
+				{"Writes applied twice / Porcupine", commas(u.num("durability.writes_duplicated")) + " / " + u.str("linearizable"), "durability.writes_duplicated, linearizable"},
+			}...)
+		}
+		table(w, []string{"Metric", "Value", "JSON field"}, rows)
+	}
+
+	if c := k.cold; c != nil {
+		if full {
+			w.WriteString("### Cold start\n\n")
+			w.WriteString("Each round runs `terraform destroy`, checks that no node container and no Terraform state are left, and then times one `terraform apply`. The clock stops at the first moment all 3 pods are Ready and all 3 nodes name the same leader. " +
+				"The kind node image was already in Docker's image store and Docker's build cache was warm, so this leaves out a first download of the node image and a first compile.\n\n")
+		}
+		rows := [][]string{
+			{"Cold starts that reached 3 Ready pods and a leader with one `terraform apply`", of(c, "summary.passed", "summary.rounds"), "k8s-coldstart: summary.passed"},
+			{"Cold start, `terraform apply` to 3 Ready pods with a leader: median / min / max", secondsOf(c, "summary.ready_with_leader_seconds", "median", "min", "max"), "summary.ready_with_leader_seconds"},
+		}
+		if full {
+			rows = append(rows, [][]string{
+				{"kind cluster created and its API server answering: median", secondsOf(c, "summary.api_server_answered_seconds", "median"), "summary.api_server_answered_seconds"},
+				{"All 3 pods created: median", secondsOf(c, "summary.pods_created_seconds", "median"), "summary.pods_created_seconds"},
+				{"`terraform apply` returned: median / max", secondsOf(c, "summary.terraform_apply_seconds", "median", "max"), "summary.terraform_apply_seconds"},
+				{"`terraform destroy`: median / max", secondsOf(c, "summary.terraform_destroy_seconds", "median", "max"), "summary.terraform_destroy_seconds"},
+			}...)
+		}
+		table(w, []string{"Metric", "Value", "JSON field"}, rows)
+	}
+
+	if c := k.checks; c != nil {
+		row := []string{"Live checks passed: objects, client Service, readiness without a majority, disruption budget under a drain",
+			fmt.Sprintf("%s of %s", commas(c.num("passed")), commas(c.num("passed")+c.num("failed"))), "k8s-checks: passed, failed"}
+		if !full {
+			table(w, []string{"Metric", "Value", "JSON field"}, [][]string{row})
+		} else {
+			w.WriteString("### Live checks\n\n")
+			var rows [][]string
+			if arr, ok := c.get("checks").([]any); ok {
+				for i := range arr {
+					p := fmt.Sprintf("checks.%d.", i)
+					verdict := "pass"
+					if c.get(p+"pass") != true {
+						verdict = "FAIL"
+					}
+					rows = append(rows, []string{c.str(p + "id"), verdict, c.str(p + "detail")})
+				}
+			}
+			table(w, []string{"Check", "Result", "What happened"}, rows)
+		}
+	}
+
+	audit := filepath.Join(*resultsDir, "audit", "k8s")
+	if p, ok := load(filepath.Join(audit, "planted-no-dedup.json")); ok {
+		fmt.Fprintf(w, "With the `no-dedup` bug planted, %s failover trials left %s writes applied twice, and Porcupine's answer was %s (`results/audit/k8s/planted-no-dedup.json`).\n\n",
+			commas(p.num("summary.trials")), commas(p.num("durability.writes_duplicated")), p.str("linearizable"))
+	}
+	if p, ok := load(filepath.Join(audit, "planted-emptydir.json")); ok {
+		fmt.Fprintf(w, "With the data on an `emptyDir` instead of the volume claims, deleting every pod %s times lost %s of %s acknowledged writes (`results/audit/k8s/planted-emptydir.json`).\n\n",
+			commas(p.num("summary.trials")), commas(p.num("durability.acknowledged_writes_lost")), commas(p.num("durability.writes_acknowledged")))
+	}
+}
+
 func main() {
 	flag.Parse()
 	storage, haveStorage := load(filepath.Join(*resultsDir, "storage.json"))
 	crash, haveCrash := load(filepath.Join(*resultsDir, "crash.json"))
 	simulation, haveSim := load(filepath.Join(*resultsDir, "sim.json"))
 	chaosRuns, haveChaos := load(filepath.Join(*resultsDir, "chaos.json"))
+	k8s, haveK8s := loadK8s()
 
 	var full, short strings.Builder
 	full.WriteString("# Measured results\n\nEvery number below is read from a JSON file produced by a tool in `cmd/`; regenerate this file with `make results`.\n\n")
@@ -360,6 +542,10 @@ func main() {
 	if haveChaos {
 		chaosSection(&full, chaosRuns, true)
 		chaosSection(&short, chaosRuns, false)
+	}
+	if haveK8s {
+		k8sSection(&full, k8s, true)
+		k8sSection(&short, k8s, false)
 	}
 	short.WriteString(endMarker)
 

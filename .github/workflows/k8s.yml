@@ -1,0 +1,68 @@
+# Builds the whole stack on a kind cluster with Terraform, checks it, and tears
+# it down: terraform apply, the live checks, 5 leader failovers with the
+# durability and linearizability checks, one rolling update, terraform destroy.
+# Nothing here needs a secret or a cloud account.
+name: kubernetes
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kubernetes-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  kind:
+    name: kind and terraform
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      # Actions are pinned to a commit, with the release it belongs to beside it.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+        with:
+          go-version-file: go.mod
+
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: 1.17.0
+          # The wrapper swallows exit codes, and `terraform plan
+          # -detailed-exitcode` is one of the checks.
+          terraform_wrapper: false
+
+      - name: Build the harness
+        run: go build ./cmd/kubebench
+
+      # Creates the kind cluster (the provider has kind built in), builds the
+      # image, loads it into the node and deploys raftkv. It returns when all
+      # three pods are ready.
+      - name: terraform apply
+        run: make kube-up
+
+      - name: Live checks, 5 leader failovers, one rolling update
+        run: make kube-smoke
+
+      - name: Show the cluster if something failed
+        if: failure()
+        run: |
+          export KUBECONFIG=deploy/terraform/kubeconfig
+          kubectl get pods,statefulset,pvc,pdb,svc -n raftkv -o wide || true
+          kubectl describe pods -n raftkv || true
+          kubectl logs -n raftkv -l app.kubernetes.io/name=raftkv --tail=200 --prefix || true
+
+      - name: terraform destroy
+        if: always()
+        run: make kube-down
+
+      - name: Keep the reports
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: k8s-reports
+          path: results/tmp/k8s
+          if-no-files-found: warn

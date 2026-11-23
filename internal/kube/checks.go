@@ -242,7 +242,7 @@ func (t *Target) checkClientService() (string, error) {
 	if v, found, err := c.Get(ctx, []byte("check.host")); err != nil || !found || string(v) != stamp {
 		return "", fmt.Errorf("read %q from the host, want %q: %v", v, stamp, err)
 	}
-	return fmt.Sprintf("put and get through %s from two pods, and through %s from the host (%d redirects)", t.ClientInside, t.Client, c.Redirects), nil
+	return fmt.Sprintf("put and get through %s from two pods, and through %s from the host", t.ClientInside, t.Client), nil
 }
 
 // checkReadinessFollowsRaft is K1. Scaling the StatefulSet to one replica is the

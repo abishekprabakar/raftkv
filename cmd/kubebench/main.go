@@ -78,6 +78,9 @@ func main() {
 
 	logw := io.Discard
 	if o.logPath != "" {
+		if err := os.MkdirAll(filepath.Dir(o.logPath), 0o755); err != nil {
+			fatal(err)
+		}
 		f, err := os.Create(o.logPath)
 		if err != nil {
 			fatal(err)
@@ -113,10 +116,14 @@ func usage() {
 }
 
 func newHeader(t *kube.Target, mode string) header {
-	return header{
+	h := header{
 		Command: "kubebench " + mode, Hardware: hwinfo.Collect("."), Image: t.Image,
 		Versions: t.CollectVersions(context.Background()),
 	}
+	// hwinfo's own note is about fsync on the host's filesystem, which nothing
+	// measured here touches.
+	h.Hardware.Note = "The pods and their volumes are inside Docker's Linux VM. The filesystem named here is the host's, where only the harness runs."
+	return h
 }
 
 func (h *header) finish(start time.Time) {

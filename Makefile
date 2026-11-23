@@ -1,6 +1,8 @@
 GO ?= go
 
-.PHONY: all build test vet race fmt proto cluster-up cluster-down chaos bench-storage bench-storage-quick crash-test crash-test-quick sim results clean
+TF ?= terraform -chdir=deploy/terraform
+
+.PHONY: all build test vet race fmt proto cluster-up cluster-down kube-up kube-down kube-smoke kube-audit chaos bench-storage bench-storage-quick crash-test crash-test-quick sim results clean
 
 all: vet test
 
@@ -35,6 +37,28 @@ cluster-up:
 
 cluster-down:
 	docker compose down -v
+
+# The same 3 nodes on Kubernetes. Terraform creates a kind cluster inside Docker,
+# builds the image, loads it, and deploys raftkv; kube-down removes all of it.
+# Then: export KUBECONFIG=deploy/terraform/kubeconfig
+kube-up:
+	$(TF) init -input=false -lockfile=readonly
+	$(TF) apply -auto-approve -input=false
+
+kube-down:
+	$(TF) destroy -auto-approve -input=false
+
+# The live checks, 5 leader failovers and one rolling update, on the cluster
+# kube-up made. This is what CI runs. Reports go to results/tmp/k8s.
+kube-smoke:
+	$(GO) run ./cmd/kubebench check -out results/tmp/k8s/checks.json -log results/tmp/k8s/checks.log
+	$(GO) run ./cmd/kubebench failover -trials 5 -out results/tmp/k8s/failover.json -artifacts results/tmp/k8s/failover
+	$(GO) run ./cmd/kubebench rollout -rounds 1 -out results/tmp/k8s/rollout.json -artifacts results/tmp/k8s/rollout
+
+# Everything in docs/acceptance/k8s.md -> results/k8s-*.json (about 45 minutes).
+# It destroys the cluster first and leaves none behind.
+kube-audit:
+	scripts/audit/k8s/run.sh
 
 # Storage engine benchmarks -> results/storage.json
 bench-storage:

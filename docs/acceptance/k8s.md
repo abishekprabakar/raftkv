@@ -264,6 +264,66 @@ numbers describe this setup and nothing larger. Every run records the hardware, 
 the Docker, Kubernetes, kind node and Terraform versions. Long runs are wrapped in
 `caffeinate`, because Go's clock on macOS stops while the machine sleeps.
 
+## Addendum: changes made in development
+
+Written after development runs on seeds from 900,000,000 up, and committed before
+any acceptance step ran. No number from a development run is reported as a result.
+
+**A real liveness bug, found by the first three failover trials.** Two of the three
+elections took two terms instead of one. The surviving node's log shows why: at the
+instant it became a candidate and sent its vote requests, it logged `stream to peer
+lost` for its stream to the *other survivor*, and reopened it 54 ms later.
+
+A follower sends nothing to another follower between elections, so that stream sits
+idle. Each trial restarts one pod, so after a trial one follower's stream to the
+restarted node is dead, and nothing notices, because only a `Send` on a stream finds
+out that it has ended. The first message written to it is then the next election's
+RequestVote, or the reply to one, and it is lost with the stream. That election
+fails, and failover waits for the other node's timeout.
+
+It is not a safety bug: Raft assumes any message can be lost, and Porcupine passed
+those histories. It cost one election timeout in most failovers. Fix, in
+`internal/server/peer.go`: each stream has a receive waiting on it, which returns as
+soon as the stream ends, so an idle stream is reopened before anything needs it.
+Regression test: `TestPeerReopensAStreamThatDiedWhileIdle`, which fails without the
+fix. After the fix, 12 development trials in a row elected in one term. The runner's
+step H runs this test with H1 to H5.
+
+M5 didn't see it because a partition there cut off the leader, and the two nodes left
+had not restarted since they last voted.
+
+**F2, reworded.** A node's first log line now states its version, so the line F2
+reads is the one after it, `started`, which reports the term, the last log index and
+the applied index the node found on disk. The test is unchanged: a term above 0 and a
+last log index above 0, for every replacement pod.
+
+**Health tests added.** Beyond H1 to H5: `TestRestartedFollowerBecomesReadyAgain`
+(a follower that missed 200 writes is ready again only once it holds them) and
+`TestHealthAfterStop`. Both run inside T3 and T4.
+
+**Two things the first applies showed.**
+
+- An image rebuilt under the same tag did not replace the running pods, because the
+  pod template had not changed. The template now carries a hash of the image's source,
+  so a rebuild is a rolling update. Test files are left out of the hash.
+- So K1 and K2's "no changes" check only holds if the source is the same as at the
+  last apply, which it is in the acceptance run and in CI.
+
+**What a restart of every pod costs clients.** No pod is up for about 3 s. A request
+that starts just then can use all of its 4 s on connections that go nowhere, and one
+read in a two-round development run did fail that way. R has no criterion on failed
+requests, and the count is reported.
+
+**The planted checks, tried once each.** With `no-dedup` planted, 15 development
+trials left writes applied twice, and Porcupine rejected the history, so P2 is
+expected to pass. With the data on an `emptyDir`, a restart of every pod lost
+acknowledged writes, so P3 is expected to pass. It also showed something not in the
+criteria: the nodes forget their term as well, so no node ever leads "in a term above
+the old one", and each P3 round waits out the full 60 s.
+
+**Order of the run.** T, H, P1 and A3 first. Then destroy anything left over, A1, the
+live checks, F with D, R, U, C, P2, P3 and X.
+
 ## If something fails
 
 A failed criterion gets reported, not rerun until it passes. A target that isn't met

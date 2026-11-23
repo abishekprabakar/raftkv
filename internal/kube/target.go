@@ -265,8 +265,8 @@ type Versions struct {
 	Kubectl    string `json:"kubectl"`
 	NodeImage  string `json:"kind_node_image"`
 	Terraform  string `json:"terraform"`
-	DockerCPUs string `json:"docker_cpus"`
-	DockerMem  string `json:"docker_memory_bytes"`
+	DockerCPUs int    `json:"docker_cpus"`
+	DockerMem  int64  `json:"docker_memory_bytes"`
 	Commit     string `json:"source_commit"`
 	Dirty      bool   `json:"source_tree_had_changes"`
 	OnBattery  string `json:"power,omitempty"`
@@ -278,11 +278,11 @@ func (t *Target) CollectVersions(ctx context.Context) Versions {
 	quiet := &Target{Dir: t.Dir, Kubeconfig: t.Kubeconfig, Namespace: t.Namespace}
 	text := func(out []byte, _ error) string { return strings.TrimSpace(string(out)) }
 	v := Versions{
-		Docker:     text(quiet.run(ctx, "docker", "version", "--format", "{{.Server.Version}}")),
-		DockerCPUs: text(quiet.run(ctx, "docker", "info", "--format", "{{.NCPU}}")),
-		DockerMem:  text(quiet.run(ctx, "docker", "info", "--format", "{{.MemTotal}}")),
-		Commit:     text(quiet.run(ctx, "git", "rev-parse", "HEAD")),
+		Docker: text(quiet.run(ctx, "docker", "version", "--format", "{{.Server.Version}}")),
+		Commit: text(quiet.run(ctx, "git", "rev-parse", "HEAD")),
 	}
+	// What Docker's VM was given, which is all the cluster can use.
+	fmt.Sscan(text(quiet.run(ctx, "docker", "info", "--format", "{{.NCPU}} {{.MemTotal}}")), &v.DockerCPUs, &v.DockerMem)
 	v.Dirty = text(quiet.run(ctx, "git", "status", "--porcelain", "--untracked-files=no")) != ""
 	if t.NodeContainer != "" {
 		v.NodeImage = text(quiet.run(ctx, "docker", "inspect", "--format", "{{.Config.Image}}", t.NodeContainer))

@@ -6,13 +6,16 @@ locals {
   build_context = abspath(coalesce(var.build_context, "${path.module}/../.."))
   image         = "raftkv:${var.image_tag}"
 
-  # Everything the Dockerfile copies. If any of it changes, the image is built
-  # and loaded again on the next apply.
-  source_files = sort(setunion(
-    fileset(local.build_context, "cmd/**"),
-    fileset(local.build_context, "internal/**"),
-    ["go.mod", "go.sum", "Dockerfile"],
-  ))
+  # Everything the image is built from. If any of it changes, the image is built
+  # and loaded again on the next apply, and the pods are replaced. Tests are left
+  # out: they are not in the binaries, so changing one should not roll the pods.
+  source_files = sort([
+    for f in setunion(
+      fileset(local.build_context, "cmd/**"),
+      fileset(local.build_context, "internal/**"),
+      ["go.mod", "go.sum", "Dockerfile"],
+    ) : f if !endswith(f, "_test.go")
+  ])
   source_hash = sha256(join("\n", [for f in local.source_files : "${f} ${filesha256("${local.build_context}/${f}")}"]))
 }
 
