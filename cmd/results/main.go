@@ -399,8 +399,11 @@ func k8sSection(w *strings.Builder, k k8sDocs, full bool) {
 		}
 		if full {
 			rows = append(rows, [][]string{
+				{"Elections that finished in one term", of(f, "summary.elected_in_one_term", "summary.trials"), "summary.elected_in_one_term"},
 				{"Time to a new leader: minimum", msOf(f, "summary.new_leader_ms", "min"), "summary.new_leader_ms.min"},
 				{"Time to the first successful write: minimum", msOf(f, "summary.first_write_ms", "min"), "summary.first_write_ms.min"},
+				{"First write after the new leader was seen: median / max", msOf(f, "summary.first_write_after_new_leader_ms", "median", "max"), "summary.first_write_after_new_leader_ms"},
+				{"Trials whose first write took over 1 s", of(f, "summary.first_write_took_over_1s", "summary.trials"), "summary.first_write_took_over_1s"},
 				{"The old leader's last Status answer after the delete: median / max", msOf(f, "summary.old_leader_last_answer_ms", "median", "max"), "summary.old_leader_last_answer_ms"},
 				{"`kubectl delete --wait=false` returned: median", msOf(f, "summary.kubectl_delete_returned_ms", "median"), "summary.kubectl_delete_returned_ms"},
 				{"All 3 pods Ready again: median / p95 / max", msOf(f, "summary.all_pods_ready_ms", "median", "p95", "max"), "summary.all_pods_ready_ms"},
@@ -452,6 +455,7 @@ func k8sSection(w *strings.Builder, k k8sDocs, full bool) {
 		if full {
 			rows = append(rows, [][]string{
 				{"Requests that needed a retry / retries in all", commas(u.num("summary.requests_that_retried")) + " / " + commas(u.num("summary.retries")), "summary.requests_that_retried, retries"},
+				{"Terms passed per rollout, counting elections nobody won: median / max", fmt.Sprintf("%.0f / %.0f", u.num("summary.terms_passed_per_rollout.median"), u.num("summary.terms_passed_per_rollout.max")), "summary.terms_passed_per_rollout"},
 				{"Longest stretch with no write acknowledged, per rollout: median / max", msOf(u, "summary.longest_write_gap_ms", "median", "max"), "summary.longest_write_gap_ms"},
 				{"`terraform apply` for the change: median / max", secondsOf(u, "summary.terraform_apply_seconds", "median", "max"), "summary.terraform_apply_seconds"},
 				{"Acknowledged writes lost over the whole run", of(u, "durability.acknowledged_writes_lost", "durability.writes_acknowledged"), "durability.acknowledged_writes_lost"},

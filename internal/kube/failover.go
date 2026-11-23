@@ -264,6 +264,15 @@ type TrialSummary struct {
 	SettledMs             Dist `json:"settled_ms"`
 	LongestWriteGapMs     Dist `json:"longest_write_gap_ms"`
 
+	// ElectedInOneTerm counts the trials whose new leader was in the very next
+	// term: the first election after the delete succeeded.
+	ElectedInOneTerm int `json:"elected_in_one_term"`
+	// FirstWriteAfterLeaderMs is how long after the new leader was seen the
+	// first write was acknowledged. The cluster could take writes for all of
+	// that time; the clients were between retries.
+	FirstWriteAfterLeaderMs Dist `json:"first_write_after_new_leader_ms"`
+	FirstWriteOver1s        int  `json:"first_write_took_over_1s"`
+
 	TrialsWithExtraLeaderChanges int `json:"trials_with_extra_leader_changes"`
 	ExtraLeaderChanges           int `json:"extra_leader_changes"`
 	// NewLeaderByPod counts how often each pod took over.
@@ -276,7 +285,7 @@ type TrialSummary struct {
 // distribution only: nothing is dropped silently.
 func SummarizeTrials(trials []Trial) TrialSummary {
 	s := TrialSummary{Trials: len(trials), NewLeaderByPod: map[string]int{}, DeletedByPod: map[string]int{}}
-	var leader, write, gone, kubectl, ready, settled, gap []float64
+	var leader, write, gone, kubectl, ready, settled, gap, lag []float64
 	for _, tr := range trials {
 		if tr.OK() {
 			s.Passed++
@@ -292,11 +301,20 @@ func SummarizeTrials(trials []Trial) TrialSummary {
 		if tr.NewLeaderSeen {
 			leader = append(leader, tr.NewLeaderMs)
 			s.NewLeaderByPod[tr.NewLeader]++
+			if tr.NewTerm == tr.OldTerm+1 {
+				s.ElectedInOneTerm++
+			}
 		} else {
 			s.NoNewLeader++
 		}
 		if tr.FirstWriteSeen {
 			write = append(write, tr.FirstWriteMs)
+			if tr.FirstWriteMs > 1000 {
+				s.FirstWriteOver1s++
+			}
+			if tr.NewLeaderSeen {
+				lag = append(lag, tr.FirstWriteMs-tr.NewLeaderMs)
+			}
 		} else {
 			s.NoFirstWrite++
 		}
@@ -319,5 +337,6 @@ func SummarizeTrials(trials []Trial) TrialSummary {
 	}
 	s.NewLeaderMs, s.FirstWriteMs, s.OldLeaderLastAnswerMs = Summarize(leader), Summarize(write), Summarize(gone)
 	s.KubectlMs, s.PodsReadyMs, s.SettledMs, s.LongestWriteGapMs = Summarize(kubectl), Summarize(ready), Summarize(settled), Summarize(gap)
+	s.FirstWriteAfterLeaderMs = Summarize(lag)
 	return s
 }

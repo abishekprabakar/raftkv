@@ -133,7 +133,11 @@ type RolloutRound struct {
 	VersionOK bool              `json:"every_pod_runs_the_new_version"`
 	Versions  map[string]string `json:"version_by_pod"`
 
-	LeaderChanges     int       `json:"leader_changes"`
+	LeaderChanges int `json:"leader_changes"`
+	// TermsPassed is how far the term moved during the rollout. Every election
+	// that was started raises it, whether or not anyone won, so this is at least
+	// LeaderChanges, and the difference is elections that failed.
+	TermsPassed       uint64    `json:"terms_passed"`
 	Load              LoadStats `json:"load"`
 	LongestWriteGapMs float64   `json:"longest_write_gap_ms"`
 	Error             string    `json:"error,omitempty"`
@@ -154,6 +158,7 @@ func (r *Run) RolloutRound(n int, from, to string) RolloutRound {
 		return rr
 	}
 	time.Sleep(loadBeforeFault)
+	_, termBefore, _ := r.Prober.Agreed()
 	watch, err := r.watchStatefulSet()
 	if err != nil {
 		rr.Error = err.Error()
@@ -183,6 +188,9 @@ func (r *Run) RolloutRound(n int, from, to string) RolloutRound {
 	}
 	rr.Healthy = r.WaitHealthy(settleLimit)
 	settled := r.Since()
+	if _, termAfter, ok := r.Prober.Agreed(); ok && termBefore != 0 {
+		rr.TermsPassed = termAfter - termBefore
+	}
 
 	rr.VersionOK = true
 	pods, err := r.T.Pods(ctx)
@@ -220,12 +228,13 @@ type RolloutSummary struct {
 	MaxLatencyMs        float64 `json:"longest_request_ms"`
 	LongestWriteGapMs   Dist    `json:"longest_write_gap_ms"`
 	LeaderChanges       Dist    `json:"leader_changes_per_rollout"`
+	TermsPassed         Dist    `json:"terms_passed_per_rollout"`
 }
 
 // SummarizeRollouts computes every number reported about the rounds.
 func SummarizeRollouts(rounds []RolloutRound) RolloutSummary {
 	s := RolloutSummary{Rounds: len(rounds)}
-	var rollout, apply, gap, leaders []float64
+	var rollout, apply, gap, leaders, terms []float64
 	for _, rr := range rounds {
 		if rr.OK() {
 			s.Passed++
@@ -236,6 +245,7 @@ func SummarizeRollouts(rounds []RolloutRound) RolloutSummary {
 		apply = append(apply, rr.ApplySeconds)
 		gap = append(gap, rr.LongestWriteGapMs)
 		leaders = append(leaders, float64(rr.LeaderChanges))
+		terms = append(terms, float64(rr.TermsPassed))
 		s.Requests += rr.Load.Requests
 		s.Failed += rr.Load.Failed
 		s.Retries += rr.Load.Retries
@@ -246,7 +256,7 @@ func SummarizeRollouts(rounds []RolloutRound) RolloutSummary {
 		s.FailedPercent = 100 * float64(s.Failed) / float64(s.Requests)
 	}
 	s.RolloutSeconds, s.ApplySeconds = Summarize(rollout), Summarize(apply)
-	s.LongestWriteGapMs, s.LeaderChanges = Summarize(gap), Summarize(leaders)
+	s.LongestWriteGapMs, s.LeaderChanges, s.TermsPassed = Summarize(gap), Summarize(leaders), Summarize(terms)
 	return s
 }
 
