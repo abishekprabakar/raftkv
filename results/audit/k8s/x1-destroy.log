@@ -1,0 +1,743 @@
+terraform_data.image: Refreshing state... [id=67d9719d-720d-a791-82ee-6c551f5e0759]
+kind_cluster.this: Refreshing state... [id=raftkv-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5]
+kind_load.image: Refreshing state... [id=raftkv|sha256:1b6e4a5222f5c4891e0d1674c45942f017822ba723494fc3be128e87e8f0cfe3]
+kubernetes_namespace_v1.raftkv: Refreshing state... [id=raftkv]
+kubernetes_pod_disruption_budget_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+kubernetes_service_v1.peers: Refreshing state... [id=raftkv/raftkv-peers]
+kubernetes_service_v1.pod[0]: Refreshing state... [id=raftkv/raftkv-0-host]
+kubernetes_service_v1.client: Refreshing state... [id=raftkv/raftkv-client]
+kubernetes_service_v1.pod[2]: Refreshing state... [id=raftkv/raftkv-2-host]
+kubernetes_service_v1.pod[1]: Refreshing state... [id=raftkv/raftkv-1-host]
+kubernetes_stateful_set_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  - destroy
+
+Terraform will perform the following actions:
+
+  # kind_cluster.this will be destroyed
+  - resource "kind_cluster" "this" {
+      - client_certificate     = <<-EOT
+            [redacted]
+        EOT -> null
+      - client_key             = <<-EOT
+            [redacted]
+        EOT -> null
+      - cluster_ca_certificate = <<-EOT
+            [redacted]
+        EOT -> null
+      - completed              = true -> null
+      - context_name           = "kind-raftkv" -> null
+      - endpoint               = "https://127.0.0.1:57065" -> null
+      - id                     = "raftkv-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5" -> null
+      - kubeconfig             = <<-EOT
+            apiVersion: v1
+            clusters:
+            - cluster:
+                certificate-authority-data: [redacted]
+                server: https://127.0.0.1:57065
+              name: kind-raftkv
+            contexts:
+            - context:
+                cluster: kind-raftkv
+                user: kind-raftkv
+              name: kind-raftkv
+            current-context: kind-raftkv
+            kind: Config
+            users:
+            - name: kind-raftkv
+              user:
+                client-certificate-data: [redacted]
+                client-key-data: [redacted]
+        EOT -> null
+      - kubeconfig_path        = "$HOME/projects/raftkv/deploy/terraform/kubeconfig" -> null
+      - name                   = "raftkv" -> null
+      - node_image             = "kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5" -> null
+      - wait_for_ready         = true -> null
+
+      - kind_config {
+          - api_version               = "kind.x-k8s.io/v1alpha4" -> null
+          - containerd_config_patches = [] -> null
+          - feature_gates             = {} -> null
+          - kind                      = "Cluster" -> null
+          - runtime_config            = {} -> null
+
+          - node {
+              - kubeadm_config_patches = [] -> null
+              - labels                 = {} -> null
+              - role                   = "control-plane" -> null
+                # (1 unchanged attribute hidden)
+
+              - extra_port_mappings {
+                  - container_port = 30700 -> null
+                  - host_port      = 17000 -> null
+                  - listen_address = "127.0.0.1" -> null
+                    # (1 unchanged attribute hidden)
+                }
+              - extra_port_mappings {
+                  - container_port = 30701 -> null
+                  - host_port      = 17001 -> null
+                  - listen_address = "127.0.0.1" -> null
+                    # (1 unchanged attribute hidden)
+                }
+              - extra_port_mappings {
+                  - container_port = 30702 -> null
+                  - host_port      = 17002 -> null
+                  - listen_address = "127.0.0.1" -> null
+                    # (1 unchanged attribute hidden)
+                }
+              - extra_port_mappings {
+                  - container_port = 30703 -> null
+                  - host_port      = 17003 -> null
+                  - listen_address = "127.0.0.1" -> null
+                    # (1 unchanged attribute hidden)
+                }
+            }
+        }
+    }
+
+  # kind_load.image will be destroyed
+  - resource "kind_load" "image" {
+      - cluster_name = "raftkv" -> null
+      - id           = "raftkv|sha256:1b6e4a5222f5c4891e0d1674c45942f017822ba723494fc3be128e87e8f0cfe3" -> null
+      - image        = "raftkv:v1" -> null
+    }
+
+  # kubernetes_namespace_v1.raftkv will be destroyed
+  - resource "kubernetes_namespace_v1" "raftkv" {
+      - id                               = "raftkv" -> null
+      - wait_for_default_service_account = false -> null
+
+      - metadata {
+          - generation       = 0 -> null
+          - name             = "raftkv" -> null
+          - resource_version = "463" -> null
+          - uid              = "8768b930-81da-405c-b0a1-259516307f58" -> null
+        }
+    }
+
+  # kubernetes_pod_disruption_budget_v1.raftkv will be destroyed
+  - resource "kubernetes_pod_disruption_budget_v1" "raftkv" {
+      - id = "raftkv/raftkv" -> null
+
+      - metadata {
+          - annotations      = {} -> null
+          - generation       = 1 -> null
+          - labels           = {
+              - "app.kubernetes.io/name" = "raftkv"
+            } -> null
+          - name             = "raftkv" -> null
+          - namespace        = "raftkv" -> null
+          - resource_version = "2756" -> null
+          - uid              = "0eb816aa-ca12-4287-8956-15e85cb149fc" -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - spec {
+          - max_unavailable = "1" -> null
+            # (1 unchanged attribute hidden)
+
+          - selector {
+              - match_labels = {
+                  - "app.kubernetes.io/name" = "raftkv"
+                } -> null
+            }
+        }
+    }
+
+  # kubernetes_service_v1.client will be destroyed
+  - resource "kubernetes_service_v1" "client" {
+      - id                     = "raftkv/raftkv-client" -> null
+      - status                 = [
+          - {
+              - load_balancer = [
+                  - {
+                      - ingress = []
+                    },
+                ]
+            },
+        ] -> null
+      - wait_for_load_balancer = true -> null
+
+      - metadata {
+          - annotations      = {} -> null
+          - generation       = 0 -> null
+          - labels           = {
+              - "app.kubernetes.io/name" = "raftkv"
+            } -> null
+          - name             = "raftkv-client" -> null
+          - namespace        = "raftkv" -> null
+          - resource_version = "475" -> null
+          - uid              = "b33d0657-7d67-426c-bd93-b45e71068db6" -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - spec {
+          - allocate_load_balancer_node_ports = true -> null
+          - cluster_ip                        = "10.96.196.58" -> null
+          - cluster_ips                       = [
+              - "10.96.196.58",
+            ] -> null
+          - external_ips                      = [] -> null
+          - external_traffic_policy           = "Cluster" -> null
+          - health_check_node_port            = 0 -> null
+          - internal_traffic_policy           = "Cluster" -> null
+          - ip_families                       = [
+              - "IPv4",
+            ] -> null
+          - ip_family_policy                  = "SingleStack" -> null
+          - load_balancer_source_ranges       = [] -> null
+          - publish_not_ready_addresses       = false -> null
+          - selector                          = {
+              - "app.kubernetes.io/name" = "raftkv"
+            } -> null
+          - session_affinity                  = "None" -> null
+          - type                              = "NodePort" -> null
+            # (3 unchanged attributes hidden)
+
+          - port {
+              - name         = "grpc" -> null
+              - node_port    = 30700 -> null
+              - port         = 7000 -> null
+              - protocol     = "TCP" -> null
+              - target_port  = "grpc" -> null
+                # (1 unchanged attribute hidden)
+            }
+        }
+    }
+
+  # kubernetes_service_v1.peers will be destroyed
+  - resource "kubernetes_service_v1" "peers" {
+      - id                     = "raftkv/raftkv-peers" -> null
+      - status                 = [
+          - {
+              - load_balancer = [
+                  - {
+                      - ingress = []
+                    },
+                ]
+            },
+        ] -> null
+      - wait_for_load_balancer = true -> null
+
+      - metadata {
+          - annotations      = {} -> null
+          - generation       = 0 -> null
+          - labels           = {
+              - "app.kubernetes.io/name" = "raftkv"
+            } -> null
+          - name             = "raftkv-peers" -> null
+          - namespace        = "raftkv" -> null
+          - resource_version = "466" -> null
+          - uid              = "097363b6-0d8b-47c5-9f94-31f599c3b5f1" -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - spec {
+          - allocate_load_balancer_node_ports = true -> null
+          - cluster_ip                        = "None" -> null
+          - cluster_ips                       = [
+              - "None",
+            ] -> null
+          - external_ips                      = [] -> null
+          - health_check_node_port            = 0 -> null
+          - internal_traffic_policy           = "Cluster" -> null
+          - ip_families                       = [
+              - "IPv4",
+            ] -> null
+          - ip_family_policy                  = "SingleStack" -> null
+          - load_balancer_source_ranges       = [] -> null
+          - publish_not_ready_addresses       = true -> null
+          - selector                          = {
+              - "app.kubernetes.io/name" = "raftkv"
+            } -> null
+          - session_affinity                  = "None" -> null
+          - type                              = "ClusterIP" -> null
+            # (4 unchanged attributes hidden)
+
+          - port {
+              - name         = "grpc" -> null
+              - node_port    = 0 -> null
+              - port         = 7000 -> null
+              - protocol     = "TCP" -> null
+              - target_port  = "grpc" -> null
+                # (1 unchanged attribute hidden)
+            }
+        }
+    }
+
+  # kubernetes_service_v1.pod[0] will be destroyed
+  - resource "kubernetes_service_v1" "pod" {
+      - id                     = "raftkv/raftkv-0-host" -> null
+      - status                 = [
+          - {
+              - load_balancer = [
+                  - {
+                      - ingress = []
+                    },
+                ]
+            },
+        ] -> null
+      - wait_for_load_balancer = true -> null
+
+      - metadata {
+          - annotations      = {} -> null
+          - generation       = 0 -> null
+          - labels           = {
+              - "app.kubernetes.io/name" = "raftkv"
+            } -> null
+          - name             = "raftkv-0-host" -> null
+          - namespace        = "raftkv" -> null
+          - resource_version = "489" -> null
+          - uid              = "15499dc4-c0dd-4a34-afd8-b5b4872bbefb" -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - spec {
+          - allocate_load_balancer_node_ports = true -> null
+          - cluster_ip                        = "10.96.231.109" -> null
+          - cluster_ips                       = [
+              - "10.96.231.109",
+            ] -> null
+          - external_ips                      = [] -> null
+          - external_traffic_policy           = "Cluster" -> null
+          - health_check_node_port            = 0 -> null
+          - internal_traffic_policy           = "Cluster" -> null
+          - ip_families                       = [
+              - "IPv4",
+            ] -> null
+          - ip_family_policy                  = "SingleStack" -> null
+          - load_balancer_source_ranges       = [] -> null
+          - publish_not_ready_addresses       = true -> null
+          - selector                          = {
+              - "app.kubernetes.io/name"             = "raftkv"
+              - "statefulset.kubernetes.io/pod-name" = "raftkv-0"
+            } -> null
+          - session_affinity                  = "None" -> null
+          - type                              = "NodePort" -> null
+            # (3 unchanged attributes hidden)
+
+          - port {
+              - name         = "grpc" -> null
+              - node_port    = 30701 -> null
+              - port         = 7000 -> null
+              - protocol     = "TCP" -> null
+              - target_port  = "grpc" -> null
+                # (1 unchanged attribute hidden)
+            }
+        }
+    }
+
+  # kubernetes_service_v1.pod[1] will be destroyed
+  - resource "kubernetes_service_v1" "pod" {
+      - id                     = "raftkv/raftkv-1-host" -> null
+      - status                 = [
+          - {
+              - load_balancer = [
+                  - {
+                      - ingress = []
+                    },
+                ]
+            },
+        ] -> null
+      - wait_for_load_balancer = true -> null
+
+      - metadata {
+          - annotations      = {} -> null
+          - generation       = 0 -> null
+          - labels           = {
+              - "app.kubernetes.io/name" = "raftkv"
+            } -> null
+          - name             = "raftkv-1-host" -> null
+          - namespace        = "raftkv" -> null
+          - resource_version = "481" -> null
+          - uid              = "4d3de52e-5a1a-47d2-adef-5d06b7ee2099" -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - spec {
+          - allocate_load_balancer_node_ports = true -> null
+          - cluster_ip                        = "10.96.145.19" -> null
+          - cluster_ips                       = [
+              - "10.96.145.19",
+            ] -> null
+          - external_ips                      = [] -> null
+          - external_traffic_policy           = "Cluster" -> null
+          - health_check_node_port            = 0 -> null
+          - internal_traffic_policy           = "Cluster" -> null
+          - ip_families                       = [
+              - "IPv4",
+            ] -> null
+          - ip_family_policy                  = "SingleStack" -> null
+          - load_balancer_source_ranges       = [] -> null
+          - publish_not_ready_addresses       = true -> null
+          - selector                          = {
+              - "app.kubernetes.io/name"             = "raftkv"
+              - "statefulset.kubernetes.io/pod-name" = "raftkv-1"
+            } -> null
+          - session_affinity                  = "None" -> null
+          - type                              = "NodePort" -> null
+            # (3 unchanged attributes hidden)
+
+          - port {
+              - name         = "grpc" -> null
+              - node_port    = 30702 -> null
+              - port         = 7000 -> null
+              - protocol     = "TCP" -> null
+              - target_port  = "grpc" -> null
+                # (1 unchanged attribute hidden)
+            }
+        }
+    }
+
+  # kubernetes_service_v1.pod[2] will be destroyed
+  - resource "kubernetes_service_v1" "pod" {
+      - id                     = "raftkv/raftkv-2-host" -> null
+      - status                 = [
+          - {
+              - load_balancer = [
+                  - {
+                      - ingress = []
+                    },
+                ]
+            },
+        ] -> null
+      - wait_for_load_balancer = true -> null
+
+      - metadata {
+          - annotations      = {} -> null
+          - generation       = 0 -> null
+          - labels           = {
+              - "app.kubernetes.io/name" = "raftkv"
+            } -> null
+          - name             = "raftkv-2-host" -> null
+          - namespace        = "raftkv" -> null
+          - resource_version = "487" -> null
+          - uid              = "ba56268b-de64-4868-964f-23f13feceb67" -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - spec {
+          - allocate_load_balancer_node_ports = true -> null
+          - cluster_ip                        = "10.96.61.156" -> null
+          - cluster_ips                       = [
+              - "10.96.61.156",
+            ] -> null
+          - external_ips                      = [] -> null
+          - external_traffic_policy           = "Cluster" -> null
+          - health_check_node_port            = 0 -> null
+          - internal_traffic_policy           = "Cluster" -> null
+          - ip_families                       = [
+              - "IPv4",
+            ] -> null
+          - ip_family_policy                  = "SingleStack" -> null
+          - load_balancer_source_ranges       = [] -> null
+          - publish_not_ready_addresses       = true -> null
+          - selector                          = {
+              - "app.kubernetes.io/name"             = "raftkv"
+              - "statefulset.kubernetes.io/pod-name" = "raftkv-2"
+            } -> null
+          - session_affinity                  = "None" -> null
+          - type                              = "NodePort" -> null
+            # (3 unchanged attributes hidden)
+
+          - port {
+              - name         = "grpc" -> null
+              - node_port    = 30703 -> null
+              - port         = 7000 -> null
+              - protocol     = "TCP" -> null
+              - target_port  = "grpc" -> null
+                # (1 unchanged attribute hidden)
+            }
+        }
+    }
+
+  # kubernetes_stateful_set_v1.raftkv will be destroyed
+  - resource "kubernetes_stateful_set_v1" "raftkv" {
+      - id               = "raftkv/raftkv" -> null
+      - wait_for_rollout = true -> null
+
+      - metadata {
+          - annotations      = {} -> null
+          - generation       = 1 -> null
+          - labels           = {
+              - "app.kubernetes.io/name" = "raftkv"
+            } -> null
+          - name             = "raftkv" -> null
+          - namespace        = "raftkv" -> null
+          - resource_version = "2761" -> null
+          - uid              = "aab56aff-63a8-4e81-98ef-493e8dfab357" -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - spec {
+          - min_ready_seconds      = 0 -> null
+          - pod_management_policy  = "Parallel" -> null
+          - replicas               = "3" -> null
+          - revision_history_limit = 0 -> null
+          - service_name           = "raftkv-peers" -> null
+
+          - persistent_volume_claim_retention_policy {
+              - when_deleted = "Retain" -> null
+              - when_scaled  = "Retain" -> null
+            }
+
+          - selector {
+              - match_labels = {
+                  - "app.kubernetes.io/name" = "raftkv"
+                } -> null
+            }
+
+          - template {
+              - metadata {
+                  - annotations      = {
+                      - "raftkv/source-hash" = "ef4513e52d821eda46e145ad9a32f1ee2421a08dab136f10f3ed8503cae27a77"
+                    } -> null
+                  - generation       = 0 -> null
+                  - labels           = {
+                      - "app.kubernetes.io/name" = "raftkv"
+                    } -> null
+                    name             = null
+                    # (4 unchanged attributes hidden)
+                }
+              - spec {
+                  - active_deadline_seconds          = 0 -> null
+                  - automount_service_account_token  = true -> null
+                  - dns_policy                       = "ClusterFirst" -> null
+                  - enable_service_links             = true -> null
+                  - host_ipc                         = false -> null
+                  - host_network                     = false -> null
+                  - host_pid                         = false -> null
+                  - node_selector                    = {} -> null
+                  - restart_policy                   = "Always" -> null
+                  - scheduler_name                   = "default-scheduler" -> null
+                  - share_process_namespace          = false -> null
+                  - termination_grace_period_seconds = 10 -> null
+                    # (6 unchanged attributes hidden)
+
+                  - container {
+                      - args                       = [
+                          - "--id-from-hostname",
+                          - "--peers=1=raftkv-0.raftkv-peers.raftkv.svc.cluster.local:7000,2=raftkv-1.raftkv-peers.raftkv.svc.cluster.local:7000,3=raftkv-2.raftkv-peers.raftkv.svc.cluster.local:7000",
+                          - "--data=/data",
+                          - "--health=:8080",
+                        ] -> null
+                      - command                    = [] -> null
+                      - image                      = "raftkv:v1" -> null
+                      - image_pull_policy          = "IfNotPresent" -> null
+                      - name                       = "raftkvd" -> null
+                      - stdin                      = false -> null
+                      - stdin_once                 = false -> null
+                      - termination_message_path   = "/dev/termination-log" -> null
+                      - termination_message_policy = "File" -> null
+                      - tty                        = false -> null
+                        # (2 unchanged attributes hidden)
+
+                      - liveness_probe {
+                          - failure_threshold     = 3 -> null
+                          - initial_delay_seconds = 0 -> null
+                          - period_seconds        = 5 -> null
+                          - success_threshold     = 1 -> null
+                          - timeout_seconds       = 2 -> null
+
+                          - http_get {
+                              - path   = "/livez" -> null
+                              - port   = "health" -> null
+                              - scheme = "HTTP" -> null
+                                # (1 unchanged attribute hidden)
+                            }
+                        }
+
+                      - port {
+                          - container_port = 7000 -> null
+                          - host_port      = 0 -> null
+                          - name           = "grpc" -> null
+                          - protocol       = "TCP" -> null
+                            # (1 unchanged attribute hidden)
+                        }
+                      - port {
+                          - container_port = 8080 -> null
+                          - host_port      = 0 -> null
+                          - name           = "health" -> null
+                          - protocol       = "TCP" -> null
+                            # (1 unchanged attribute hidden)
+                        }
+
+                      - readiness_probe {
+                          - failure_threshold     = 3 -> null
+                          - initial_delay_seconds = 0 -> null
+                          - period_seconds        = 1 -> null
+                          - success_threshold     = 1 -> null
+                          - timeout_seconds       = 2 -> null
+
+                          - http_get {
+                              - path   = "/readyz" -> null
+                              - port   = "health" -> null
+                              - scheme = "HTTP" -> null
+                                # (1 unchanged attribute hidden)
+                            }
+                        }
+
+                      - resources {
+                          - limits   = {
+                              - "memory" = "512Mi"
+                            } -> null
+                          - requests = {
+                              - "cpu"    = "100m"
+                              - "memory" = "128Mi"
+                            } -> null
+                        }
+
+                      - security_context {
+                          - allow_privilege_escalation = false -> null
+                          - privileged                 = false -> null
+                          - read_only_root_filesystem  = true -> null
+                          - run_as_non_root            = false -> null
+                            # (2 unchanged attributes hidden)
+
+                          - capabilities {
+                              - add  = [] -> null
+                              - drop = [
+                                  - "ALL",
+                                ] -> null
+                            }
+                        }
+
+                      - startup_probe {
+                          - failure_threshold     = 60 -> null
+                          - initial_delay_seconds = 0 -> null
+                          - period_seconds        = 1 -> null
+                          - success_threshold     = 1 -> null
+                          - timeout_seconds       = 2 -> null
+
+                          - http_get {
+                              - path   = "/livez" -> null
+                              - port   = "health" -> null
+                              - scheme = "HTTP" -> null
+                                # (1 unchanged attribute hidden)
+                            }
+                        }
+
+                      - volume_mount {
+                          - mount_path        = "/data" -> null
+                          - mount_propagation = "None" -> null
+                          - name              = "data" -> null
+                          - read_only         = false -> null
+                            # (2 unchanged attributes hidden)
+                        }
+                    }
+
+                  - security_context {
+                      - fs_group               = "65532" -> null
+                      - run_as_group           = "65532" -> null
+                      - run_as_non_root        = true -> null
+                      - run_as_user            = "65532" -> null
+                      - supplemental_groups    = [] -> null
+                        # (1 unchanged attribute hidden)
+
+                      - seccomp_profile {
+                          - type              = "RuntimeDefault" -> null
+                            # (1 unchanged attribute hidden)
+                        }
+                    }
+
+                  - topology_spread_constraint {
+                      - match_label_keys     = [] -> null
+                      - max_skew             = 1 -> null
+                      - min_domains          = 0 -> null
+                      - topology_key         = "kubernetes.io/hostname" -> null
+                      - when_unsatisfiable   = "ScheduleAnyway" -> null
+                        # (2 unchanged attributes hidden)
+
+                      - label_selector {
+                          - match_labels = {
+                              - "app.kubernetes.io/name" = "raftkv"
+                            } -> null
+                        }
+                    }
+
+                  - volume {
+                      - name = "data" -> null
+
+                      - empty_dir {
+                            # (2 unchanged attributes hidden)
+                        }
+                    }
+                }
+            }
+
+          - update_strategy {
+              - type = "RollingUpdate" -> null
+            }
+        }
+    }
+
+  # terraform_data.image will be destroyed
+  - resource "terraform_data" "image" {
+      - id               = "67d9719d-720d-a791-82ee-6c551f5e0759" -> null
+      - triggers_replace = {
+          - image  = "raftkv:v1"
+          - source = "ef4513e52d821eda46e145ad9a32f1ee2421a08dab136f10f3ed8503cae27a77"
+        } -> null
+    }
+
+Plan: 0 to add, 0 to change, 11 to destroy.
+
+Changes to Outputs:
+  - client_address            = "127.0.0.1:17000" -> null
+  - client_address_in_cluster = "raftkv-client.raftkv.svc.cluster.local:7000" -> null
+  - image                     = "raftkv:v1" -> null
+  - kubeconfig                = "$HOME/projects/raftkv/deploy/terraform/kubeconfig" -> null
+  - namespace                 = "raftkv" -> null
+  - node_container            = "raftkv-control-plane" -> null
+  - nodes                     = [
+      - {
+          - address      = "raftkv-0.raftkv-peers.raftkv.svc.cluster.local:7000"
+          - host_address = "127.0.0.1:17001"
+          - id           = 1
+          - pod          = "raftkv-0"
+        },
+      - {
+          - address      = "raftkv-1.raftkv-peers.raftkv.svc.cluster.local:7000"
+          - host_address = "127.0.0.1:17002"
+          - id           = 2
+          - pod          = "raftkv-1"
+        },
+      - {
+          - address      = "raftkv-2.raftkv-peers.raftkv.svc.cluster.local:7000"
+          - host_address = "127.0.0.1:17003"
+          - id           = 3
+          - pod          = "raftkv-2"
+        },
+    ] -> null
+  - statefulset               = "raftkv" -> null
+kubernetes_pod_disruption_budget_v1.raftkv: Destroying... [id=raftkv/raftkv]
+kubernetes_service_v1.client: Destroying... [id=raftkv/raftkv-client]
+kubernetes_service_v1.pod[1]: Destroying... [id=raftkv/raftkv-1-host]
+kubernetes_service_v1.pod[2]: Destroying... [id=raftkv/raftkv-2-host]
+kubernetes_service_v1.pod[0]: Destroying... [id=raftkv/raftkv-0-host]
+kubernetes_stateful_set_v1.raftkv: Destroying... [id=raftkv/raftkv]
+kubernetes_pod_disruption_budget_v1.raftkv: Destruction complete after 0s
+kubernetes_service_v1.pod[1]: Destruction complete after 0s
+kubernetes_service_v1.client: Destruction complete after 0s
+kubernetes_service_v1.pod[2]: Destruction complete after 0s
+kubernetes_service_v1.pod[0]: Destruction complete after 0s
+kubernetes_stateful_set_v1.raftkv: Destruction complete after 0s
+kind_load.image: Destroying... [id=raftkv|sha256:1b6e4a5222f5c4891e0d1674c45942f017822ba723494fc3be128e87e8f0cfe3]
+kubernetes_service_v1.peers: Destroying... [id=raftkv/raftkv-peers]
+kind_load.image: Destruction complete after 0s
+terraform_data.image: Destroying... [id=67d9719d-720d-a791-82ee-6c551f5e0759]
+terraform_data.image: Destruction complete after 0s
+kubernetes_service_v1.peers: Destruction complete after 0s
+kubernetes_namespace_v1.raftkv: Destroying... [id=raftkv]
+kubernetes_namespace_v1.raftkv: Still destroying... [id=raftkv, 00m10s elapsed]
+kubernetes_namespace_v1.raftkv: Destruction complete after 13s
+kind_cluster.this: Destroying... [id=raftkv-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5]
+kind_cluster.this: Destruction complete after 1s
+
+Destroy complete! Resources: 11 destroyed.
+resources in the Terraform state: []
+node containers: []
+Untagged: raftkv:no-dedup
+Deleted: sha256:e996955af2c49f790aceb1913eb5c117c0dc4d6607be60abea3cb64731764c16

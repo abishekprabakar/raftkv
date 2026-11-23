@@ -1,0 +1,4 @@
+=== RUN   TestDurabilityCountsLostAndDuplicatedWrites
+--- PASS: TestDurabilityCountsLostAndDuplicatedWrites (0.00s)
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/kube	0.311s

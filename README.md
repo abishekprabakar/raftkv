@@ -300,4 +300,44 @@ Bloom filters cut disk block reads for missing keys by 116.3x (`bloom.disk_read_
 
 With the `plain-leader-read` bug planted, Porcupine found 7 violations in 20 schedules (`results/audit/m5/planted-plain-leader-read.json`).
 
+## Kubernetes on kind, deployed with Terraform (`make kube-audit` -> `results/k8s-*.json`)
+
+| Metric | Value | JSON field |
+|---|---|---|
+| Leader failover trials (`kubectl delete pod` on the leader, under load) | 100 | k8s-failover: summary.trials |
+| Trials that elected a new leader, took a write, and settled with 3 Ready pods | 100 of 100 | summary.passed |
+| Time to a new leader: median / p95 / max | 645 ms / 924 ms / 1033 ms | summary.new_leader_ms |
+| Time to the first successful write: median / p95 / max | 674 ms / 1170 ms / 1203 ms | summary.first_write_ms |
+| Acknowledged writes lost | 0 of 83,600 | durability.acknowledged_writes_lost |
+| Writes applied twice / values nobody wrote | 0 / 0 | durability.writes_duplicated, values_never_written |
+| Porcupine on the whole history (139,431 requests, 1,204 keys) | Ok | linearizable |
+| Failed client requests across the 100 failovers | 0 of 139,431 | load.failed_requests |
+| Replacement pods that started from their own volume | 100 of 100 | summary.replacement_did_not_start_from_its_volume |
+
+| Metric | Value | JSON field |
+|---|---|---|
+| Restarts of every pod at once that recovered, each pod from its volume | 5 of 5 | k8s-restart: summary.passed |
+| Acknowledged writes lost across those restarts | 0 of 2,807 | durability.acknowledged_writes_lost |
+
+| Metric | Value | JSON field |
+|---|---|---|
+| Rolling updates under load that finished on the new version | 10 of 10 | k8s-rollout: summary.passed |
+| Rollout time: median / min / max | 8.8 s / 8.3 s / 9.5 s | summary.rollout_seconds |
+| Failed client requests during the rollouts | 0 of 36,924 | summary.failed_requests |
+| Longest any request took during a rollout | 2630 ms | summary.longest_request_ms |
+| Leader changes per rollout: median / max | 2 / 3 | summary.leader_changes_per_rollout |
+
+| Metric | Value | JSON field |
+|---|---|---|
+| Cold starts that reached 3 Ready pods and a leader with one `terraform apply` | 10 of 10 | k8s-coldstart: summary.passed |
+| Cold start, `terraform apply` to 3 Ready pods with a leader: median / min / max | 34.8 s / 33.7 s / 37.4 s | summary.ready_with_leader_seconds |
+
+| Metric | Value | JSON field |
+|---|---|---|
+| Live checks passed: objects, client Service, readiness without a majority, disruption budget under a drain | 7 of 7 | k8s-checks: passed, failed |
+
+With the `no-dedup` bug planted, 20 failover trials left 10 writes applied twice, and Porcupine's answer was Illegal (`results/audit/k8s/planted-no-dedup.json`).
+
+With the data on an `emptyDir` instead of the volume claims, deleting every pod 3 times lost 21,599 of 31,495 acknowledged writes (`results/audit/k8s/planted-emptydir.json`).
+
 <!-- results:end -->

@@ -1,0 +1,176 @@
+$ terraform -chdir=deploy/terraform output -json
+{
+  "client_address": {
+    "sensitive": false,
+    "type": "string",
+    "value": "127.0.0.1:17000"
+  },
+  "client_address_in_cluster": {
+    "sensitive": false,
+    "type": "string",
+    "value": "raftkv-client.raftkv.svc.cluster.local:7000"
+  },
+  "image": {
+    "sensitive": false,
+    "type": "string",
+    "value": "raftkv:v1"
+  },
+  "kubeconfig": {
+    "sensitive": false,
+    "type": "string",
+    "value": "$HOME/projects/raftkv/deploy/terraform/kubeconfig"
+  },
+  "namespace": {
+    "sensitive": false,
+    "type": "string",
+    "value": "raftkv"
+  },
+  "node_container": {
+    "sensitive": false,
+    "type": "string",
+    "value": "raftkv-control-plane"
+  },
+  "nodes": {
+    "sensitive": false,
+    "type": [
+      "tuple",
+      [
+        [
+          "object",
+          {
+            "address": "string",
+            "host_address": "string",
+            "id": "number",
+            "pod": "string"
+          }
+        ],
+        [
+          "object",
+          {
+            "address": "string",
+            "host_address": "string",
+            "id": "number",
+            "pod": "string"
+          }
+        ],
+        [
+          "object",
+          {
+            "address": "string",
+            "host_address": "string",
+            "id": "number",
+            "pod": "string"
+          }
+        ]
+      ]
+    ],
+    "value": [
+      {
+        "address": "raftkv-0.raftkv-peers.raftkv.svc.cluster.local:7000",
+        "host_address": "127.0.0.1:17001",
+        "id": 1,
+        "pod": "raftkv-0"
+      },
+      {
+        "address": "raftkv-1.raftkv-peers.raftkv.svc.cluster.local:7000",
+        "host_address": "127.0.0.1:17002",
+        "id": 2,
+        "pod": "raftkv-1"
+      },
+      {
+        "address": "raftkv-2.raftkv-peers.raftkv.svc.cluster.local:7000",
+        "host_address": "127.0.0.1:17003",
+        "id": 3,
+        "pod": "raftkv-2"
+      }
+    ]
+  },
+  "statefulset": {
+    "sensitive": false,
+    "type": "string",
+    "value": "raftkv"
+  }
+}
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-0 -- /usr/local/bin/raftkv --addr raftkv-client.raftkv.svc.cluster.local:7000 put check.inside 1795464823024642000
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-2 -- /usr/local/bin/raftkv --addr raftkv-client.raftkv.svc.cluster.local:7000 get check.inside
+1795464823024642000
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv scale statefulset raftkv --replicas 1
+statefulset.apps/raftkv scaled
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv get events --field-selector involvedObject.name=raftkv-0,reason=Unhealthy -o jsonpath={.items[-1:].message}
+Readiness probe failed: HTTP probe failed with statuscode: 503$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv scale statefulset raftkv --replicas 3
+statefulset.apps/raftkv scaled
+$ terraform -chdir=deploy/terraform plan -detailed-exitcode -input=false -no-color -lock=false
+terraform_data.image: Refreshing state... [id=167a8a12-1bff-261c-e764-08537863cff1]
+kind_cluster.this: Refreshing state... [id=raftkv-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5]
+kind_load.image: Refreshing state... [id=raftkv|sha256:59de6727e28ebfdbb6f5002de58c992c326f04db87d8559f9bde9723bf29bc53]
+kubernetes_namespace_v1.raftkv: Refreshing state... [id=raftkv]
+kubernetes_pod_disruption_budget_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+kubernetes_service_v1.peers: Refreshing state... [id=raftkv/raftkv-peers]
+kubernetes_service_v1.client: Refreshing state... [id=raftkv/raftkv-client]
+kubernetes_service_v1.pod[2]: Refreshing state... [id=raftkv/raftkv-2-host]
+kubernetes_service_v1.pod[1]: Refreshing state... [id=raftkv/raftkv-1-host]
+kubernetes_service_v1.pod[0]: Refreshing state... [id=raftkv/raftkv-0-host]
+kubernetes_stateful_set_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv get nodes -o jsonpath={.items[0].metadata.name}
+raftkv-control-plane$ kubectl drain raftkv-control-plane ...
+node/raftkv-control-plane cordoned
+evicting pod raftkv/raftkv-2
+evicting pod raftkv/raftkv-1
+evicting pod raftkv/raftkv-0
+error when evicting pods/"raftkv-2" -n "raftkv" (will retry after 5s): Cannot evict pod as it would violate the pod's disruption budget.
+error when evicting pods/"raftkv-1" -n "raftkv" (will retry after 5s): Cannot evict pod as it would violate the pod's disruption budget.
+pod/raftkv-0 evicted
+evicting pod raftkv/raftkv-2
+error when evicting pods/"raftkv-2" -n "raftkv" (will retry after 5s): Cannot evict pod as it would violate the pod's disruption budget.
+evicting pod raftkv/raftkv-1
+error when evicting pods/"raftkv-1" -n "raftkv" (will retry after 5s): Cannot evict pod as it would violate the pod's disruption budget.
+evicting pod raftkv/raftkv-2
+error when evicting pods/"raftkv-2" -n "raftkv" (will retry after 5s): Cannot evict pod as it would violate the pod's disruption budget.
+evicting pod raftkv/raftkv-1
+error when evicting pods/"raftkv-1" -n "raftkv" (will retry after 5s): Cannot evict pod as it would violate the pod's disruption budget.
+evicting pod raftkv/raftkv-2
+error when evicting pods/"raftkv-2" -n "raftkv" (will retry after 5s): Cannot evict pod as it would violate the pod's disruption budget.
+evicting pod raftkv/raftkv-1
+error when evicting pods/"raftkv-1" -n "raftkv" (will retry after 5s): Cannot evict pod as it would violate the pod's disruption budget.
+evicting pod raftkv/raftkv-2
+error when evicting pods/"raftkv-2" -n "raftkv" (will retry after 5s): Cannot evict pod as it would violate the pod's disruption budget.
+evicting pod raftkv/raftkv-1
+error when evicting pods/"raftkv-1" -n "raftkv" (will retry after 5s): Cannot evict pod as it would violate the pod's disruption budget.
+evicting pod raftkv/raftkv-2
+error when evicting pods/"raftkv-2" -n "raftkv" (will retry after 5s): Cannot evict pod as it would violate the pod's disruption budget.
+evicting pod raftkv/raftkv-1
+error when evicting pods/"raftkv-1" -n "raftkv" (will retry after 5s): Cannot evict pod as it would violate the pod's disruption budget.
+evicting pod raftkv/raftkv-2
+evicting pod raftkv/raftkv-1
+There are pending pods in node "raftkv-control-plane" when an error occurred: [error when evicting pods/"raftkv-2" -n "raftkv": global timeout reached: 30s, error when evicting pods/"raftkv-1" -n "raftkv": global timeout reached: 30s]
+pod/raftkv-1
+pod/raftkv-2
+error: unable to drain node "raftkv-control-plane" due to error: [error when evicting pods/"raftkv-2" -n "raftkv": global timeout reached: 30s, error when evicting pods/"raftkv-1" -n "raftkv": global timeout reached: 30s], continuing command...
+There are pending nodes to be drained:
+ raftkv-control-plane
+error when evicting pods/"raftkv-2" -n "raftkv": global timeout reached: 30s
+error when evicting pods/"raftkv-1" -n "raftkv": global timeout reached: 30s
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv uncordon raftkv-control-plane
+node/raftkv-control-plane uncordoned
+$ terraform -chdir=deploy/terraform plan -detailed-exitcode -input=false -no-color -lock=false
+terraform_data.image: Refreshing state... [id=167a8a12-1bff-261c-e764-08537863cff1]
+kind_cluster.this: Refreshing state... [id=raftkv-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5]
+kind_load.image: Refreshing state... [id=raftkv|sha256:59de6727e28ebfdbb6f5002de58c992c326f04db87d8559f9bde9723bf29bc53]
+kubernetes_namespace_v1.raftkv: Refreshing state... [id=raftkv]
+kubernetes_pod_disruption_budget_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+kubernetes_service_v1.peers: Refreshing state... [id=raftkv/raftkv-peers]
+kubernetes_service_v1.client: Refreshing state... [id=raftkv/raftkv-client]
+kubernetes_service_v1.pod[0]: Refreshing state... [id=raftkv/raftkv-0-host]
+kubernetes_service_v1.pod[2]: Refreshing state... [id=raftkv/raftkv-2-host]
+kubernetes_service_v1.pod[1]: Refreshing state... [id=raftkv/raftkv-1-host]
+kubernetes_stateful_set_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.

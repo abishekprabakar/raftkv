@@ -1,0 +1,298 @@
+{
+  "generated_at": "2026-11-23T20:43:13Z",
+  "command": "kubebench restart",
+  "hardware": {
+    "collected_at": "2026-11-23T20:39:55Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "The pods and their volumes are inside Docker's Linux VM. The filesystem named here is the host's, where only the harness runs."
+  },
+  "versions": {
+    "docker": "29.7.2",
+    "kubernetes": "v1.37.0",
+    "kubectl": "v1.36.1",
+    "kind_node_image": "kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5",
+    "terraform": "1.17.0",
+    "docker_cpus": 10,
+    "docker_memory_bytes": 8319504384,
+    "source_commit": "04d32c1e07049fc10d205bb6124d3e109837d4ee",
+    "source_tree_had_changes": false,
+    "power": "Battery Power"
+  },
+  "image": "raftkv:v1",
+  "wall_seconds": 197.770188167,
+  "trials_requested": 3,
+  "summary": {
+    "trials": 3,
+    "passed": 0,
+    "no_new_leader_within_60s": 3,
+    "no_first_write_seen": 3,
+    "not_settled_within_180s": 0,
+    "replacement_did_not_start_from_its_volume": 3,
+    "errors": 0,
+    "replacement_pods": 9,
+    "new_leader_ms": {
+      "n": 0,
+      "min": 0,
+      "median": 0,
+      "p95": 0,
+      "p99": 0,
+      "max": 0
+    },
+    "first_write_ms": {
+      "n": 0,
+      "min": 0,
+      "median": 0,
+      "p95": 0,
+      "p99": 0,
+      "max": 0
+    },
+    "old_leader_last_answer_ms": {
+      "n": 3,
+      "min": 43.228,
+      "median": 43.24,
+      "p95": 47.872,
+      "p99": 47.872,
+      "max": 47.872
+    },
+    "kubectl_delete_returned_ms": {
+      "n": 3,
+      "min": 52.363,
+      "median": 57.646,
+      "p95": 66.845,
+      "p99": 66.845,
+      "max": 66.845
+    },
+    "all_pods_ready_ms": {
+      "n": 3,
+      "min": 60209.127,
+      "median": 60232.125,
+      "p95": 60297.354,
+      "p99": 60297.354,
+      "max": 60297.354
+    },
+    "settled_ms": {
+      "n": 3,
+      "min": 60209.127,
+      "median": 60232.126,
+      "p95": 60297.354,
+      "p99": 60297.354,
+      "max": 60297.354
+    },
+    "longest_write_gap_ms": {
+      "n": 3,
+      "min": 1627.537,
+      "median": 2130.042,
+      "p95": 3140.814,
+      "p99": 3140.814,
+      "max": 3140.814
+    },
+    "elected_in_one_term": 0,
+    "first_write_after_new_leader_ms": {
+      "n": 0,
+      "min": 0,
+      "median": 0,
+      "p95": 0,
+      "p99": 0,
+      "max": 0
+    },
+    "first_write_took_over_1s": 0,
+    "trials_with_extra_leader_changes": 0,
+    "extra_leader_changes": 0,
+    "new_leader_by_pod": {},
+    "deleted_by_pod": {
+      "raftkv-0": 3,
+      "raftkv-1": 3,
+      "raftkv-2": 3
+    }
+  },
+  "seed": 1,
+  "clients": 6,
+  "status_poll_interval_ms": {
+    "n": 105044,
+    "min": 5.1852498054504395,
+    "median": 5.35529088973999,
+    "p95": 5.962791919708252,
+    "p99": 6.984125137329102,
+    "max": 59.74229049682617
+  },
+  "load": {
+    "requests": 52670,
+    "writes_acknowledged": 31495,
+    "writes_unknown": 0,
+    "reads_served": 21175,
+    "reads_failed": 0,
+    "failed_requests": 0,
+    "retries": 146,
+    "requests_that_retried": 18,
+    "latency_ms": {
+      "n": 52670,
+      "min": 0.276875,
+      "median": 1.195083,
+      "p95": 3.540292,
+      "p99": 5.943542,
+      "max": 3629.745083
+    }
+  },
+  "durability": {
+    "keys": 392,
+    "keys_whose_final_read_failed": 0,
+    "writes_acknowledged": 31495,
+    "writes_unknown": 0,
+    "acknowledged_writes_lost": 21599,
+    "writes_duplicated": 0,
+    "unknown_writes_found_applied": 0,
+    "values_never_written": 0,
+    "examples": [
+      "acknowledged and lost: r1795466396.e0.k0 c3.1;",
+      "acknowledged and lost: r1795466396.e0.k1 c4.1;",
+      "acknowledged and lost: r1795466396.e0.k1 c2.1;",
+      "acknowledged and lost: r1795466396.e0.k3 c5.1;",
+      "acknowledged and lost: r1795466396.e0.k0 c1.1;",
+      "acknowledged and lost: r1795466396.e0.k0 c4.2;",
+      "acknowledged and lost: r1795466396.e0.k0 c5.2;",
+      "acknowledged and lost: r1795466396.e0.k3 c0.1;",
+      "acknowledged and lost: r1795466396.e0.k2 c2.2;",
+      "acknowledged and lost: r1795466396.e0.k0 c4.3;"
+    ]
+  },
+  "linearizable": "Illegal",
+  "check_seconds": 0.01553925,
+  "trials": [
+    {
+      "trial": 1,
+      "deleted_pods": [
+        "raftkv-0",
+        "raftkv-1",
+        "raftkv-2"
+      ],
+      "old_term": 3,
+      "t0_since_run_start_ms": 3280.936,
+      "kubectl_delete_returned_ms": 52.363,
+      "old_leader_last_answer_ms": 43.24,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": false,
+      "new_leader_ms": 0,
+      "first_write_seen": false,
+      "first_write_ms": 0,
+      "settled": true,
+      "all_pods_ready_ms": 60232.125,
+      "settled_ms": 60232.126,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 3140.814,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 0,
+          "last_log_index": 0,
+          "applied": 0
+        },
+        "raftkv-1": {
+          "found": true,
+          "term": 0,
+          "last_log_index": 0,
+          "applied": 0
+        },
+        "raftkv-2": {
+          "found": true,
+          "term": 0,
+          "last_log_index": 0,
+          "applied": 0
+        }
+      },
+      "every_replacement_started_from_its_volume": false
+    },
+    {
+      "trial": 2,
+      "deleted_pods": [
+        "raftkv-0",
+        "raftkv-1",
+        "raftkv-2"
+      ],
+      "old_term": 1,
+      "t0_since_run_start_ms": 68702.283,
+      "kubectl_delete_returned_ms": 57.646,
+      "old_leader_last_answer_ms": 47.872,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": false,
+      "new_leader_ms": 0,
+      "first_write_seen": false,
+      "first_write_ms": 0,
+      "settled": true,
+      "all_pods_ready_ms": 60209.127,
+      "settled_ms": 60209.127,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 2130.042,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 0,
+          "last_log_index": 0,
+          "applied": 0
+        },
+        "raftkv-1": {
+          "found": true,
+          "term": 0,
+          "last_log_index": 0,
+          "applied": 0
+        },
+        "raftkv-2": {
+          "found": true,
+          "term": 0,
+          "last_log_index": 0,
+          "applied": 0
+        }
+      },
+      "every_replacement_started_from_its_volume": false
+    },
+    {
+      "trial": 3,
+      "deleted_pods": [
+        "raftkv-0",
+        "raftkv-1",
+        "raftkv-2"
+      ],
+      "old_term": 1,
+      "t0_since_run_start_ms": 134102.559,
+      "kubectl_delete_returned_ms": 66.845,
+      "old_leader_last_answer_ms": 43.228,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": false,
+      "new_leader_ms": 0,
+      "first_write_seen": false,
+      "first_write_ms": 0,
+      "settled": true,
+      "all_pods_ready_ms": 60297.354,
+      "settled_ms": 60297.354,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1627.537,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 0,
+          "last_log_index": 0,
+          "applied": 0
+        },
+        "raftkv-1": {
+          "found": true,
+          "term": 0,
+          "last_log_index": 0,
+          "applied": 0
+        },
+        "raftkv-2": {
+          "found": true,
+          "term": 0,
+          "last_log_index": 0,
+          "applied": 0
+        }
+      },
+      "every_replacement_started_from_its_volume": false
+    }
+  ]
+}

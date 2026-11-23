@@ -1,0 +1,641 @@
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # kind_cluster.this will be created
+  + resource "kind_cluster" "this" {
+      + client_certificate     = (known after apply)
+      + client_key             = (known after apply)
+      + cluster_ca_certificate = (known after apply)
+      + completed              = (known after apply)
+      + context_name           = (known after apply)
+      + endpoint               = (known after apply)
+      + id                     = (known after apply)
+      + kubeconfig             = (known after apply)
+      + kubeconfig_path        = "$HOME/projects/raftkv/deploy/terraform/kubeconfig"
+      + name                   = "raftkv"
+      + node_image             = "kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5"
+      + wait_for_ready         = true
+
+      + kind_config {
+          + api_version = "kind.x-k8s.io/v1alpha4"
+          + kind        = "Cluster"
+
+          + node {
+              + role = "control-plane"
+
+              + extra_port_mappings {
+                  + container_port = 30700
+                  + host_port      = 17000
+                  + listen_address = "127.0.0.1"
+                }
+              + extra_port_mappings {
+                  + container_port = 30701
+                  + host_port      = 17001
+                  + listen_address = "127.0.0.1"
+                }
+              + extra_port_mappings {
+                  + container_port = 30702
+                  + host_port      = 17002
+                  + listen_address = "127.0.0.1"
+                }
+              + extra_port_mappings {
+                  + container_port = 30703
+                  + host_port      = 17003
+                  + listen_address = "127.0.0.1"
+                }
+            }
+        }
+    }
+
+  # kind_load.image will be created
+  + resource "kind_load" "image" {
+      + cluster_name = "raftkv"
+      + id           = (known after apply)
+      + image        = "raftkv:v1"
+    }
+
+  # kubernetes_namespace_v1.raftkv will be created
+  + resource "kubernetes_namespace_v1" "raftkv" {
+      + id                               = (known after apply)
+      + wait_for_default_service_account = false
+
+      + metadata {
+          + generation       = (known after apply)
+          + name             = "raftkv"
+          + resource_version = (known after apply)
+          + uid              = (known after apply)
+        }
+    }
+
+  # kubernetes_pod_disruption_budget_v1.raftkv will be created
+  + resource "kubernetes_pod_disruption_budget_v1" "raftkv" {
+      + id = (known after apply)
+
+      + metadata {
+          + generation       = (known after apply)
+          + labels           = {
+              + "app.kubernetes.io/name" = "raftkv"
+            }
+          + name             = "raftkv"
+          + namespace        = "raftkv"
+          + resource_version = (known after apply)
+          + uid              = (known after apply)
+        }
+
+      + spec {
+          + max_unavailable = "1"
+
+          + selector {
+              + match_labels = {
+                  + "app.kubernetes.io/name" = "raftkv"
+                }
+            }
+        }
+    }
+
+  # kubernetes_service_v1.client will be created
+  + resource "kubernetes_service_v1" "client" {
+      + id                     = (known after apply)
+      + status                 = (known after apply)
+      + wait_for_load_balancer = true
+
+      + metadata {
+          + generation       = (known after apply)
+          + labels           = {
+              + "app.kubernetes.io/name" = "raftkv"
+            }
+          + name             = "raftkv-client"
+          + namespace        = "raftkv"
+          + resource_version = (known after apply)
+          + uid              = (known after apply)
+        }
+
+      + spec {
+          + allocate_load_balancer_node_ports = true
+          + cluster_ip                        = (known after apply)
+          + cluster_ips                       = (known after apply)
+          + external_traffic_policy           = (known after apply)
+          + health_check_node_port            = (known after apply)
+          + internal_traffic_policy           = (known after apply)
+          + ip_families                       = (known after apply)
+          + ip_family_policy                  = (known after apply)
+          + publish_not_ready_addresses       = false
+          + selector                          = {
+              + "app.kubernetes.io/name" = "raftkv"
+            }
+          + session_affinity                  = "None"
+          + type                              = "NodePort"
+
+          + port {
+              + name        = "grpc"
+              + node_port   = 30700
+              + port        = 7000
+              + protocol    = "TCP"
+              + target_port = "grpc"
+            }
+
+          + session_affinity_config (known after apply)
+        }
+    }
+
+  # kubernetes_service_v1.peers will be created
+  + resource "kubernetes_service_v1" "peers" {
+      + id                     = (known after apply)
+      + status                 = (known after apply)
+      + wait_for_load_balancer = true
+
+      + metadata {
+          + generation       = (known after apply)
+          + labels           = {
+              + "app.kubernetes.io/name" = "raftkv"
+            }
+          + name             = "raftkv-peers"
+          + namespace        = "raftkv"
+          + resource_version = (known after apply)
+          + uid              = (known after apply)
+        }
+
+      + spec {
+          + allocate_load_balancer_node_ports = true
+          + cluster_ip                        = "None"
+          + cluster_ips                       = (known after apply)
+          + external_traffic_policy           = (known after apply)
+          + health_check_node_port            = (known after apply)
+          + internal_traffic_policy           = (known after apply)
+          + ip_families                       = (known after apply)
+          + ip_family_policy                  = (known after apply)
+          + publish_not_ready_addresses       = true
+          + selector                          = {
+              + "app.kubernetes.io/name" = "raftkv"
+            }
+          + session_affinity                  = "None"
+          + type                              = "ClusterIP"
+
+          + port {
+              + name        = "grpc"
+              + node_port   = (known after apply)
+              + port        = 7000
+              + protocol    = "TCP"
+              + target_port = "grpc"
+            }
+
+          + session_affinity_config (known after apply)
+        }
+    }
+
+  # kubernetes_service_v1.pod[0] will be created
+  + resource "kubernetes_service_v1" "pod" {
+      + id                     = (known after apply)
+      + status                 = (known after apply)
+      + wait_for_load_balancer = true
+
+      + metadata {
+          + generation       = (known after apply)
+          + labels           = {
+              + "app.kubernetes.io/name" = "raftkv"
+            }
+          + name             = "raftkv-0-host"
+          + namespace        = "raftkv"
+          + resource_version = (known after apply)
+          + uid              = (known after apply)
+        }
+
+      + spec {
+          + allocate_load_balancer_node_ports = true
+          + cluster_ip                        = (known after apply)
+          + cluster_ips                       = (known after apply)
+          + external_traffic_policy           = (known after apply)
+          + health_check_node_port            = (known after apply)
+          + internal_traffic_policy           = (known after apply)
+          + ip_families                       = (known after apply)
+          + ip_family_policy                  = (known after apply)
+          + publish_not_ready_addresses       = true
+          + selector                          = {
+              + "app.kubernetes.io/name"             = "raftkv"
+              + "statefulset.kubernetes.io/pod-name" = "raftkv-0"
+            }
+          + session_affinity                  = "None"
+          + type                              = "NodePort"
+
+          + port {
+              + name        = "grpc"
+              + node_port   = 30701
+              + port        = 7000
+              + protocol    = "TCP"
+              + target_port = "grpc"
+            }
+
+          + session_affinity_config (known after apply)
+        }
+    }
+
+  # kubernetes_service_v1.pod[1] will be created
+  + resource "kubernetes_service_v1" "pod" {
+      + id                     = (known after apply)
+      + status                 = (known after apply)
+      + wait_for_load_balancer = true
+
+      + metadata {
+          + generation       = (known after apply)
+          + labels           = {
+              + "app.kubernetes.io/name" = "raftkv"
+            }
+          + name             = "raftkv-1-host"
+          + namespace        = "raftkv"
+          + resource_version = (known after apply)
+          + uid              = (known after apply)
+        }
+
+      + spec {
+          + allocate_load_balancer_node_ports = true
+          + cluster_ip                        = (known after apply)
+          + cluster_ips                       = (known after apply)
+          + external_traffic_policy           = (known after apply)
+          + health_check_node_port            = (known after apply)
+          + internal_traffic_policy           = (known after apply)
+          + ip_families                       = (known after apply)
+          + ip_family_policy                  = (known after apply)
+          + publish_not_ready_addresses       = true
+          + selector                          = {
+              + "app.kubernetes.io/name"             = "raftkv"
+              + "statefulset.kubernetes.io/pod-name" = "raftkv-1"
+            }
+          + session_affinity                  = "None"
+          + type                              = "NodePort"
+
+          + port {
+              + name        = "grpc"
+              + node_port   = 30702
+              + port        = 7000
+              + protocol    = "TCP"
+              + target_port = "grpc"
+            }
+
+          + session_affinity_config (known after apply)
+        }
+    }
+
+  # kubernetes_service_v1.pod[2] will be created
+  + resource "kubernetes_service_v1" "pod" {
+      + id                     = (known after apply)
+      + status                 = (known after apply)
+      + wait_for_load_balancer = true
+
+      + metadata {
+          + generation       = (known after apply)
+          + labels           = {
+              + "app.kubernetes.io/name" = "raftkv"
+            }
+          + name             = "raftkv-2-host"
+          + namespace        = "raftkv"
+          + resource_version = (known after apply)
+          + uid              = (known after apply)
+        }
+
+      + spec {
+          + allocate_load_balancer_node_ports = true
+          + cluster_ip                        = (known after apply)
+          + cluster_ips                       = (known after apply)
+          + external_traffic_policy           = (known after apply)
+          + health_check_node_port            = (known after apply)
+          + internal_traffic_policy           = (known after apply)
+          + ip_families                       = (known after apply)
+          + ip_family_policy                  = (known after apply)
+          + publish_not_ready_addresses       = true
+          + selector                          = {
+              + "app.kubernetes.io/name"             = "raftkv"
+              + "statefulset.kubernetes.io/pod-name" = "raftkv-2"
+            }
+          + session_affinity                  = "None"
+          + type                              = "NodePort"
+
+          + port {
+              + name        = "grpc"
+              + node_port   = 30703
+              + port        = 7000
+              + protocol    = "TCP"
+              + target_port = "grpc"
+            }
+
+          + session_affinity_config (known after apply)
+        }
+    }
+
+  # kubernetes_stateful_set_v1.raftkv will be created
+  + resource "kubernetes_stateful_set_v1" "raftkv" {
+      + id               = (known after apply)
+      + wait_for_rollout = true
+
+      + metadata {
+          + generation       = (known after apply)
+          + labels           = {
+              + "app.kubernetes.io/name" = "raftkv"
+            }
+          + name             = "raftkv"
+          + namespace        = "raftkv"
+          + resource_version = (known after apply)
+          + uid              = (known after apply)
+        }
+
+      + spec {
+          + min_ready_seconds      = 0
+          + pod_management_policy  = "Parallel"
+          + replicas               = "3"
+          + revision_history_limit = (known after apply)
+          + service_name           = "raftkv-peers"
+
+          + persistent_volume_claim_retention_policy (known after apply)
+
+          + selector {
+              + match_labels = {
+                  + "app.kubernetes.io/name" = "raftkv"
+                }
+            }
+
+          + template {
+              + metadata {
+                  + annotations      = {
+                      + "raftkv/source-hash" = "ef4513e52d821eda46e145ad9a32f1ee2421a08dab136f10f3ed8503cae27a77"
+                    }
+                  + generation       = (known after apply)
+                  + labels           = {
+                      + "app.kubernetes.io/name" = "raftkv"
+                    }
+                  + name             = (known after apply)
+                  + resource_version = (known after apply)
+                  + uid              = (known after apply)
+                }
+              + spec {
+                  + automount_service_account_token  = true
+                  + dns_policy                       = "ClusterFirst"
+                  + enable_service_links             = true
+                  + host_ipc                         = false
+                  + host_network                     = false
+                  + host_pid                         = false
+                  + hostname                         = (known after apply)
+                  + node_name                        = (known after apply)
+                  + restart_policy                   = "Always"
+                  + scheduler_name                   = (known after apply)
+                  + service_account_name             = (known after apply)
+                  + share_process_namespace          = false
+                  + termination_grace_period_seconds = 10
+
+                  + container {
+                      + args                       = [
+                          + "--id-from-hostname",
+                          + "--peers=1=raftkv-0.raftkv-peers.raftkv.svc.cluster.local:7000,2=raftkv-1.raftkv-peers.raftkv.svc.cluster.local:7000,3=raftkv-2.raftkv-peers.raftkv.svc.cluster.local:7000",
+                          + "--data=/data",
+                          + "--health=:8080",
+                        ]
+                      + image                      = "raftkv:v1"
+                      + image_pull_policy          = "IfNotPresent"
+                      + name                       = "raftkvd"
+                      + restart_policy             = (known after apply)
+                      + stdin                      = false
+                      + stdin_once                 = false
+                      + termination_message_path   = "/dev/termination-log"
+                      + termination_message_policy = (known after apply)
+                      + tty                        = false
+
+                      + liveness_probe {
+                          + failure_threshold = 3
+                          + period_seconds    = 5
+                          + success_threshold = 1
+                          + timeout_seconds   = 2
+
+                          + http_get {
+                              + path   = "/livez"
+                              + port   = "health"
+                              + scheme = "HTTP"
+                            }
+                        }
+
+                      + port {
+                          + container_port = 7000
+                          + name           = "grpc"
+                          + protocol       = "TCP"
+                        }
+                      + port {
+                          + container_port = 8080
+                          + name           = "health"
+                          + protocol       = "TCP"
+                        }
+
+                      + readiness_probe {
+                          + failure_threshold = 3
+                          + period_seconds    = 1
+                          + success_threshold = 1
+                          + timeout_seconds   = 2
+
+                          + http_get {
+                              + path   = "/readyz"
+                              + port   = "health"
+                              + scheme = "HTTP"
+                            }
+                        }
+
+                      + resources {
+                          + limits   = {
+                              + "memory" = "512Mi"
+                            }
+                          + requests = {
+                              + "cpu"    = "100m"
+                              + "memory" = "128Mi"
+                            }
+                        }
+
+                      + security_context {
+                          + allow_privilege_escalation = false
+                          + privileged                 = false
+                          + read_only_root_filesystem  = true
+
+                          + capabilities {
+                              + drop = [
+                                  + "ALL",
+                                ]
+                            }
+                        }
+
+                      + startup_probe {
+                          + failure_threshold = 60
+                          + period_seconds    = 1
+                          + success_threshold = 1
+                          + timeout_seconds   = 2
+
+                          + http_get {
+                              + path   = "/livez"
+                              + port   = "health"
+                              + scheme = "HTTP"
+                            }
+                        }
+
+                      + volume_mount {
+                          + mount_path        = "/data"
+                          + mount_propagation = "None"
+                          + name              = "data"
+                          + read_only         = false
+                        }
+                    }
+
+                  + image_pull_secrets (known after apply)
+
+                  + readiness_gate (known after apply)
+
+                  + security_context {
+                      + fs_group        = "65532"
+                      + run_as_group    = "65532"
+                      + run_as_non_root = true
+                      + run_as_user     = "65532"
+
+                      + seccomp_profile {
+                          + type = "RuntimeDefault"
+                        }
+                    }
+
+                  + topology_spread_constraint {
+                      + max_skew           = 1
+                      + topology_key       = "kubernetes.io/hostname"
+                      + when_unsatisfiable = "ScheduleAnyway"
+
+                      + label_selector {
+                          + match_labels = {
+                              + "app.kubernetes.io/name" = "raftkv"
+                            }
+                        }
+                    }
+                }
+            }
+
+          + update_strategy {
+              + type = "RollingUpdate"
+            }
+
+          + volume_claim_template {
+              + metadata {
+                  + generation       = (known after apply)
+                  + name             = "data"
+                  + namespace        = "default"
+                  + resource_version = (known after apply)
+                  + uid              = (known after apply)
+                }
+              + spec {
+                  + access_modes       = [
+                      + "ReadWriteOnce",
+                    ]
+                  + storage_class_name = (known after apply)
+                  + volume_mode        = (known after apply)
+                  + volume_name        = (known after apply)
+
+                  + resources {
+                      + requests = {
+                          + "storage" = "1Gi"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+  # terraform_data.image will be created
+  + resource "terraform_data" "image" {
+      + id               = (known after apply)
+      + triggers_replace = {
+          + image  = "raftkv:v1"
+          + source = "ef4513e52d821eda46e145ad9a32f1ee2421a08dab136f10f3ed8503cae27a77"
+        }
+    }
+
+Plan: 11 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + client_address            = "127.0.0.1:17000"
+  + client_address_in_cluster = "raftkv-client.raftkv.svc.cluster.local:7000"
+  + image                     = "raftkv:v1"
+  + kubeconfig                = "$HOME/projects/raftkv/deploy/terraform/kubeconfig"
+  + namespace                 = "raftkv"
+  + node_container            = "raftkv-control-plane"
+  + nodes                     = [
+      + {
+          + address      = "raftkv-0.raftkv-peers.raftkv.svc.cluster.local:7000"
+          + host_address = "127.0.0.1:17001"
+          + id           = 1
+          + pod          = "raftkv-0"
+        },
+      + {
+          + address      = "raftkv-1.raftkv-peers.raftkv.svc.cluster.local:7000"
+          + host_address = "127.0.0.1:17002"
+          + id           = 2
+          + pod          = "raftkv-1"
+        },
+      + {
+          + address      = "raftkv-2.raftkv-peers.raftkv.svc.cluster.local:7000"
+          + host_address = "127.0.0.1:17003"
+          + id           = 3
+          + pod          = "raftkv-2"
+        },
+    ]
+  + statefulset               = "raftkv"
+terraform_data.image: Creating...
+terraform_data.image: Provisioning with 'local-exec'...
+terraform_data.image (local-exec): Executing: ["/bin/sh" "-c" "docker build --quiet --build-arg VERSION=v1 --tag raftkv:v1 $HOME/projects/raftkv"]
+kind_cluster.this: Creating...
+terraform_data.image (local-exec): sha256:59de6727e28ebfdbb6f5002de58c992c326f04db87d8559f9bde9723bf29bc53
+terraform_data.image: Creation complete after 5s [id=167a8a12-1bff-261c-e764-08537863cff1]
+kind_cluster.this: Still creating... [00m10s elapsed]
+kind_cluster.this: Still creating... [00m20s elapsed]
+kind_cluster.this: Still creating... [00m30s elapsed]
+kind_cluster.this: Creation complete after 30s [id=raftkv-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5]
+kind_load.image: Creating...
+kubernetes_namespace_v1.raftkv: Creating...
+kubernetes_namespace_v1.raftkv: Creation complete after 0s [id=raftkv]
+kubernetes_pod_disruption_budget_v1.raftkv: Creating...
+kubernetes_service_v1.pod[0]: Creating...
+kubernetes_service_v1.pod[1]: Creating...
+kubernetes_service_v1.pod[2]: Creating...
+kubernetes_service_v1.client: Creating...
+kubernetes_service_v1.peers: Creating...
+kubernetes_pod_disruption_budget_v1.raftkv: Creation complete after 0s [id=raftkv/raftkv]
+kubernetes_service_v1.peers: Creation complete after 0s [id=raftkv/raftkv-peers]
+kubernetes_service_v1.pod[1]: Creation complete after 0s [id=raftkv/raftkv-1-host]
+kubernetes_service_v1.pod[0]: Creation complete after 0s [id=raftkv/raftkv-0-host]
+kubernetes_service_v1.pod[2]: Creation complete after 0s [id=raftkv/raftkv-2-host]
+kubernetes_service_v1.client: Creation complete after 0s [id=raftkv/raftkv-client]
+kind_load.image: Creation complete after 1s [id=raftkv|sha256:59de6727e28ebfdbb6f5002de58c992c326f04db87d8559f9bde9723bf29bc53]
+kubernetes_stateful_set_v1.raftkv: Creating...
+kubernetes_stateful_set_v1.raftkv: Creation complete after 8s [id=raftkv/raftkv]
+
+Apply complete! Resources: 11 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+client_address = "127.0.0.1:17000"
+client_address_in_cluster = "raftkv-client.raftkv.svc.cluster.local:7000"
+image = "raftkv:v1"
+kubeconfig = "$HOME/projects/raftkv/deploy/terraform/kubeconfig"
+namespace = "raftkv"
+node_container = "raftkv-control-plane"
+nodes = [
+  {
+    "address" = "raftkv-0.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17001"
+    "id" = 1
+    "pod" = "raftkv-0"
+  },
+  {
+    "address" = "raftkv-1.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17002"
+    "id" = 2
+    "pod" = "raftkv-1"
+  },
+  {
+    "address" = "raftkv-2.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17003"
+    "id" = 3
+    "pod" = "raftkv-2"
+  },
+]
+statefulset = "raftkv"

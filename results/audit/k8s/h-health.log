@@ -1,0 +1,22 @@
+=== RUN   TestLonelyNodeIsLiveButNotReady
+--- PASS: TestLonelyNodeIsLiveButNotReady (2.04s)
+=== RUN   TestClusterBecomesReady
+--- PASS: TestClusterBecomesReady (0.37s)
+=== RUN   TestFollowerBehindIsNotReady
+--- PASS: TestFollowerBehindIsNotReady (0.00s)
+=== RUN   TestLeaderWithoutMajorityIsNotReady
+--- PASS: TestLeaderWithoutMajorityIsNotReady (1.33s)
+=== RUN   TestRestartedFollowerIsNotReadyUntilItHasCaughtUp
+--- PASS: TestRestartedFollowerIsNotReadyUntilItHasCaughtUp (4.07s)
+=== RUN   TestPeerReopensAStreamThatDiedWhileIdle
+--- PASS: TestPeerReopensAStreamThatDiedWhileIdle (0.07s)
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/server	8.101s
+=== RUN   TestIDFromHostname
+--- PASS: TestIDFromHostname (0.00s)
+PASS
+ok  	github.com/abishekprabakar/raftkv/cmd/raftkvd	0.423s
+=== RUN   TestRedactHidesCredentials
+--- PASS: TestRedactHidesCredentials (0.00s)
+PASS
+ok  	github.com/abishekprabakar/raftkv/internal/kube	0.584s

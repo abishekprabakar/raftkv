@@ -1,0 +1,3361 @@
+{
+  "generated_at": "2026-11-23T20:24:43Z",
+  "command": "kubebench failover",
+  "hardware": {
+    "collected_at": "2026-11-23T20:14:41Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "The pods and their volumes are inside Docker's Linux VM. The filesystem named here is the host's, where only the harness runs."
+  },
+  "versions": {
+    "docker": "29.7.2",
+    "kubernetes": "v1.37.0",
+    "kubectl": "v1.36.1",
+    "kind_node_image": "kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5",
+    "terraform": "1.17.0",
+    "docker_cpus": 10,
+    "docker_memory_bytes": 8319504384,
+    "source_commit": "04d32c1e07049fc10d205bb6124d3e109837d4ee",
+    "source_tree_had_changes": false,
+    "power": "Battery Power"
+  },
+  "image": "raftkv:v1",
+  "wall_seconds": 602.097159667,
+  "trials_requested": 100,
+  "summary": {
+    "trials": 100,
+    "passed": 100,
+    "no_new_leader_within_60s": 0,
+    "no_first_write_seen": 0,
+    "not_settled_within_180s": 0,
+    "replacement_did_not_start_from_its_volume": 0,
+    "errors": 0,
+    "replacement_pods": 100,
+    "new_leader_ms": {
+      "n": 100,
+      "min": 527.619,
+      "median": 645.25,
+      "p95": 923.706,
+      "p99": 996.753,
+      "max": 1032.654
+    },
+    "first_write_ms": {
+      "n": 100,
+      "min": 656.961,
+      "median": 673.634,
+      "p95": 1170.202,
+      "p99": 1179.65,
+      "max": 1202.816
+    },
+    "old_leader_last_answer_ms": {
+      "n": 100,
+      "min": 25.716,
+      "median": 32.654,
+      "p95": 40.635,
+      "p99": 44.081,
+      "max": 70.35
+    },
+    "kubectl_delete_returned_ms": {
+      "n": 100,
+      "min": 27.854,
+      "median": 30.011,
+      "p95": 34.001,
+      "p99": 39.261,
+      "max": 57.358
+    },
+    "all_pods_ready_ms": {
+      "n": 100,
+      "min": 2270.276,
+      "median": 2873.408,
+      "p95": 3077.291,
+      "p99": 3109.741,
+      "max": 3891.111
+    },
+    "settled_ms": {
+      "n": 100,
+      "min": 2270.276,
+      "median": 2873.408,
+      "p95": 3077.291,
+      "p99": 3109.741,
+      "max": 3891.112
+    },
+    "longest_write_gap_ms": {
+      "n": 100,
+      "min": 625.439,
+      "median": 649.121,
+      "p95": 1142.513,
+      "p99": 1145.271,
+      "max": 1154.253
+    },
+    "elected_in_one_term": 94,
+    "first_write_after_new_leader_ms": {
+      "n": 100,
+      "min": -0.25300000000004275,
+      "median": 119.17399999999998,
+      "p95": 457.13199999999995,
+      "p99": 466.42700000000013,
+      "max": 489.038
+    },
+    "first_write_took_over_1s": 44,
+    "trials_with_extra_leader_changes": 0,
+    "extra_leader_changes": 0,
+    "new_leader_by_pod": {
+      "raftkv-0": 35,
+      "raftkv-1": 36,
+      "raftkv-2": 29
+    },
+    "deleted_by_pod": {
+      "raftkv-0": 35,
+      "raftkv-1": 36,
+      "raftkv-2": 29
+    }
+  },
+  "seed": 1,
+  "clients": 6,
+  "status_poll_interval_ms": {
+    "n": 283532,
+    "min": 5.175917148590088,
+    "median": 5.450041770935059,
+    "p95": 6.416542053222656,
+    "p99": 7.99875020980835,
+    "max": 118.0005874633789
+  },
+  "load": {
+    "requests": 139431,
+    "writes_acknowledged": 83600,
+    "writes_unknown": 0,
+    "reads_served": 55831,
+    "reads_failed": 0,
+    "failed_requests": 0,
+    "retries": 3272,
+    "requests_that_retried": 600,
+    "latency_ms": {
+      "n": 139431,
+      "min": 0.269208,
+      "median": 1.579917,
+      "p95": 5.235125,
+      "p99": 9.463,
+      "max": 1146.553584
+    }
+  },
+  "durability": {
+    "keys": 1204,
+    "keys_whose_final_read_failed": 0,
+    "writes_acknowledged": 83600,
+    "writes_unknown": 0,
+    "acknowledged_writes_lost": 0,
+    "writes_duplicated": 0,
+    "unknown_writes_found_applied": 0,
+    "values_never_written": 0
+  },
+  "linearizable": "Ok",
+  "check_seconds": 0.033161833,
+  "trials": [
+    {
+      "trial": 1,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 33,
+      "t0_since_run_start_ms": 3282.349,
+      "kubectl_delete_returned_ms": 36.124,
+      "old_leader_last_answer_ms": 44.081,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 34,
+      "new_leader_ms": 761.411,
+      "first_write_seen": true,
+      "first_write_ms": 1179.65,
+      "first_write_term": 34,
+      "settled": true,
+      "all_pods_ready_ms": 2270.276,
+      "settled_ms": 2270.276,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1154.253,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 33,
+          "last_log_index": 566,
+          "applied": 565
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 2,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 34,
+      "t0_since_run_start_ms": 8656.909,
+      "kubectl_delete_returned_ms": 29.626,
+      "old_leader_last_answer_ms": 35.106,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 35,
+      "new_leader_ms": 587.257,
+      "first_write_seen": true,
+      "first_write_ms": 668.326,
+      "first_write_term": 35,
+      "settled": true,
+      "all_pods_ready_ms": 3064.891,
+      "settled_ms": 3064.892,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 642.245,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 34,
+          "last_log_index": 1300,
+          "applied": 1300
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 3,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 35,
+      "t0_since_run_start_ms": 14826.15,
+      "kubectl_delete_returned_ms": 29.971,
+      "old_leader_last_answer_ms": 38.202,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 36,
+      "new_leader_ms": 632.012,
+      "first_write_seen": true,
+      "first_write_ms": 676.473,
+      "first_write_term": 36,
+      "settled": true,
+      "all_pods_ready_ms": 2873.408,
+      "settled_ms": 2873.408,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 665.802,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 35,
+          "last_log_index": 2227,
+          "applied": 2227
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 4,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 36,
+      "t0_since_run_start_ms": 20800.498,
+      "kubectl_delete_returned_ms": 29.828,
+      "old_leader_last_answer_ms": 34.377,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 37,
+      "new_leader_ms": 589.585,
+      "first_write_seen": true,
+      "first_write_ms": 665.784,
+      "first_write_term": 37,
+      "settled": true,
+      "all_pods_ready_ms": 2835.916,
+      "settled_ms": 2835.916,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 634.687,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 36,
+          "last_log_index": 3118,
+          "applied": 3118
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 5,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 37,
+      "t0_since_run_start_ms": 26740.919,
+      "kubectl_delete_returned_ms": 28.313,
+      "old_leader_last_answer_ms": 31.283,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 38,
+      "new_leader_ms": 532.191,
+      "first_write_seen": true,
+      "first_write_ms": 662.011,
+      "first_write_term": 38,
+      "settled": true,
+      "all_pods_ready_ms": 2992.837,
+      "settled_ms": 2992.837,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 633.752,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 37,
+          "last_log_index": 4022,
+          "applied": 4022
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 6,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 38,
+      "t0_since_run_start_ms": 32839.36,
+      "kubectl_delete_returned_ms": 28.628,
+      "old_leader_last_answer_ms": 32.439,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 39,
+      "new_leader_ms": 551.117,
+      "first_write_seen": true,
+      "first_write_ms": 660.662,
+      "first_write_term": 39,
+      "settled": true,
+      "all_pods_ready_ms": 2796.442,
+      "settled_ms": 2796.442,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 626.821,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 38,
+          "last_log_index": 4919,
+          "applied": 4919
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 7,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 39,
+      "t0_since_run_start_ms": 38746.035,
+      "kubectl_delete_returned_ms": 29.145,
+      "old_leader_last_answer_ms": 30.638,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 40,
+      "new_leader_ms": 879.717,
+      "first_write_seen": true,
+      "first_write_ms": 1167.988,
+      "first_write_term": 40,
+      "settled": true,
+      "all_pods_ready_ms": 2881.266,
+      "settled_ms": 2881.266,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1133.442,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 39,
+          "last_log_index": 5791,
+          "applied": 5791
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 8,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 40,
+      "t0_since_run_start_ms": 44723.826,
+      "kubectl_delete_returned_ms": 29.401,
+      "old_leader_last_answer_ms": 37.395,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 41,
+      "new_leader_ms": 906.985,
+      "first_write_seen": true,
+      "first_write_ms": 1169.727,
+      "first_write_term": 41,
+      "settled": true,
+      "all_pods_ready_ms": 2906.239,
+      "settled_ms": 2906.239,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1129.084,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 40,
+          "last_log_index": 6550,
+          "applied": 6549
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 9,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 41,
+      "t0_since_run_start_ms": 50737.781,
+      "kubectl_delete_returned_ms": 30.011,
+      "old_leader_last_answer_ms": 31.549,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 42,
+      "new_leader_ms": 548.743,
+      "first_write_seen": true,
+      "first_write_ms": 660.793,
+      "first_write_term": 42,
+      "settled": true,
+      "all_pods_ready_ms": 3024.972,
+      "settled_ms": 3024.972,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 634.684,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 41,
+          "last_log_index": 7356,
+          "applied": 7354
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 10,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 42,
+      "t0_since_run_start_ms": 56870.073,
+      "kubectl_delete_returned_ms": 28.657,
+      "old_leader_last_answer_ms": 31.459,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 43,
+      "new_leader_ms": 589.147,
+      "first_write_seen": true,
+      "first_write_ms": 670.39,
+      "first_write_term": 43,
+      "settled": true,
+      "all_pods_ready_ms": 2826.955,
+      "settled_ms": 2826.956,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 643.538,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 42,
+          "last_log_index": 8281,
+          "applied": 8281
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 11,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 43,
+      "t0_since_run_start_ms": 62808.411,
+      "kubectl_delete_returned_ms": 29.331,
+      "old_leader_last_answer_ms": 32.885,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 44,
+      "new_leader_ms": 544.883,
+      "first_write_seen": true,
+      "first_write_ms": 664.057,
+      "first_write_term": 44,
+      "settled": true,
+      "all_pods_ready_ms": 3069.035,
+      "settled_ms": 3069.036,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 649.322,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 43,
+          "last_log_index": 9126,
+          "applied": 9123
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 12,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 44,
+      "t0_since_run_start_ms": 69025.642,
+      "kubectl_delete_returned_ms": 28.337,
+      "old_leader_last_answer_ms": 30.421,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 45,
+      "new_leader_ms": 917.041,
+      "first_write_seen": true,
+      "first_write_ms": 1159.323,
+      "first_write_term": 45,
+      "settled": true,
+      "all_pods_ready_ms": 2666.305,
+      "settled_ms": 2666.305,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1134.714,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 44,
+          "last_log_index": 10031,
+          "applied": 10031
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 13,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 45,
+      "t0_since_run_start_ms": 74799.858,
+      "kubectl_delete_returned_ms": 30.085,
+      "old_leader_last_answer_ms": 28.777,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 46,
+      "new_leader_ms": 683.068,
+      "first_write_seen": true,
+      "first_write_ms": 691.191,
+      "first_write_term": 46,
+      "settled": true,
+      "all_pods_ready_ms": 2918.165,
+      "settled_ms": 2918.166,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 659.681,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 45,
+          "last_log_index": 10774,
+          "applied": 10773
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 14,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 46,
+      "t0_since_run_start_ms": 80825.56,
+      "kubectl_delete_returned_ms": 31.288,
+      "old_leader_last_answer_ms": 32.654,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 47,
+      "new_leader_ms": 557.09,
+      "first_write_seen": true,
+      "first_write_ms": 663.807,
+      "first_write_term": 47,
+      "settled": true,
+      "all_pods_ready_ms": 3039.199,
+      "settled_ms": 3039.199,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 635.329,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 46,
+          "last_log_index": 11569,
+          "applied": 11568
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 15,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 47,
+      "t0_since_run_start_ms": 86971.045,
+      "kubectl_delete_returned_ms": 32.342,
+      "old_leader_last_answer_ms": 35.105,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 48,
+      "new_leader_ms": 576.545,
+      "first_write_seen": true,
+      "first_write_ms": 662.3,
+      "first_write_term": 48,
+      "settled": true,
+      "all_pods_ready_ms": 2847.766,
+      "settled_ms": 2847.766,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 627.192,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 47,
+          "last_log_index": 12436,
+          "applied": 12436
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 16,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 48,
+      "t0_since_run_start_ms": 92923.796,
+      "kubectl_delete_returned_ms": 28.516,
+      "old_leader_last_answer_ms": 32.467,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 49,
+      "new_leader_ms": 903.234,
+      "first_write_seen": true,
+      "first_write_ms": 1170.147,
+      "first_write_term": 49,
+      "settled": true,
+      "all_pods_ready_ms": 2900.49,
+      "settled_ms": 2900.49,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1142.928,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 48,
+          "last_log_index": 13275,
+          "applied": 13275
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 17,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 49,
+      "t0_since_run_start_ms": 98929.068,
+      "kubectl_delete_returned_ms": 32.695,
+      "old_leader_last_answer_ms": 36.704,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 50,
+      "new_leader_ms": 566.153,
+      "first_write_seen": true,
+      "first_write_ms": 666.122,
+      "first_write_term": 50,
+      "settled": true,
+      "all_pods_ready_ms": 2806.031,
+      "settled_ms": 2806.031,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 634.241,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 49,
+          "last_log_index": 14040,
+          "applied": 14039
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 18,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 50,
+      "t0_since_run_start_ms": 104843.025,
+      "kubectl_delete_returned_ms": 28.786,
+      "old_leader_last_answer_ms": 32.116,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 51,
+      "new_leader_ms": 695.807,
+      "first_write_seen": true,
+      "first_write_ms": 695.554,
+      "first_write_term": 51,
+      "settled": true,
+      "all_pods_ready_ms": 2947.653,
+      "settled_ms": 2947.653,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 662.003,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 50,
+          "last_log_index": 14905,
+          "applied": 14905
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 19,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 51,
+      "t0_since_run_start_ms": 110899.624,
+      "kubectl_delete_returned_ms": 28.286,
+      "old_leader_last_answer_ms": 27.427,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 52,
+      "new_leader_ms": 651.569,
+      "first_write_seen": true,
+      "first_write_ms": 661.287,
+      "first_write_term": 52,
+      "settled": true,
+      "all_pods_ready_ms": 2893.379,
+      "settled_ms": 2893.38,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 639.764,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 51,
+          "last_log_index": 15725,
+          "applied": 15725
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 20,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 52,
+      "t0_since_run_start_ms": 116900.11,
+      "kubectl_delete_returned_ms": 27.944,
+      "old_leader_last_answer_ms": 29.669,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 53,
+      "new_leader_ms": 621.807,
+      "first_write_seen": true,
+      "first_write_ms": 656.961,
+      "first_write_term": 53,
+      "settled": true,
+      "all_pods_ready_ms": 2864.602,
+      "settled_ms": 2864.602,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 633.482,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 52,
+          "last_log_index": 16634,
+          "applied": 16634
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 21,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 53,
+      "t0_since_run_start_ms": 122869.723,
+      "kubectl_delete_returned_ms": 31.962,
+      "old_leader_last_answer_ms": 33.963,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 54,
+      "new_leader_ms": 605.373,
+      "first_write_seen": true,
+      "first_write_ms": 665.528,
+      "first_write_term": 54,
+      "settled": true,
+      "all_pods_ready_ms": 3082.738,
+      "settled_ms": 3082.74,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 647.355,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 53,
+          "last_log_index": 17472,
+          "applied": 17469
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 22,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 54,
+      "t0_since_run_start_ms": 129104.832,
+      "kubectl_delete_returned_ms": 30.496,
+      "old_leader_last_answer_ms": 32.517,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 55,
+      "new_leader_ms": 677.328,
+      "first_write_seen": true,
+      "first_write_ms": 1166.366,
+      "first_write_term": 55,
+      "settled": true,
+      "all_pods_ready_ms": 2676.082,
+      "settled_ms": 2676.082,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1143.181,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 54,
+          "last_log_index": 18381,
+          "applied": 18379
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 23,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 55,
+      "t0_since_run_start_ms": 134889.002,
+      "kubectl_delete_returned_ms": 30.522,
+      "old_leader_last_answer_ms": 35.294,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 56,
+      "new_leader_ms": 721.799,
+      "first_write_seen": true,
+      "first_write_ms": 1161.657,
+      "first_write_term": 56,
+      "settled": true,
+      "all_pods_ready_ms": 2965.41,
+      "settled_ms": 2965.41,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1126.345,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 55,
+          "last_log_index": 19180,
+          "applied": 19179
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 24,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 56,
+      "t0_since_run_start_ms": 140960.49,
+      "kubectl_delete_returned_ms": 28.832,
+      "old_leader_last_answer_ms": 31.34,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 57,
+      "new_leader_ms": 593.525,
+      "first_write_seen": true,
+      "first_write_ms": 661.308,
+      "first_write_term": 57,
+      "settled": true,
+      "all_pods_ready_ms": 2833.652,
+      "settled_ms": 2833.653,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 636.184,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 56,
+          "last_log_index": 20038,
+          "applied": 20036
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 25,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 57,
+      "t0_since_run_start_ms": 146900.964,
+      "kubectl_delete_returned_ms": 31.664,
+      "old_leader_last_answer_ms": 39.855,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 58,
+      "new_leader_ms": 822.023,
+      "first_write_seen": true,
+      "first_write_ms": 1167.127,
+      "first_write_term": 58,
+      "settled": true,
+      "all_pods_ready_ms": 3076.306,
+      "settled_ms": 3076.307,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1134.636,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 57,
+          "last_log_index": 20871,
+          "applied": 20870
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 26,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 58,
+      "t0_since_run_start_ms": 153125.756,
+      "kubectl_delete_returned_ms": 32.63,
+      "old_leader_last_answer_ms": 35.91,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 59,
+      "new_leader_ms": 702.46,
+      "first_write_seen": true,
+      "first_write_ms": 1164.996,
+      "first_write_term": 59,
+      "settled": true,
+      "all_pods_ready_ms": 2747.545,
+      "settled_ms": 2747.545,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1127.813,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 58,
+          "last_log_index": 21686,
+          "applied": 21685
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 27,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 59,
+      "t0_since_run_start_ms": 158987.327,
+      "kubectl_delete_returned_ms": 31.62,
+      "old_leader_last_answer_ms": 35.655,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 60,
+      "new_leader_ms": 701.685,
+      "first_write_seen": true,
+      "first_write_ms": 1168.112,
+      "first_write_term": 60,
+      "settled": true,
+      "all_pods_ready_ms": 2954.336,
+      "settled_ms": 2954.337,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1137.393,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 59,
+          "last_log_index": 22431,
+          "applied": 22431
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 28,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 60,
+      "t0_since_run_start_ms": 165051.608,
+      "kubectl_delete_returned_ms": 29.654,
+      "old_leader_last_answer_ms": 36.143,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 61,
+      "new_leader_ms": 536.674,
+      "first_write_seen": true,
+      "first_write_ms": 669.529,
+      "first_write_term": 61,
+      "settled": true,
+      "all_pods_ready_ms": 2785.226,
+      "settled_ms": 2785.227,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 635.499,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 60,
+          "last_log_index": 23271,
+          "applied": 23271
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 29,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 61,
+      "t0_since_run_start_ms": 170947.933,
+      "kubectl_delete_returned_ms": 29.409,
+      "old_leader_last_answer_ms": 34.633,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 62,
+      "new_leader_ms": 645.987,
+      "first_write_seen": true,
+      "first_write_ms": 665.663,
+      "first_write_term": 62,
+      "settled": true,
+      "all_pods_ready_ms": 3891.111,
+      "settled_ms": 3891.112,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 628.727,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 61,
+          "last_log_index": 24117,
+          "applied": 24115
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 30,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 62,
+      "t0_since_run_start_ms": 177946.369,
+      "kubectl_delete_returned_ms": 29.143,
+      "old_leader_last_answer_ms": 36.919,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 63,
+      "new_leader_ms": 657.659,
+      "first_write_seen": true,
+      "first_write_ms": 664.211,
+      "first_write_term": 63,
+      "settled": true,
+      "all_pods_ready_ms": 2904.426,
+      "settled_ms": 2904.427,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 637.176,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 62,
+          "last_log_index": 25142,
+          "applied": 25142
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 31,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 63,
+      "t0_since_run_start_ms": 183960.545,
+      "kubectl_delete_returned_ms": 36.622,
+      "old_leader_last_answer_ms": 39.185,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 64,
+      "new_leader_ms": 629.291,
+      "first_write_seen": true,
+      "first_write_ms": 673.59,
+      "first_write_term": 64,
+      "settled": true,
+      "all_pods_ready_ms": 2893.192,
+      "settled_ms": 2893.193,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 635.894,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 63,
+          "last_log_index": 26036,
+          "applied": 26036
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 32,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 64,
+      "t0_since_run_start_ms": 189968.425,
+      "kubectl_delete_returned_ms": 30.452,
+      "old_leader_last_answer_ms": 34.881,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 65,
+      "new_leader_ms": 879.154,
+      "first_write_seen": true,
+      "first_write_ms": 1166.91,
+      "first_write_term": 65,
+      "settled": true,
+      "all_pods_ready_ms": 2882.866,
+      "settled_ms": 2882.866,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1140.192,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 64,
+          "last_log_index": 26871,
+          "applied": 26870
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 33,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 65,
+      "t0_since_run_start_ms": 195967.822,
+      "kubectl_delete_returned_ms": 28.804,
+      "old_leader_last_answer_ms": 31.009,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 66,
+      "new_leader_ms": 546.522,
+      "first_write_seen": true,
+      "first_write_ms": 680.33,
+      "first_write_term": 66,
+      "settled": true,
+      "all_pods_ready_ms": 3050.565,
+      "settled_ms": 3050.566,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 647.366,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 65,
+          "last_log_index": 27669,
+          "applied": 27669
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 34,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 66,
+      "t0_since_run_start_ms": 202134.931,
+      "kubectl_delete_returned_ms": 30.746,
+      "old_leader_last_answer_ms": 32.476,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 67,
+      "new_leader_ms": 572.928,
+      "first_write_seen": true,
+      "first_write_ms": 666.817,
+      "first_write_term": 67,
+      "settled": true,
+      "all_pods_ready_ms": 2828.672,
+      "settled_ms": 2828.672,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 633.156,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 66,
+          "last_log_index": 28528,
+          "applied": 28528
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 35,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 67,
+      "t0_since_run_start_ms": 208117.164,
+      "kubectl_delete_returned_ms": 30.209,
+      "old_leader_last_answer_ms": 33.002,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 69,
+      "new_leader_ms": 996.753,
+      "first_write_seen": true,
+      "first_write_ms": 1168.944,
+      "first_write_term": 69,
+      "settled": true,
+      "all_pods_ready_ms": 2760.303,
+      "settled_ms": 2760.304,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1135.94,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 67,
+          "last_log_index": 29414,
+          "applied": 29411
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 36,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 69,
+      "t0_since_run_start_ms": 213989.725,
+      "kubectl_delete_returned_ms": 28.878,
+      "old_leader_last_answer_ms": 33.548,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 70,
+      "new_leader_ms": 608.152,
+      "first_write_seen": true,
+      "first_write_ms": 659.539,
+      "first_write_term": 70,
+      "settled": true,
+      "all_pods_ready_ms": 3097.194,
+      "settled_ms": 3097.194,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 625.439,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 69,
+          "last_log_index": 30186,
+          "applied": 30185
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 37,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 70,
+      "t0_since_run_start_ms": 220234.632,
+      "kubectl_delete_returned_ms": 29.475,
+      "old_leader_last_answer_ms": 27.451,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 72,
+      "new_leader_ms": 1032.654,
+      "first_write_seen": true,
+      "first_write_ms": 1165.353,
+      "first_write_term": 72,
+      "settled": true,
+      "all_pods_ready_ms": 2795.486,
+      "settled_ms": 2795.487,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1140.567,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 70,
+          "last_log_index": 31042,
+          "applied": 31040
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 38,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 72,
+      "t0_since_run_start_ms": 226133.591,
+      "kubectl_delete_returned_ms": 30.09,
+      "old_leader_last_answer_ms": 31.082,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 74,
+      "new_leader_ms": 933.602,
+      "first_write_seen": true,
+      "first_write_ms": 1161.628,
+      "first_write_term": 74,
+      "settled": true,
+      "all_pods_ready_ms": 2925.768,
+      "settled_ms": 2925.768,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1128.419,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 72,
+          "last_log_index": 31835,
+          "applied": 31834
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 39,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 74,
+      "t0_since_run_start_ms": 232165.183,
+      "kubectl_delete_returned_ms": 29.931,
+      "old_leader_last_answer_ms": 31.612,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 75,
+      "new_leader_ms": 577.432,
+      "first_write_seen": true,
+      "first_write_ms": 664.467,
+      "first_write_term": 75,
+      "settled": true,
+      "all_pods_ready_ms": 2822.113,
+      "settled_ms": 2822.113,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 630.662,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 74,
+          "last_log_index": 32616,
+          "applied": 32616
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 40,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 75,
+      "t0_since_run_start_ms": 238132.546,
+      "kubectl_delete_returned_ms": 31.398,
+      "old_leader_last_answer_ms": 32.396,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 76,
+      "new_leader_ms": 769.267,
+      "first_write_seen": true,
+      "first_write_ms": 1164.101,
+      "first_write_term": 76,
+      "settled": true,
+      "all_pods_ready_ms": 3012.376,
+      "settled_ms": 3012.376,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1130.798,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 75,
+          "last_log_index": 33503,
+          "applied": 33503
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 41,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 76,
+      "t0_since_run_start_ms": 244252.68,
+      "kubectl_delete_returned_ms": 32.875,
+      "old_leader_last_answer_ms": 31.494,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 77,
+      "new_leader_ms": 873.702,
+      "first_write_seen": true,
+      "first_write_ms": 1165.672,
+      "first_write_term": 77,
+      "settled": true,
+      "all_pods_ready_ms": 2874.325,
+      "settled_ms": 2874.325,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1133.478,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 76,
+          "last_log_index": 34313,
+          "applied": 34313
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 42,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 77,
+      "t0_since_run_start_ms": 250243.138,
+      "kubectl_delete_returned_ms": 30.543,
+      "old_leader_last_answer_ms": 28.266,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 79,
+      "new_leader_ms": 806.099,
+      "first_write_seen": true,
+      "first_write_ms": 1164.331,
+      "first_write_term": 79,
+      "settled": true,
+      "all_pods_ready_ms": 2810.258,
+      "settled_ms": 2810.258,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1139.639,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 77,
+          "last_log_index": 35136,
+          "applied": 35135
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 43,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 79,
+      "t0_since_run_start_ms": 256156.281,
+      "kubectl_delete_returned_ms": 28.816,
+      "old_leader_last_answer_ms": 32.155,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 80,
+      "new_leader_ms": 887.202,
+      "first_write_seen": true,
+      "first_write_ms": 1162.592,
+      "first_write_term": 80,
+      "settled": true,
+      "all_pods_ready_ms": 2886.288,
+      "settled_ms": 2886.289,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1145.271,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 79,
+          "last_log_index": 35904,
+          "applied": 35903
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 44,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 80,
+      "t0_since_run_start_ms": 262295.47,
+      "kubectl_delete_returned_ms": 57.358,
+      "old_leader_last_answer_ms": 70.35,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 81,
+      "new_leader_ms": 805.794,
+      "first_write_seen": true,
+      "first_write_ms": 1202.816,
+      "first_write_term": 81,
+      "settled": true,
+      "all_pods_ready_ms": 2771.034,
+      "settled_ms": 2771.035,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1136.957,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 80,
+          "last_log_index": 36678,
+          "applied": 36678
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 45,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 81,
+      "t0_since_run_start_ms": 268184.37,
+      "kubectl_delete_returned_ms": 31.031,
+      "old_leader_last_answer_ms": 42.769,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 83,
+      "new_leader_ms": 900.875,
+      "first_write_seen": true,
+      "first_write_ms": 1175.564,
+      "first_write_term": 83,
+      "settled": true,
+      "all_pods_ready_ms": 2858.772,
+      "settled_ms": 2858.772,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1140.522,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 81,
+          "last_log_index": 37400,
+          "applied": 37397
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 46,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 83,
+      "t0_since_run_start_ms": 274193.496,
+      "kubectl_delete_returned_ms": 31.123,
+      "old_leader_last_answer_ms": 41.046,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 84,
+      "new_leader_ms": 659.265,
+      "first_write_seen": true,
+      "first_write_ms": 672.328,
+      "first_write_term": 84,
+      "settled": true,
+      "all_pods_ready_ms": 2896.386,
+      "settled_ms": 2896.386,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 635.117,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 83,
+          "last_log_index": 38201,
+          "applied": 38201
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 47,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 84,
+      "t0_since_run_start_ms": 280194.398,
+      "kubectl_delete_returned_ms": 29.867,
+      "old_leader_last_answer_ms": 32.211,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 85,
+      "new_leader_ms": 627.748,
+      "first_write_seen": true,
+      "first_write_ms": 669.418,
+      "first_write_term": 85,
+      "settled": true,
+      "all_pods_ready_ms": 2874.766,
+      "settled_ms": 2874.767,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 643.577,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 84,
+          "last_log_index": 39073,
+          "applied": 39073
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 48,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 85,
+      "t0_since_run_start_ms": 286219.157,
+      "kubectl_delete_returned_ms": 31.214,
+      "old_leader_last_answer_ms": 40.635,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 86,
+      "new_leader_ms": 841.703,
+      "first_write_seen": true,
+      "first_write_ms": 1175.344,
+      "first_write_term": 86,
+      "settled": true,
+      "all_pods_ready_ms": 2841.854,
+      "settled_ms": 2841.854,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1136.612,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 85,
+          "last_log_index": 39930,
+          "applied": 39929
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 49,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 86,
+      "t0_since_run_start_ms": 292208.799,
+      "kubectl_delete_returned_ms": 30.543,
+      "old_leader_last_answer_ms": 32.258,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 87,
+      "new_leader_ms": 858.315,
+      "first_write_seen": true,
+      "first_write_ms": 1160.459,
+      "first_write_term": 87,
+      "settled": true,
+      "all_pods_ready_ms": 2873.373,
+      "settled_ms": 2873.373,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1135.52,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 86,
+          "last_log_index": 40700,
+          "applied": 40699
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 50,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 87,
+      "t0_since_run_start_ms": 298228.468,
+      "kubectl_delete_returned_ms": 30.334,
+      "old_leader_last_answer_ms": 34.203,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 88,
+      "new_leader_ms": 837.257,
+      "first_write_seen": true,
+      "first_write_ms": 1164.327,
+      "first_write_term": 88,
+      "settled": true,
+      "all_pods_ready_ms": 2838.632,
+      "settled_ms": 2838.633,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1136.904,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 87,
+          "last_log_index": 41465,
+          "applied": 41464
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 51,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 88,
+      "t0_since_run_start_ms": 304215.722,
+      "kubectl_delete_returned_ms": 39.261,
+      "old_leader_last_answer_ms": 41.539,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 89,
+      "new_leader_ms": 915.339,
+      "first_write_seen": true,
+      "first_write_ms": 1169.225,
+      "first_write_term": 89,
+      "settled": true,
+      "all_pods_ready_ms": 2928.263,
+      "settled_ms": 2928.263,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1127.685,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 88,
+          "last_log_index": 42234,
+          "applied": 42233
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 52,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 89,
+      "t0_since_run_start_ms": 310252.724,
+      "kubectl_delete_returned_ms": 27.854,
+      "old_leader_last_answer_ms": 34.469,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 90,
+      "new_leader_ms": 597.455,
+      "first_write_seen": true,
+      "first_write_ms": 662.671,
+      "first_write_term": 90,
+      "settled": true,
+      "all_pods_ready_ms": 2859.991,
+      "settled_ms": 2859.991,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 647.544,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 89,
+          "last_log_index": 43057,
+          "applied": 43057
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 53,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 90,
+      "t0_since_run_start_ms": 316260.748,
+      "kubectl_delete_returned_ms": 28.395,
+      "old_leader_last_answer_ms": 35.821,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 91,
+      "new_leader_ms": 645.25,
+      "first_write_seen": true,
+      "first_write_ms": 674.116,
+      "first_write_term": 91,
+      "settled": true,
+      "all_pods_ready_ms": 2900.791,
+      "settled_ms": 2900.792,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 650.691,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 90,
+          "last_log_index": 43947,
+          "applied": 43947
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 54,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 91,
+      "t0_since_run_start_ms": 322266.616,
+      "kubectl_delete_returned_ms": 33.474,
+      "old_leader_last_answer_ms": 34.522,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 92,
+      "new_leader_ms": 855.46,
+      "first_write_seen": true,
+      "first_write_ms": 1166.641,
+      "first_write_term": 92,
+      "settled": true,
+      "all_pods_ready_ms": 2867.481,
+      "settled_ms": 2867.481,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1132.711,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 91,
+          "last_log_index": 44790,
+          "applied": 44789
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 55,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 92,
+      "t0_since_run_start_ms": 328240.873,
+      "kubectl_delete_returned_ms": 29.197,
+      "old_leader_last_answer_ms": 29.009,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 93,
+      "new_leader_ms": 546.73,
+      "first_write_seen": true,
+      "first_write_ms": 661.271,
+      "first_write_term": 93,
+      "settled": true,
+      "all_pods_ready_ms": 2304.32,
+      "settled_ms": 2304.32,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 637.93,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 92,
+          "last_log_index": 45556,
+          "applied": 45555
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 56,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 93,
+      "t0_since_run_start_ms": 333653.572,
+      "kubectl_delete_returned_ms": 28.387,
+      "old_leader_last_answer_ms": 28.713,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 94,
+      "new_leader_ms": 586.019,
+      "first_write_seen": true,
+      "first_write_ms": 667.411,
+      "first_write_term": 94,
+      "settled": true,
+      "all_pods_ready_ms": 2579.818,
+      "settled_ms": 2579.818,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 648.539,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 93,
+          "last_log_index": 46296,
+          "applied": 46296
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 57,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 94,
+      "t0_since_run_start_ms": 339340.673,
+      "kubectl_delete_returned_ms": 29.091,
+      "old_leader_last_answer_ms": 28.199,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 95,
+      "new_leader_ms": 579.869,
+      "first_write_seen": true,
+      "first_write_ms": 661.561,
+      "first_write_term": 95,
+      "settled": true,
+      "all_pods_ready_ms": 2817.32,
+      "settled_ms": 2817.32,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 635,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 94,
+          "last_log_index": 47123,
+          "applied": 47121
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 58,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 95,
+      "t0_since_run_start_ms": 345265.14,
+      "kubectl_delete_returned_ms": 29.146,
+      "old_leader_last_answer_ms": 33.908,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 96,
+      "new_leader_ms": 553.91,
+      "first_write_seen": true,
+      "first_write_ms": 661.842,
+      "first_write_term": 96,
+      "settled": true,
+      "all_pods_ready_ms": 3035.996,
+      "settled_ms": 3035.996,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 625.769,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 95,
+          "last_log_index": 48013,
+          "applied": 48012
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 59,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 96,
+      "t0_since_run_start_ms": 351404.529,
+      "kubectl_delete_returned_ms": 29.095,
+      "old_leader_last_answer_ms": 26.861,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 97,
+      "new_leader_ms": 601.362,
+      "first_write_seen": true,
+      "first_write_ms": 660.616,
+      "first_write_term": 97,
+      "settled": true,
+      "all_pods_ready_ms": 2840.4,
+      "settled_ms": 2840.401,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 630.393,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 96,
+          "last_log_index": 48932,
+          "applied": 48931
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 60,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 97,
+      "t0_since_run_start_ms": 357350.16,
+      "kubectl_delete_returned_ms": 31.912,
+      "old_leader_last_answer_ms": 36.521,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 98,
+      "new_leader_ms": 743.452,
+      "first_write_seen": true,
+      "first_write_ms": 1165.197,
+      "first_write_term": 98,
+      "settled": true,
+      "all_pods_ready_ms": 2978.002,
+      "settled_ms": 2978.002,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1134.33,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 97,
+          "last_log_index": 49833,
+          "applied": 49832
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 61,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 98,
+      "t0_since_run_start_ms": 363435.083,
+      "kubectl_delete_returned_ms": 32.172,
+      "old_leader_last_answer_ms": 27.773,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 99,
+      "new_leader_ms": 545.938,
+      "first_write_seen": true,
+      "first_write_ms": 660.741,
+      "first_write_term": 99,
+      "settled": true,
+      "all_pods_ready_ms": 2782.054,
+      "settled_ms": 2782.054,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 626.858,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 98,
+          "last_log_index": 50663,
+          "applied": 50661
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 62,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 99,
+      "t0_since_run_start_ms": 369332.02,
+      "kubectl_delete_returned_ms": 30.397,
+      "old_leader_last_answer_ms": 39.475,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 100,
+      "new_leader_ms": 978.139,
+      "first_write_seen": true,
+      "first_write_ms": 1170.202,
+      "first_write_term": 100,
+      "settled": true,
+      "all_pods_ready_ms": 2981.379,
+      "settled_ms": 2981.38,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1131.573,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 99,
+          "last_log_index": 51470,
+          "applied": 51468
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 63,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 100,
+      "t0_since_run_start_ms": 375419.13,
+      "kubectl_delete_returned_ms": 31.838,
+      "old_leader_last_answer_ms": 30.746,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 101,
+      "new_leader_ms": 605.674,
+      "first_write_seen": true,
+      "first_write_ms": 662.334,
+      "first_write_term": 101,
+      "settled": true,
+      "all_pods_ready_ms": 2848.178,
+      "settled_ms": 2848.179,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 635.33,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 100,
+          "last_log_index": 52283,
+          "applied": 52282
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 64,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 101,
+      "t0_since_run_start_ms": 381372.839,
+      "kubectl_delete_returned_ms": 28.653,
+      "old_leader_last_answer_ms": 31.666,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 102,
+      "new_leader_ms": 571.357,
+      "first_write_seen": true,
+      "first_write_ms": 662.27,
+      "first_write_term": 102,
+      "settled": true,
+      "all_pods_ready_ms": 2808.861,
+      "settled_ms": 2808.862,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 637.19,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 101,
+          "last_log_index": 53155,
+          "applied": 53155
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 65,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 102,
+      "t0_since_run_start_ms": 387288.777,
+      "kubectl_delete_returned_ms": 31.46,
+      "old_leader_last_answer_ms": 35.638,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 103,
+      "new_leader_ms": 627.206,
+      "first_write_seen": true,
+      "first_write_ms": 674.589,
+      "first_write_term": 103,
+      "settled": true,
+      "all_pods_ready_ms": 3109.741,
+      "settled_ms": 3109.741,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 650.439,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 102,
+          "last_log_index": 54052,
+          "applied": 54052
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 66,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 103,
+      "t0_since_run_start_ms": 393506.438,
+      "kubectl_delete_returned_ms": 30.21,
+      "old_leader_last_answer_ms": 30.748,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 104,
+      "new_leader_ms": 615.257,
+      "first_write_seen": true,
+      "first_write_ms": 663.511,
+      "first_write_term": 104,
+      "settled": true,
+      "all_pods_ready_ms": 2848.881,
+      "settled_ms": 2848.881,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 633.022,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 103,
+          "last_log_index": 54952,
+          "applied": 54952
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 67,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 104,
+      "t0_since_run_start_ms": 399466.508,
+      "kubectl_delete_returned_ms": 30.123,
+      "old_leader_last_answer_ms": 37.81,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 105,
+      "new_leader_ms": 715.34,
+      "first_write_seen": true,
+      "first_write_ms": 1162.729,
+      "first_write_term": 105,
+      "settled": true,
+      "all_pods_ready_ms": 2718.154,
+      "settled_ms": 2718.154,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1128.141,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 104,
+          "last_log_index": 55809,
+          "applied": 55807
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 68,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 105,
+      "t0_since_run_start_ms": 405292.528,
+      "kubectl_delete_returned_ms": 31.249,
+      "old_leader_last_answer_ms": 35.108,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 106,
+      "new_leader_ms": 555.384,
+      "first_write_seen": true,
+      "first_write_ms": 666.374,
+      "first_write_term": 106,
+      "settled": true,
+      "all_pods_ready_ms": 3040.001,
+      "settled_ms": 3040.001,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 635.017,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 105,
+          "last_log_index": 56579,
+          "applied": 56579
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 69,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 106,
+      "t0_since_run_start_ms": 411438.88,
+      "kubectl_delete_returned_ms": 30.727,
+      "old_leader_last_answer_ms": 32.015,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 107,
+      "new_leader_ms": 766.56,
+      "first_write_seen": true,
+      "first_write_ms": 1159.657,
+      "first_write_term": 107,
+      "settled": true,
+      "all_pods_ready_ms": 2763.117,
+      "settled_ms": 2763.118,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1127.487,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 106,
+          "last_log_index": 57445,
+          "applied": 57444
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 70,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 107,
+      "t0_since_run_start_ms": 417307.523,
+      "kubectl_delete_returned_ms": 28.472,
+      "old_leader_last_answer_ms": 30.598,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 108,
+      "new_leader_ms": 740.526,
+      "first_write_seen": true,
+      "first_write_ms": 1160.103,
+      "first_write_term": 108,
+      "settled": true,
+      "all_pods_ready_ms": 2988.606,
+      "settled_ms": 2988.607,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1137.386,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 107,
+          "last_log_index": 58226,
+          "applied": 58225
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 71,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 108,
+      "t0_since_run_start_ms": 423405.911,
+      "kubectl_delete_returned_ms": 28.357,
+      "old_leader_last_answer_ms": 30.849,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 109,
+      "new_leader_ms": 613.586,
+      "first_write_seen": true,
+      "first_write_ms": 659.292,
+      "first_write_term": 109,
+      "settled": true,
+      "all_pods_ready_ms": 2847.988,
+      "settled_ms": 2847.988,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 627.097,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 108,
+          "last_log_index": 59039,
+          "applied": 59039
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 72,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 109,
+      "t0_since_run_start_ms": 429364.212,
+      "kubectl_delete_returned_ms": 30.58,
+      "old_leader_last_answer_ms": 36.742,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 110,
+      "new_leader_ms": 546.699,
+      "first_write_seen": true,
+      "first_write_ms": 663.635,
+      "first_write_term": 110,
+      "settled": true,
+      "all_pods_ready_ms": 3035.078,
+      "settled_ms": 3035.079,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 627.492,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 109,
+          "last_log_index": 59897,
+          "applied": 59897
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 73,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 110,
+      "t0_since_run_start_ms": 435507.907,
+      "kubectl_delete_returned_ms": 27.947,
+      "old_leader_last_answer_ms": 30.968,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 111,
+      "new_leader_ms": 540.232,
+      "first_write_seen": true,
+      "first_write_ms": 660.617,
+      "first_write_term": 111,
+      "settled": true,
+      "all_pods_ready_ms": 2783.989,
+      "settled_ms": 2783.989,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 628.201,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 110,
+          "last_log_index": 60805,
+          "applied": 60804
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 74,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 111,
+      "t0_since_run_start_ms": 441399.463,
+      "kubectl_delete_returned_ms": 30.803,
+      "old_leader_last_answer_ms": 33.635,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 112,
+      "new_leader_ms": 763.934,
+      "first_write_seen": true,
+      "first_write_ms": 1160.395,
+      "first_write_term": 112,
+      "settled": true,
+      "all_pods_ready_ms": 3026.134,
+      "settled_ms": 3026.134,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1126.772,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 111,
+          "last_log_index": 61637,
+          "applied": 61636
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 75,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 112,
+      "t0_since_run_start_ms": 447534.537,
+      "kubectl_delete_returned_ms": 28.937,
+      "old_leader_last_answer_ms": 33.771,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 113,
+      "new_leader_ms": 573.441,
+      "first_write_seen": true,
+      "first_write_ms": 661.878,
+      "first_write_term": 113,
+      "settled": true,
+      "all_pods_ready_ms": 2832.93,
+      "settled_ms": 2832.93,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 638.532,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 112,
+          "last_log_index": 62493,
+          "applied": 62493
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 76,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 113,
+      "t0_since_run_start_ms": 453479.567,
+      "kubectl_delete_returned_ms": 33.195,
+      "old_leader_last_answer_ms": 36.277,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 114,
+      "new_leader_ms": 638.677,
+      "first_write_seen": true,
+      "first_write_ms": 663.59,
+      "first_write_term": 114,
+      "settled": true,
+      "all_pods_ready_ms": 2891.875,
+      "settled_ms": 2891.875,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 626.923,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 113,
+          "last_log_index": 63326,
+          "applied": 63325
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 77,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 114,
+      "t0_since_run_start_ms": 459481.635,
+      "kubectl_delete_returned_ms": 29.678,
+      "old_leader_last_answer_ms": 32.258,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 115,
+      "new_leader_ms": 586.977,
+      "first_write_seen": true,
+      "first_write_ms": 673.634,
+      "first_write_term": 115,
+      "settled": true,
+      "all_pods_ready_ms": 2830.383,
+      "settled_ms": 2830.384,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 649.121,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 114,
+          "last_log_index": 64182,
+          "applied": 64182
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 78,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 115,
+      "t0_since_run_start_ms": 465422.315,
+      "kubectl_delete_returned_ms": 29.295,
+      "old_leader_last_answer_ms": 32.126,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 116,
+      "new_leader_ms": 558.557,
+      "first_write_seen": true,
+      "first_write_ms": 662.934,
+      "first_write_term": 116,
+      "settled": true,
+      "all_pods_ready_ms": 3050.891,
+      "settled_ms": 3050.892,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 637.362,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 115,
+          "last_log_index": 65082,
+          "applied": 65081
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 79,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 116,
+      "t0_since_run_start_ms": 471580.299,
+      "kubectl_delete_returned_ms": 28.934,
+      "old_leader_last_answer_ms": 34.405,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 117,
+      "new_leader_ms": 762.722,
+      "first_write_seen": true,
+      "first_write_ms": 1163.541,
+      "first_write_term": 117,
+      "settled": true,
+      "all_pods_ready_ms": 2762.827,
+      "settled_ms": 2762.827,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1129.084,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 116,
+          "last_log_index": 66030,
+          "applied": 66029
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 80,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 117,
+      "t0_since_run_start_ms": 477449.582,
+      "kubectl_delete_returned_ms": 31.778,
+      "old_leader_last_answer_ms": 38.708,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 118,
+      "new_leader_ms": 581.651,
+      "first_write_seen": true,
+      "first_write_ms": 667.895,
+      "first_write_term": 118,
+      "settled": true,
+      "all_pods_ready_ms": 3077.291,
+      "settled_ms": 3077.291,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 636.461,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 117,
+          "last_log_index": 66817,
+          "applied": 66817
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 81,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 118,
+      "t0_since_run_start_ms": 483672.632,
+      "kubectl_delete_returned_ms": 30.37,
+      "old_leader_last_answer_ms": 40.149,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 119,
+      "new_leader_ms": 807.49,
+      "first_write_seen": true,
+      "first_write_ms": 1170.001,
+      "first_write_term": 119,
+      "settled": true,
+      "all_pods_ready_ms": 2807.46,
+      "settled_ms": 2807.461,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1127.023,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 118,
+          "last_log_index": 67760,
+          "applied": 67759
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 82,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 119,
+      "t0_since_run_start_ms": 489586.825,
+      "kubectl_delete_returned_ms": 34.015,
+      "old_leader_last_answer_ms": 37.79,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 120,
+      "new_leader_ms": 711.234,
+      "first_write_seen": true,
+      "first_write_ms": 1171.341,
+      "first_write_term": 120,
+      "settled": true,
+      "all_pods_ready_ms": 2729.995,
+      "settled_ms": 2729.995,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1144.715,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 119,
+          "last_log_index": 68529,
+          "applied": 68527
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 83,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 120,
+      "t0_since_run_start_ms": 495426.105,
+      "kubectl_delete_returned_ms": 29.354,
+      "old_leader_last_answer_ms": 31.697,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 121,
+      "new_leader_ms": 968.995,
+      "first_write_seen": true,
+      "first_write_ms": 1161.886,
+      "first_write_term": 121,
+      "settled": true,
+      "all_pods_ready_ms": 2961.339,
+      "settled_ms": 2961.34,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1142.513,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 120,
+          "last_log_index": 69323,
+          "applied": 69322
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 84,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 121,
+      "t0_since_run_start_ms": 501499.5,
+      "kubectl_delete_returned_ms": 30.907,
+      "old_leader_last_answer_ms": 28.367,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 122,
+      "new_leader_ms": 527.619,
+      "first_write_seen": true,
+      "first_write_ms": 660.037,
+      "first_write_term": 122,
+      "settled": true,
+      "all_pods_ready_ms": 3012.971,
+      "settled_ms": 3012.971,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 631.217,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 121,
+          "last_log_index": 70101,
+          "applied": 70101
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 85,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 122,
+      "t0_since_run_start_ms": 507621.787,
+      "kubectl_delete_returned_ms": 31.119,
+      "old_leader_last_answer_ms": 26.228,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 123,
+      "new_leader_ms": 923.706,
+      "first_write_seen": true,
+      "first_write_ms": 1160.556,
+      "first_write_term": 123,
+      "settled": true,
+      "all_pods_ready_ms": 2921.95,
+      "settled_ms": 2921.95,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1134.025,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 122,
+          "last_log_index": 70999,
+          "applied": 70997
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 86,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 123,
+      "t0_since_run_start_ms": 513654.127,
+      "kubectl_delete_returned_ms": 30.012,
+      "old_leader_last_answer_ms": 35.954,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 124,
+      "new_leader_ms": 719.46,
+      "first_write_seen": true,
+      "first_write_ms": 1161.332,
+      "first_write_term": 124,
+      "settled": true,
+      "all_pods_ready_ms": 2736.14,
+      "settled_ms": 2736.14,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1125.382,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 123,
+          "last_log_index": 71834,
+          "applied": 71833
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 87,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 124,
+      "t0_since_run_start_ms": 519503.885,
+      "kubectl_delete_returned_ms": 28.965,
+      "old_leader_last_answer_ms": 25.716,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 126,
+      "new_leader_ms": 876.705,
+      "first_write_seen": true,
+      "first_write_ms": 1164.972,
+      "first_write_term": 126,
+      "settled": true,
+      "all_pods_ready_ms": 2868.425,
+      "settled_ms": 2868.426,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1141.591,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 124,
+          "last_log_index": 72654,
+          "applied": 72652
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 88,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 126,
+      "t0_since_run_start_ms": 525475.984,
+      "kubectl_delete_returned_ms": 32.782,
+      "old_leader_last_answer_ms": 32.461,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 127,
+      "new_leader_ms": 620.933,
+      "first_write_seen": true,
+      "first_write_ms": 667.737,
+      "first_write_term": 127,
+      "settled": true,
+      "all_pods_ready_ms": 3104.697,
+      "settled_ms": 3104.698,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 642.028,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 126,
+          "last_log_index": 73416,
+          "applied": 73416
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 89,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 127,
+      "t0_since_run_start_ms": 531687.755,
+      "kubectl_delete_returned_ms": 29.039,
+      "old_leader_last_answer_ms": 28.303,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 128,
+      "new_leader_ms": 565.141,
+      "first_write_seen": true,
+      "first_write_ms": 659.551,
+      "first_write_term": 128,
+      "settled": true,
+      "all_pods_ready_ms": 2805.895,
+      "settled_ms": 2805.896,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 635.324,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 127,
+          "last_log_index": 74345,
+          "applied": 74344
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 90,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 128,
+      "t0_since_run_start_ms": 537598.907,
+      "kubectl_delete_returned_ms": 29.494,
+      "old_leader_last_answer_ms": 31.118,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 129,
+      "new_leader_ms": 913.697,
+      "first_write_seen": true,
+      "first_write_ms": 1160.435,
+      "first_write_term": 129,
+      "settled": true,
+      "all_pods_ready_ms": 2912.12,
+      "settled_ms": 2912.121,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1129.33,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 128,
+          "last_log_index": 75180,
+          "applied": 75179
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 91,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 129,
+      "t0_since_run_start_ms": 543619.47,
+      "kubectl_delete_returned_ms": 28.532,
+      "old_leader_last_answer_ms": 31.391,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 130,
+      "new_leader_ms": 602.69,
+      "first_write_seen": true,
+      "first_write_ms": 659.974,
+      "first_write_term": 130,
+      "settled": true,
+      "all_pods_ready_ms": 2838.394,
+      "settled_ms": 2838.395,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 625.859,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 129,
+          "last_log_index": 75959,
+          "applied": 75959
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 92,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 130,
+      "t0_since_run_start_ms": 549566.416,
+      "kubectl_delete_returned_ms": 31.709,
+      "old_leader_last_answer_ms": 36.446,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 131,
+      "new_leader_ms": 557.24,
+      "first_write_seen": true,
+      "first_write_ms": 671.787,
+      "first_write_term": 131,
+      "settled": true,
+      "all_pods_ready_ms": 3041.512,
+      "settled_ms": 3041.512,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 633.019,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 130,
+          "last_log_index": 76870,
+          "applied": 76870
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 93,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 131,
+      "t0_since_run_start_ms": 555716.013,
+      "kubectl_delete_returned_ms": 28.979,
+      "old_leader_last_answer_ms": 26.877,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 132,
+      "new_leader_ms": 807.045,
+      "first_write_seen": true,
+      "first_write_ms": 1160.344,
+      "first_write_term": 132,
+      "settled": true,
+      "all_pods_ready_ms": 2809.205,
+      "settled_ms": 2809.206,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1138.313,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 131,
+          "last_log_index": 77796,
+          "applied": 77794
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 94,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 132,
+      "t0_since_run_start_ms": 561635.788,
+      "kubectl_delete_returned_ms": 31.741,
+      "old_leader_last_answer_ms": 33.425,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 133,
+      "new_leader_ms": 706.629,
+      "first_write_seen": true,
+      "first_write_ms": 1163.761,
+      "first_write_term": 133,
+      "settled": true,
+      "all_pods_ready_ms": 2944.384,
+      "settled_ms": 2944.385,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1133.505,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 132,
+          "last_log_index": 78555,
+          "applied": 78555
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 95,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 133,
+      "t0_since_run_start_ms": 567684.184,
+      "kubectl_delete_returned_ms": 28.298,
+      "old_leader_last_answer_ms": 28.455,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 134,
+      "new_leader_ms": 538.809,
+      "first_write_seen": true,
+      "first_write_ms": 662.913,
+      "first_write_term": 134,
+      "settled": true,
+      "all_pods_ready_ms": 2774.806,
+      "settled_ms": 2774.806,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 636.494,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 133,
+          "last_log_index": 79317,
+          "applied": 79317
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 96,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 134,
+      "t0_since_run_start_ms": 573565.21,
+      "kubectl_delete_returned_ms": 30.525,
+      "old_leader_last_answer_ms": 36.283,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 135,
+      "new_leader_ms": 703.163,
+      "first_write_seen": true,
+      "first_write_ms": 1164.687,
+      "first_write_term": 135,
+      "settled": true,
+      "all_pods_ready_ms": 2945.248,
+      "settled_ms": 2945.248,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1128.338,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 134,
+          "last_log_index": 80162,
+          "applied": 80161
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 97,
+      "deleted_pods": [
+        "raftkv-2"
+      ],
+      "old_term": 135,
+      "t0_since_run_start_ms": 579614.958,
+      "kubectl_delete_returned_ms": 34.001,
+      "old_leader_last_answer_ms": 35.278,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 136,
+      "new_leader_ms": 603.889,
+      "first_write_seen": true,
+      "first_write_ms": 665.117,
+      "first_write_term": 136,
+      "settled": true,
+      "all_pods_ready_ms": 2862.264,
+      "settled_ms": 2862.264,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 629.912,
+      "replacement_started_with": {
+        "raftkv-2": {
+          "found": true,
+          "term": 135,
+          "last_log_index": 80957,
+          "applied": 80956
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 98,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 136,
+      "t0_since_run_start_ms": 585580.992,
+      "kubectl_delete_returned_ms": 30.001,
+      "old_leader_last_answer_ms": 33.477,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-0",
+      "new_term": 137,
+      "new_leader_ms": 723.486,
+      "first_write_seen": true,
+      "first_write_ms": 1161.313,
+      "first_write_term": 137,
+      "settled": true,
+      "all_pods_ready_ms": 2965.443,
+      "settled_ms": 2965.443,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1134.105,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 136,
+          "last_log_index": 81826,
+          "applied": 81825
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 99,
+      "deleted_pods": [
+        "raftkv-0"
+      ],
+      "old_term": 137,
+      "t0_since_run_start_ms": 591654.786,
+      "kubectl_delete_returned_ms": 28.407,
+      "old_leader_last_answer_ms": 31.598,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-1",
+      "new_term": 138,
+      "new_leader_ms": 797.064,
+      "first_write_seen": true,
+      "first_write_ms": 1163.471,
+      "first_write_term": 138,
+      "settled": true,
+      "all_pods_ready_ms": 2884.992,
+      "settled_ms": 2885.332,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 1131.87,
+      "replacement_started_with": {
+        "raftkv-0": {
+          "found": true,
+          "term": 137,
+          "last_log_index": 82629,
+          "applied": 82629
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    },
+    {
+      "trial": 100,
+      "deleted_pods": [
+        "raftkv-1"
+      ],
+      "old_term": 138,
+      "t0_since_run_start_ms": 597744.98,
+      "kubectl_delete_returned_ms": 29.719,
+      "old_leader_last_answer_ms": 39.616,
+      "old_leader_seen_gone": true,
+      "new_leader_seen": true,
+      "new_leader_pod": "raftkv-2",
+      "new_term": 139,
+      "new_leader_ms": 634.311,
+      "first_write_seen": true,
+      "first_write_ms": 670.673,
+      "first_write_term": 139,
+      "settled": true,
+      "all_pods_ready_ms": 2821.959,
+      "settled_ms": 2821.959,
+      "extra_leader_changes": 0,
+      "longest_write_gap_ms": 634.149,
+      "replacement_started_with": {
+        "raftkv-1": {
+          "found": true,
+          "term": 138,
+          "last_log_index": 83408,
+          "applied": 83408
+        }
+      },
+      "every_replacement_started_from_its_volume": true
+    }
+  ]
+}

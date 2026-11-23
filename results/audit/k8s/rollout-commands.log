@@ -1,0 +1,1333 @@
+$ terraform -chdir=deploy/terraform output -json
+{
+  "client_address": {
+    "sensitive": false,
+    "type": "string",
+    "value": "127.0.0.1:17000"
+  },
+  "client_address_in_cluster": {
+    "sensitive": false,
+    "type": "string",
+    "value": "raftkv-client.raftkv.svc.cluster.local:7000"
+  },
+  "image": {
+    "sensitive": false,
+    "type": "string",
+    "value": "raftkv:v1"
+  },
+  "kubeconfig": {
+    "sensitive": false,
+    "type": "string",
+    "value": "$HOME/projects/raftkv/deploy/terraform/kubeconfig"
+  },
+  "namespace": {
+    "sensitive": false,
+    "type": "string",
+    "value": "raftkv"
+  },
+  "node_container": {
+    "sensitive": false,
+    "type": "string",
+    "value": "raftkv-control-plane"
+  },
+  "nodes": {
+    "sensitive": false,
+    "type": [
+      "tuple",
+      [
+        [
+          "object",
+          {
+            "address": "string",
+            "host_address": "string",
+            "id": "number",
+            "pod": "string"
+          }
+        ],
+        [
+          "object",
+          {
+            "address": "string",
+            "host_address": "string",
+            "id": "number",
+            "pod": "string"
+          }
+        ],
+        [
+          "object",
+          {
+            "address": "string",
+            "host_address": "string",
+            "id": "number",
+            "pod": "string"
+          }
+        ]
+      ]
+    ],
+    "value": [
+      {
+        "address": "raftkv-0.raftkv-peers.raftkv.svc.cluster.local:7000",
+        "host_address": "127.0.0.1:17001",
+        "id": 1,
+        "pod": "raftkv-0"
+      },
+      {
+        "address": "raftkv-1.raftkv-peers.raftkv.svc.cluster.local:7000",
+        "host_address": "127.0.0.1:17002",
+        "id": 2,
+        "pod": "raftkv-1"
+      },
+      {
+        "address": "raftkv-2.raftkv-peers.raftkv.svc.cluster.local:7000",
+        "host_address": "127.0.0.1:17003",
+        "id": 3,
+        "pod": "raftkv-2"
+      }
+    ]
+  },
+  "statefulset": {
+    "sensitive": false,
+    "type": "string",
+    "value": "raftkv"
+  }
+}
+$ terraform -chdir=deploy/terraform apply -auto-approve -input=false -no-color -var image_tag=v2
+terraform_data.image: Refreshing state... [id=167a8a12-1bff-261c-e764-08537863cff1]
+kind_cluster.this: Refreshing state... [id=raftkv-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5]
+kind_load.image: Refreshing state... [id=raftkv|sha256:59de6727e28ebfdbb6f5002de58c992c326f04db87d8559f9bde9723bf29bc53]
+kubernetes_namespace_v1.raftkv: Refreshing state... [id=raftkv]
+kubernetes_pod_disruption_budget_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+kubernetes_service_v1.peers: Refreshing state... [id=raftkv/raftkv-peers]
+kubernetes_service_v1.pod[2]: Refreshing state... [id=raftkv/raftkv-2-host]
+kubernetes_service_v1.pod[0]: Refreshing state... [id=raftkv/raftkv-0-host]
+kubernetes_service_v1.client: Refreshing state... [id=raftkv/raftkv-client]
+kubernetes_service_v1.pod[1]: Refreshing state... [id=raftkv/raftkv-1-host]
+kubernetes_stateful_set_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # kind_load.image will be replaced due to changes in replace_triggered_by
+-/+ resource "kind_load" "image" {
+      ~ id           = "raftkv|sha256:59de6727e28ebfdbb6f5002de58c992c326f04db87d8559f9bde9723bf29bc53" -> (known after apply)
+      ~ image        = "raftkv:v1" -> "raftkv:v2" # forces replacement
+        # (1 unchanged attribute hidden)
+    }
+
+  # kubernetes_stateful_set_v1.raftkv will be updated in-place
+  ~ resource "kubernetes_stateful_set_v1" "raftkv" {
+        id               = "raftkv/raftkv"
+        # (1 unchanged attribute hidden)
+
+      ~ spec {
+            # (5 unchanged attributes hidden)
+
+          ~ template {
+              ~ spec {
+                    # (18 unchanged attributes hidden)
+
+                  ~ container {
+                      ~ image                      = "raftkv:v1" -> "raftkv:v2"
+                        name                       = "raftkvd"
+                        # (10 unchanged attributes hidden)
+
+                        # (8 unchanged blocks hidden)
+                    }
+
+                    # (2 unchanged blocks hidden)
+                }
+
+                # (1 unchanged block hidden)
+            }
+
+            # (4 unchanged blocks hidden)
+        }
+
+        # (1 unchanged block hidden)
+    }
+
+  # terraform_data.image must be replaced
+-/+ resource "terraform_data" "image" {
+      ~ id               = "167a8a12-1bff-261c-e764-08537863cff1" -> (known after apply)
+      ~ triggers_replace = {
+          ~ image  = "raftkv:v1" -> "raftkv:v2"
+            # (1 unchanged attribute hidden)
+        }
+    }
+
+Plan: 2 to add, 1 to change, 2 to destroy.
+
+Changes to Outputs:
+  ~ image                     = "raftkv:v1" -> "raftkv:v2"
+kind_load.image: Destroying... [id=raftkv|sha256:59de6727e28ebfdbb6f5002de58c992c326f04db87d8559f9bde9723bf29bc53]
+kind_load.image: Destruction complete after 0s
+terraform_data.image: Destroying... [id=167a8a12-1bff-261c-e764-08537863cff1]
+terraform_data.image: Destruction complete after 0s
+terraform_data.image: Creating...
+terraform_data.image: Provisioning with 'local-exec'...
+terraform_data.image (local-exec): Executing: ["/bin/sh" "-c" "docker build --quiet --build-arg VERSION=v2 --tag raftkv:v2 $HOME/projects/raftkv"]
+terraform_data.image (local-exec): sha256:e8e527f22499129d4d91dfd4a1c760cc73e098df597c04ae3e836dcecc70f002
+terraform_data.image: Creation complete after 4s [id=623edb6d-2deb-2c54-983d-0b5d5b9c70ae]
+kind_load.image: Creating...
+kind_load.image: Creation complete after 2s [id=raftkv|sha256:e8e527f22499129d4d91dfd4a1c760cc73e098df597c04ae3e836dcecc70f002]
+kubernetes_stateful_set_v1.raftkv: Modifying... [id=raftkv/raftkv]
+kubernetes_stateful_set_v1.raftkv: Still modifying... [id=raftkv/raftkv, 00m10s elapsed]
+kubernetes_stateful_set_v1.raftkv: Modifications complete after 15s [id=raftkv/raftkv]
+
+Apply complete! Resources: 2 added, 1 changed, 2 destroyed.
+
+Outputs:
+
+client_address = "127.0.0.1:17000"
+client_address_in_cluster = "raftkv-client.raftkv.svc.cluster.local:7000"
+image = "raftkv:v2"
+kubeconfig = "$HOME/projects/raftkv/deploy/terraform/kubeconfig"
+namespace = "raftkv"
+node_container = "raftkv-control-plane"
+nodes = [
+  {
+    "address" = "raftkv-0.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17001"
+    "id" = 1
+    "pod" = "raftkv-0"
+  },
+  {
+    "address" = "raftkv-1.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17002"
+    "id" = 2
+    "pod" = "raftkv-1"
+  },
+  {
+    "address" = "raftkv-2.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17003"
+    "id" = 3
+    "pod" = "raftkv-2"
+  },
+]
+statefulset = "raftkv"
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-0 -- /usr/local/bin/raftkvd --version
+v2
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-1 -- /usr/local/bin/raftkvd --version
+v2
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-2 -- /usr/local/bin/raftkvd --version
+v2
+$ terraform -chdir=deploy/terraform apply -auto-approve -input=false -no-color -var image_tag=v1
+terraform_data.image: Refreshing state... [id=623edb6d-2deb-2c54-983d-0b5d5b9c70ae]
+kind_cluster.this: Refreshing state... [id=raftkv-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5]
+kind_load.image: Refreshing state... [id=raftkv|sha256:e8e527f22499129d4d91dfd4a1c760cc73e098df597c04ae3e836dcecc70f002]
+kubernetes_namespace_v1.raftkv: Refreshing state... [id=raftkv]
+kubernetes_pod_disruption_budget_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+kubernetes_service_v1.pod[1]: Refreshing state... [id=raftkv/raftkv-1-host]
+kubernetes_service_v1.pod[0]: Refreshing state... [id=raftkv/raftkv-0-host]
+kubernetes_service_v1.pod[2]: Refreshing state... [id=raftkv/raftkv-2-host]
+kubernetes_service_v1.peers: Refreshing state... [id=raftkv/raftkv-peers]
+kubernetes_service_v1.client: Refreshing state... [id=raftkv/raftkv-client]
+kubernetes_stateful_set_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # kind_load.image will be replaced due to changes in replace_triggered_by
+-/+ resource "kind_load" "image" {
+      ~ id           = "raftkv|sha256:e8e527f22499129d4d91dfd4a1c760cc73e098df597c04ae3e836dcecc70f002" -> (known after apply)
+      ~ image        = "raftkv:v2" -> "raftkv:v1" # forces replacement
+        # (1 unchanged attribute hidden)
+    }
+
+  # kubernetes_stateful_set_v1.raftkv will be updated in-place
+  ~ resource "kubernetes_stateful_set_v1" "raftkv" {
+        id               = "raftkv/raftkv"
+        # (1 unchanged attribute hidden)
+
+      ~ spec {
+            # (5 unchanged attributes hidden)
+
+          ~ template {
+              ~ spec {
+                    # (18 unchanged attributes hidden)
+
+                  ~ container {
+                      ~ image                      = "raftkv:v2" -> "raftkv:v1"
+                        name                       = "raftkvd"
+                        # (10 unchanged attributes hidden)
+
+                        # (8 unchanged blocks hidden)
+                    }
+
+                    # (2 unchanged blocks hidden)
+                }
+
+                # (1 unchanged block hidden)
+            }
+
+            # (4 unchanged blocks hidden)
+        }
+
+        # (1 unchanged block hidden)
+    }
+
+  # terraform_data.image must be replaced
+-/+ resource "terraform_data" "image" {
+      ~ id               = "623edb6d-2deb-2c54-983d-0b5d5b9c70ae" -> (known after apply)
+      ~ triggers_replace = {
+          ~ image  = "raftkv:v2" -> "raftkv:v1"
+            # (1 unchanged attribute hidden)
+        }
+    }
+
+Plan: 2 to add, 1 to change, 2 to destroy.
+
+Changes to Outputs:
+  ~ image                     = "raftkv:v2" -> "raftkv:v1"
+kind_load.image: Destroying... [id=raftkv|sha256:e8e527f22499129d4d91dfd4a1c760cc73e098df597c04ae3e836dcecc70f002]
+kind_load.image: Destruction complete after 0s
+terraform_data.image: Destroying... [id=623edb6d-2deb-2c54-983d-0b5d5b9c70ae]
+terraform_data.image: Destruction complete after 0s
+terraform_data.image: Creating...
+terraform_data.image: Provisioning with 'local-exec'...
+terraform_data.image (local-exec): Executing: ["/bin/sh" "-c" "docker build --quiet --build-arg VERSION=v1 --tag raftkv:v1 $HOME/projects/raftkv"]
+terraform_data.image (local-exec): sha256:abb27aaa6cce88627060cde997086f6f837d83e4bc7667b541d061813bb215bb
+terraform_data.image: Creation complete after 1s [id=2b5ef9e1-8817-301e-ca62-eafbe55bfc2d]
+kind_load.image: Creating...
+kind_load.image: Creation complete after 1s [id=raftkv|sha256:abb27aaa6cce88627060cde997086f6f837d83e4bc7667b541d061813bb215bb]
+kubernetes_stateful_set_v1.raftkv: Modifying... [id=raftkv/raftkv]
+kubernetes_stateful_set_v1.raftkv: Still modifying... [id=raftkv/raftkv, 00m10s elapsed]
+kubernetes_stateful_set_v1.raftkv: Modifications complete after 16s [id=raftkv/raftkv]
+
+Apply complete! Resources: 2 added, 1 changed, 2 destroyed.
+
+Outputs:
+
+client_address = "127.0.0.1:17000"
+client_address_in_cluster = "raftkv-client.raftkv.svc.cluster.local:7000"
+image = "raftkv:v1"
+kubeconfig = "$HOME/projects/raftkv/deploy/terraform/kubeconfig"
+namespace = "raftkv"
+node_container = "raftkv-control-plane"
+nodes = [
+  {
+    "address" = "raftkv-0.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17001"
+    "id" = 1
+    "pod" = "raftkv-0"
+  },
+  {
+    "address" = "raftkv-1.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17002"
+    "id" = 2
+    "pod" = "raftkv-1"
+  },
+  {
+    "address" = "raftkv-2.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17003"
+    "id" = 3
+    "pod" = "raftkv-2"
+  },
+]
+statefulset = "raftkv"
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-0 -- /usr/local/bin/raftkvd --version
+v1
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-1 -- /usr/local/bin/raftkvd --version
+v1
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-2 -- /usr/local/bin/raftkvd --version
+v1
+$ terraform -chdir=deploy/terraform apply -auto-approve -input=false -no-color -var image_tag=v2
+terraform_data.image: Refreshing state... [id=2b5ef9e1-8817-301e-ca62-eafbe55bfc2d]
+kind_cluster.this: Refreshing state... [id=raftkv-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5]
+kind_load.image: Refreshing state... [id=raftkv|sha256:abb27aaa6cce88627060cde997086f6f837d83e4bc7667b541d061813bb215bb]
+kubernetes_namespace_v1.raftkv: Refreshing state... [id=raftkv]
+kubernetes_service_v1.peers: Refreshing state... [id=raftkv/raftkv-peers]
+kubernetes_service_v1.client: Refreshing state... [id=raftkv/raftkv-client]
+kubernetes_pod_disruption_budget_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+kubernetes_service_v1.pod[2]: Refreshing state... [id=raftkv/raftkv-2-host]
+kubernetes_service_v1.pod[1]: Refreshing state... [id=raftkv/raftkv-1-host]
+kubernetes_service_v1.pod[0]: Refreshing state... [id=raftkv/raftkv-0-host]
+kubernetes_stateful_set_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # kind_load.image will be replaced due to changes in replace_triggered_by
+-/+ resource "kind_load" "image" {
+      ~ id           = "raftkv|sha256:abb27aaa6cce88627060cde997086f6f837d83e4bc7667b541d061813bb215bb" -> (known after apply)
+      ~ image        = "raftkv:v1" -> "raftkv:v2" # forces replacement
+        # (1 unchanged attribute hidden)
+    }
+
+  # kubernetes_stateful_set_v1.raftkv will be updated in-place
+  ~ resource "kubernetes_stateful_set_v1" "raftkv" {
+        id               = "raftkv/raftkv"
+        # (1 unchanged attribute hidden)
+
+      ~ spec {
+            # (5 unchanged attributes hidden)
+
+          ~ template {
+              ~ spec {
+                    # (18 unchanged attributes hidden)
+
+                  ~ container {
+                      ~ image                      = "raftkv:v1" -> "raftkv:v2"
+                        name                       = "raftkvd"
+                        # (10 unchanged attributes hidden)
+
+                        # (8 unchanged blocks hidden)
+                    }
+
+                    # (2 unchanged blocks hidden)
+                }
+
+                # (1 unchanged block hidden)
+            }
+
+            # (4 unchanged blocks hidden)
+        }
+
+        # (1 unchanged block hidden)
+    }
+
+  # terraform_data.image must be replaced
+-/+ resource "terraform_data" "image" {
+      ~ id               = "2b5ef9e1-8817-301e-ca62-eafbe55bfc2d" -> (known after apply)
+      ~ triggers_replace = {
+          ~ image  = "raftkv:v1" -> "raftkv:v2"
+            # (1 unchanged attribute hidden)
+        }
+    }
+
+Plan: 2 to add, 1 to change, 2 to destroy.
+
+Changes to Outputs:
+  ~ image                     = "raftkv:v1" -> "raftkv:v2"
+kind_load.image: Destroying... [id=raftkv|sha256:abb27aaa6cce88627060cde997086f6f837d83e4bc7667b541d061813bb215bb]
+kind_load.image: Destruction complete after 0s
+terraform_data.image: Destroying... [id=2b5ef9e1-8817-301e-ca62-eafbe55bfc2d]
+terraform_data.image: Destruction complete after 0s
+terraform_data.image: Creating...
+terraform_data.image: Provisioning with 'local-exec'...
+terraform_data.image (local-exec): Executing: ["/bin/sh" "-c" "docker build --quiet --build-arg VERSION=v2 --tag raftkv:v2 $HOME/projects/raftkv"]
+terraform_data.image (local-exec): sha256:de36dbcaf9dc57dbdb04c1452eddec84fc6c805dc0185b2f5a9bd31eeb82a556
+terraform_data.image: Creation complete after 0s [id=6e647cd7-b5f6-de4b-d756-f4d255fffd95]
+kind_load.image: Creating...
+kind_load.image: Creation complete after 1s [id=raftkv|sha256:de36dbcaf9dc57dbdb04c1452eddec84fc6c805dc0185b2f5a9bd31eeb82a556]
+kubernetes_stateful_set_v1.raftkv: Modifying... [id=raftkv/raftkv]
+kubernetes_stateful_set_v1.raftkv: Still modifying... [id=raftkv/raftkv, 00m10s elapsed]
+kubernetes_stateful_set_v1.raftkv: Modifications complete after 16s [id=raftkv/raftkv]
+
+Apply complete! Resources: 2 added, 1 changed, 2 destroyed.
+
+Outputs:
+
+client_address = "127.0.0.1:17000"
+client_address_in_cluster = "raftkv-client.raftkv.svc.cluster.local:7000"
+image = "raftkv:v2"
+kubeconfig = "$HOME/projects/raftkv/deploy/terraform/kubeconfig"
+namespace = "raftkv"
+node_container = "raftkv-control-plane"
+nodes = [
+  {
+    "address" = "raftkv-0.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17001"
+    "id" = 1
+    "pod" = "raftkv-0"
+  },
+  {
+    "address" = "raftkv-1.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17002"
+    "id" = 2
+    "pod" = "raftkv-1"
+  },
+  {
+    "address" = "raftkv-2.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17003"
+    "id" = 3
+    "pod" = "raftkv-2"
+  },
+]
+statefulset = "raftkv"
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-0 -- /usr/local/bin/raftkvd --version
+v2
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-1 -- /usr/local/bin/raftkvd --version
+v2
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-2 -- /usr/local/bin/raftkvd --version
+v2
+$ terraform -chdir=deploy/terraform apply -auto-approve -input=false -no-color -var image_tag=v1
+terraform_data.image: Refreshing state... [id=6e647cd7-b5f6-de4b-d756-f4d255fffd95]
+kind_cluster.this: Refreshing state... [id=raftkv-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5]
+kind_load.image: Refreshing state... [id=raftkv|sha256:de36dbcaf9dc57dbdb04c1452eddec84fc6c805dc0185b2f5a9bd31eeb82a556]
+kubernetes_namespace_v1.raftkv: Refreshing state... [id=raftkv]
+kubernetes_pod_disruption_budget_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+kubernetes_service_v1.client: Refreshing state... [id=raftkv/raftkv-client]
+kubernetes_service_v1.pod[0]: Refreshing state... [id=raftkv/raftkv-0-host]
+kubernetes_service_v1.pod[2]: Refreshing state... [id=raftkv/raftkv-2-host]
+kubernetes_service_v1.peers: Refreshing state... [id=raftkv/raftkv-peers]
+kubernetes_service_v1.pod[1]: Refreshing state... [id=raftkv/raftkv-1-host]
+kubernetes_stateful_set_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # kind_load.image will be replaced due to changes in replace_triggered_by
+-/+ resource "kind_load" "image" {
+      ~ id           = "raftkv|sha256:de36dbcaf9dc57dbdb04c1452eddec84fc6c805dc0185b2f5a9bd31eeb82a556" -> (known after apply)
+      ~ image        = "raftkv:v2" -> "raftkv:v1" # forces replacement
+        # (1 unchanged attribute hidden)
+    }
+
+  # kubernetes_stateful_set_v1.raftkv will be updated in-place
+  ~ resource "kubernetes_stateful_set_v1" "raftkv" {
+        id               = "raftkv/raftkv"
+        # (1 unchanged attribute hidden)
+
+      ~ spec {
+            # (5 unchanged attributes hidden)
+
+          ~ template {
+              ~ spec {
+                    # (18 unchanged attributes hidden)
+
+                  ~ container {
+                      ~ image                      = "raftkv:v2" -> "raftkv:v1"
+                        name                       = "raftkvd"
+                        # (10 unchanged attributes hidden)
+
+                        # (8 unchanged blocks hidden)
+                    }
+
+                    # (2 unchanged blocks hidden)
+                }
+
+                # (1 unchanged block hidden)
+            }
+
+            # (4 unchanged blocks hidden)
+        }
+
+        # (1 unchanged block hidden)
+    }
+
+  # terraform_data.image must be replaced
+-/+ resource "terraform_data" "image" {
+      ~ id               = "6e647cd7-b5f6-de4b-d756-f4d255fffd95" -> (known after apply)
+      ~ triggers_replace = {
+          ~ image  = "raftkv:v2" -> "raftkv:v1"
+            # (1 unchanged attribute hidden)
+        }
+    }
+
+Plan: 2 to add, 1 to change, 2 to destroy.
+
+Changes to Outputs:
+  ~ image                     = "raftkv:v2" -> "raftkv:v1"
+kind_load.image: Destroying... [id=raftkv|sha256:de36dbcaf9dc57dbdb04c1452eddec84fc6c805dc0185b2f5a9bd31eeb82a556]
+kind_load.image: Destruction complete after 0s
+terraform_data.image: Destroying... [id=6e647cd7-b5f6-de4b-d756-f4d255fffd95]
+terraform_data.image: Destruction complete after 0s
+terraform_data.image: Creating...
+terraform_data.image: Provisioning with 'local-exec'...
+terraform_data.image (local-exec): Executing: ["/bin/sh" "-c" "docker build --quiet --build-arg VERSION=v1 --tag raftkv:v1 $HOME/projects/raftkv"]
+terraform_data.image (local-exec): sha256:9b739bfbbf6883d2dc98857193d589ad7e774f2a90160f11519ebe5d5e33b3fa
+terraform_data.image: Creation complete after 1s [id=23f0884b-96b9-a8d8-b8e6-d3c01bc5a738]
+kind_load.image: Creating...
+kind_load.image: Creation complete after 1s [id=raftkv|sha256:9b739bfbbf6883d2dc98857193d589ad7e774f2a90160f11519ebe5d5e33b3fa]
+kubernetes_stateful_set_v1.raftkv: Modifying... [id=raftkv/raftkv]
+kubernetes_stateful_set_v1.raftkv: Still modifying... [id=raftkv/raftkv, 00m10s elapsed]
+kubernetes_stateful_set_v1.raftkv: Modifications complete after 15s [id=raftkv/raftkv]
+
+Apply complete! Resources: 2 added, 1 changed, 2 destroyed.
+
+Outputs:
+
+client_address = "127.0.0.1:17000"
+client_address_in_cluster = "raftkv-client.raftkv.svc.cluster.local:7000"
+image = "raftkv:v1"
+kubeconfig = "$HOME/projects/raftkv/deploy/terraform/kubeconfig"
+namespace = "raftkv"
+node_container = "raftkv-control-plane"
+nodes = [
+  {
+    "address" = "raftkv-0.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17001"
+    "id" = 1
+    "pod" = "raftkv-0"
+  },
+  {
+    "address" = "raftkv-1.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17002"
+    "id" = 2
+    "pod" = "raftkv-1"
+  },
+  {
+    "address" = "raftkv-2.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17003"
+    "id" = 3
+    "pod" = "raftkv-2"
+  },
+]
+statefulset = "raftkv"
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-0 -- /usr/local/bin/raftkvd --version
+v1
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-1 -- /usr/local/bin/raftkvd --version
+v1
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-2 -- /usr/local/bin/raftkvd --version
+v1
+$ terraform -chdir=deploy/terraform apply -auto-approve -input=false -no-color -var image_tag=v2
+terraform_data.image: Refreshing state... [id=23f0884b-96b9-a8d8-b8e6-d3c01bc5a738]
+kind_cluster.this: Refreshing state... [id=raftkv-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5]
+kind_load.image: Refreshing state... [id=raftkv|sha256:9b739bfbbf6883d2dc98857193d589ad7e774f2a90160f11519ebe5d5e33b3fa]
+kubernetes_namespace_v1.raftkv: Refreshing state... [id=raftkv]
+kubernetes_pod_disruption_budget_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+kubernetes_service_v1.peers: Refreshing state... [id=raftkv/raftkv-peers]
+kubernetes_service_v1.client: Refreshing state... [id=raftkv/raftkv-client]
+kubernetes_service_v1.pod[0]: Refreshing state... [id=raftkv/raftkv-0-host]
+kubernetes_service_v1.pod[1]: Refreshing state... [id=raftkv/raftkv-1-host]
+kubernetes_service_v1.pod[2]: Refreshing state... [id=raftkv/raftkv-2-host]
+kubernetes_stateful_set_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # kind_load.image will be replaced due to changes in replace_triggered_by
+-/+ resource "kind_load" "image" {
+      ~ id           = "raftkv|sha256:9b739bfbbf6883d2dc98857193d589ad7e774f2a90160f11519ebe5d5e33b3fa" -> (known after apply)
+      ~ image        = "raftkv:v1" -> "raftkv:v2" # forces replacement
+        # (1 unchanged attribute hidden)
+    }
+
+  # kubernetes_stateful_set_v1.raftkv will be updated in-place
+  ~ resource "kubernetes_stateful_set_v1" "raftkv" {
+        id               = "raftkv/raftkv"
+        # (1 unchanged attribute hidden)
+
+      ~ spec {
+            # (5 unchanged attributes hidden)
+
+          ~ template {
+              ~ spec {
+                    # (18 unchanged attributes hidden)
+
+                  ~ container {
+                      ~ image                      = "raftkv:v1" -> "raftkv:v2"
+                        name                       = "raftkvd"
+                        # (10 unchanged attributes hidden)
+
+                        # (8 unchanged blocks hidden)
+                    }
+
+                    # (2 unchanged blocks hidden)
+                }
+
+                # (1 unchanged block hidden)
+            }
+
+            # (4 unchanged blocks hidden)
+        }
+
+        # (1 unchanged block hidden)
+    }
+
+  # terraform_data.image must be replaced
+-/+ resource "terraform_data" "image" {
+      ~ id               = "23f0884b-96b9-a8d8-b8e6-d3c01bc5a738" -> (known after apply)
+      ~ triggers_replace = {
+          ~ image  = "raftkv:v1" -> "raftkv:v2"
+            # (1 unchanged attribute hidden)
+        }
+    }
+
+Plan: 2 to add, 1 to change, 2 to destroy.
+
+Changes to Outputs:
+  ~ image                     = "raftkv:v1" -> "raftkv:v2"
+kind_load.image: Destroying... [id=raftkv|sha256:9b739bfbbf6883d2dc98857193d589ad7e774f2a90160f11519ebe5d5e33b3fa]
+kind_load.image: Destruction complete after 0s
+terraform_data.image: Destroying... [id=23f0884b-96b9-a8d8-b8e6-d3c01bc5a738]
+terraform_data.image: Destruction complete after 0s
+terraform_data.image: Creating...
+terraform_data.image: Provisioning with 'local-exec'...
+terraform_data.image (local-exec): Executing: ["/bin/sh" "-c" "docker build --quiet --build-arg VERSION=v2 --tag raftkv:v2 $HOME/projects/raftkv"]
+terraform_data.image (local-exec): sha256:704229114d8bfc3db1ce0c5037123cc02db318b17a53686de6593ede90113d15
+terraform_data.image: Creation complete after 1s [id=60a43aa6-5baf-c05a-53f9-53f20923ff08]
+kind_load.image: Creating...
+kind_load.image: Creation complete after 1s [id=raftkv|sha256:704229114d8bfc3db1ce0c5037123cc02db318b17a53686de6593ede90113d15]
+kubernetes_stateful_set_v1.raftkv: Modifying... [id=raftkv/raftkv]
+kubernetes_stateful_set_v1.raftkv: Still modifying... [id=raftkv/raftkv, 00m10s elapsed]
+kubernetes_stateful_set_v1.raftkv: Modifications complete after 15s [id=raftkv/raftkv]
+
+Apply complete! Resources: 2 added, 1 changed, 2 destroyed.
+
+Outputs:
+
+client_address = "127.0.0.1:17000"
+client_address_in_cluster = "raftkv-client.raftkv.svc.cluster.local:7000"
+image = "raftkv:v2"
+kubeconfig = "$HOME/projects/raftkv/deploy/terraform/kubeconfig"
+namespace = "raftkv"
+node_container = "raftkv-control-plane"
+nodes = [
+  {
+    "address" = "raftkv-0.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17001"
+    "id" = 1
+    "pod" = "raftkv-0"
+  },
+  {
+    "address" = "raftkv-1.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17002"
+    "id" = 2
+    "pod" = "raftkv-1"
+  },
+  {
+    "address" = "raftkv-2.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17003"
+    "id" = 3
+    "pod" = "raftkv-2"
+  },
+]
+statefulset = "raftkv"
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-0 -- /usr/local/bin/raftkvd --version
+v2
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-1 -- /usr/local/bin/raftkvd --version
+v2
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-2 -- /usr/local/bin/raftkvd --version
+v2
+$ terraform -chdir=deploy/terraform apply -auto-approve -input=false -no-color -var image_tag=v1
+terraform_data.image: Refreshing state... [id=60a43aa6-5baf-c05a-53f9-53f20923ff08]
+kind_cluster.this: Refreshing state... [id=raftkv-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5]
+kind_load.image: Refreshing state... [id=raftkv|sha256:704229114d8bfc3db1ce0c5037123cc02db318b17a53686de6593ede90113d15]
+kubernetes_namespace_v1.raftkv: Refreshing state... [id=raftkv]
+kubernetes_service_v1.client: Refreshing state... [id=raftkv/raftkv-client]
+kubernetes_pod_disruption_budget_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+kubernetes_service_v1.pod[1]: Refreshing state... [id=raftkv/raftkv-1-host]
+kubernetes_service_v1.peers: Refreshing state... [id=raftkv/raftkv-peers]
+kubernetes_service_v1.pod[0]: Refreshing state... [id=raftkv/raftkv-0-host]
+kubernetes_service_v1.pod[2]: Refreshing state... [id=raftkv/raftkv-2-host]
+kubernetes_stateful_set_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # kind_load.image will be replaced due to changes in replace_triggered_by
+-/+ resource "kind_load" "image" {
+      ~ id           = "raftkv|sha256:704229114d8bfc3db1ce0c5037123cc02db318b17a53686de6593ede90113d15" -> (known after apply)
+      ~ image        = "raftkv:v2" -> "raftkv:v1" # forces replacement
+        # (1 unchanged attribute hidden)
+    }
+
+  # kubernetes_stateful_set_v1.raftkv will be updated in-place
+  ~ resource "kubernetes_stateful_set_v1" "raftkv" {
+        id               = "raftkv/raftkv"
+        # (1 unchanged attribute hidden)
+
+      ~ spec {
+            # (5 unchanged attributes hidden)
+
+          ~ template {
+              ~ spec {
+                    # (18 unchanged attributes hidden)
+
+                  ~ container {
+                      ~ image                      = "raftkv:v2" -> "raftkv:v1"
+                        name                       = "raftkvd"
+                        # (10 unchanged attributes hidden)
+
+                        # (8 unchanged blocks hidden)
+                    }
+
+                    # (2 unchanged blocks hidden)
+                }
+
+                # (1 unchanged block hidden)
+            }
+
+            # (4 unchanged blocks hidden)
+        }
+
+        # (1 unchanged block hidden)
+    }
+
+  # terraform_data.image must be replaced
+-/+ resource "terraform_data" "image" {
+      ~ id               = "60a43aa6-5baf-c05a-53f9-53f20923ff08" -> (known after apply)
+      ~ triggers_replace = {
+          ~ image  = "raftkv:v2" -> "raftkv:v1"
+            # (1 unchanged attribute hidden)
+        }
+    }
+
+Plan: 2 to add, 1 to change, 2 to destroy.
+
+Changes to Outputs:
+  ~ image                     = "raftkv:v2" -> "raftkv:v1"
+kind_load.image: Destroying... [id=raftkv|sha256:704229114d8bfc3db1ce0c5037123cc02db318b17a53686de6593ede90113d15]
+kind_load.image: Destruction complete after 0s
+terraform_data.image: Destroying... [id=60a43aa6-5baf-c05a-53f9-53f20923ff08]
+terraform_data.image: Destruction complete after 0s
+terraform_data.image: Creating...
+terraform_data.image: Provisioning with 'local-exec'...
+terraform_data.image (local-exec): Executing: ["/bin/sh" "-c" "docker build --quiet --build-arg VERSION=v1 --tag raftkv:v1 $HOME/projects/raftkv"]
+terraform_data.image (local-exec): sha256:28f98463c9b05b54fec07585af57611fc8c5ddb30b8c47dc4531d25ce31034de
+terraform_data.image: Creation complete after 1s [id=bdae4357-6514-b9f1-8f54-0473c9b400b2]
+kind_load.image: Creating...
+kind_load.image: Creation complete after 1s [id=raftkv|sha256:28f98463c9b05b54fec07585af57611fc8c5ddb30b8c47dc4531d25ce31034de]
+kubernetes_stateful_set_v1.raftkv: Modifying... [id=raftkv/raftkv]
+kubernetes_stateful_set_v1.raftkv: Still modifying... [id=raftkv/raftkv, 00m10s elapsed]
+kubernetes_stateful_set_v1.raftkv: Modifications complete after 15s [id=raftkv/raftkv]
+
+Apply complete! Resources: 2 added, 1 changed, 2 destroyed.
+
+Outputs:
+
+client_address = "127.0.0.1:17000"
+client_address_in_cluster = "raftkv-client.raftkv.svc.cluster.local:7000"
+image = "raftkv:v1"
+kubeconfig = "$HOME/projects/raftkv/deploy/terraform/kubeconfig"
+namespace = "raftkv"
+node_container = "raftkv-control-plane"
+nodes = [
+  {
+    "address" = "raftkv-0.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17001"
+    "id" = 1
+    "pod" = "raftkv-0"
+  },
+  {
+    "address" = "raftkv-1.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17002"
+    "id" = 2
+    "pod" = "raftkv-1"
+  },
+  {
+    "address" = "raftkv-2.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17003"
+    "id" = 3
+    "pod" = "raftkv-2"
+  },
+]
+statefulset = "raftkv"
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-0 -- /usr/local/bin/raftkvd --version
+v1
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-1 -- /usr/local/bin/raftkvd --version
+v1
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-2 -- /usr/local/bin/raftkvd --version
+v1
+$ terraform -chdir=deploy/terraform apply -auto-approve -input=false -no-color -var image_tag=v2
+kind_cluster.this: Refreshing state... [id=raftkv-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5]
+terraform_data.image: Refreshing state... [id=bdae4357-6514-b9f1-8f54-0473c9b400b2]
+kind_load.image: Refreshing state... [id=raftkv|sha256:28f98463c9b05b54fec07585af57611fc8c5ddb30b8c47dc4531d25ce31034de]
+kubernetes_namespace_v1.raftkv: Refreshing state... [id=raftkv]
+kubernetes_pod_disruption_budget_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+kubernetes_service_v1.pod[1]: Refreshing state... [id=raftkv/raftkv-1-host]
+kubernetes_service_v1.client: Refreshing state... [id=raftkv/raftkv-client]
+kubernetes_service_v1.peers: Refreshing state... [id=raftkv/raftkv-peers]
+kubernetes_service_v1.pod[0]: Refreshing state... [id=raftkv/raftkv-0-host]
+kubernetes_service_v1.pod[2]: Refreshing state... [id=raftkv/raftkv-2-host]
+kubernetes_stateful_set_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # kind_load.image will be replaced due to changes in replace_triggered_by
+-/+ resource "kind_load" "image" {
+      ~ id           = "raftkv|sha256:28f98463c9b05b54fec07585af57611fc8c5ddb30b8c47dc4531d25ce31034de" -> (known after apply)
+      ~ image        = "raftkv:v1" -> "raftkv:v2" # forces replacement
+        # (1 unchanged attribute hidden)
+    }
+
+  # kubernetes_stateful_set_v1.raftkv will be updated in-place
+  ~ resource "kubernetes_stateful_set_v1" "raftkv" {
+        id               = "raftkv/raftkv"
+        # (1 unchanged attribute hidden)
+
+      ~ spec {
+            # (5 unchanged attributes hidden)
+
+          ~ template {
+              ~ spec {
+                    # (18 unchanged attributes hidden)
+
+                  ~ container {
+                      ~ image                      = "raftkv:v1" -> "raftkv:v2"
+                        name                       = "raftkvd"
+                        # (10 unchanged attributes hidden)
+
+                        # (8 unchanged blocks hidden)
+                    }
+
+                    # (2 unchanged blocks hidden)
+                }
+
+                # (1 unchanged block hidden)
+            }
+
+            # (4 unchanged blocks hidden)
+        }
+
+        # (1 unchanged block hidden)
+    }
+
+  # terraform_data.image must be replaced
+-/+ resource "terraform_data" "image" {
+      ~ id               = "bdae4357-6514-b9f1-8f54-0473c9b400b2" -> (known after apply)
+      ~ triggers_replace = {
+          ~ image  = "raftkv:v1" -> "raftkv:v2"
+            # (1 unchanged attribute hidden)
+        }
+    }
+
+Plan: 2 to add, 1 to change, 2 to destroy.
+
+Changes to Outputs:
+  ~ image                     = "raftkv:v1" -> "raftkv:v2"
+kind_load.image: Destroying... [id=raftkv|sha256:28f98463c9b05b54fec07585af57611fc8c5ddb30b8c47dc4531d25ce31034de]
+kind_load.image: Destruction complete after 1s
+terraform_data.image: Destroying... [id=bdae4357-6514-b9f1-8f54-0473c9b400b2]
+terraform_data.image: Destruction complete after 0s
+terraform_data.image: Creating...
+terraform_data.image: Provisioning with 'local-exec'...
+terraform_data.image (local-exec): Executing: ["/bin/sh" "-c" "docker build --quiet --build-arg VERSION=v2 --tag raftkv:v2 $HOME/projects/raftkv"]
+terraform_data.image (local-exec): sha256:e87dbbcb82ed537cec918987ecfbc7985a6e2b705ce58a13003c5ac5691f4e65
+terraform_data.image: Creation complete after 0s [id=d024e8e1-c589-ca8b-161f-17835a1b244b]
+kind_load.image: Creating...
+kind_load.image: Creation complete after 1s [id=raftkv|sha256:e87dbbcb82ed537cec918987ecfbc7985a6e2b705ce58a13003c5ac5691f4e65]
+kubernetes_stateful_set_v1.raftkv: Modifying... [id=raftkv/raftkv]
+kubernetes_stateful_set_v1.raftkv: Still modifying... [id=raftkv/raftkv, 00m10s elapsed]
+kubernetes_stateful_set_v1.raftkv: Modifications complete after 16s [id=raftkv/raftkv]
+
+Apply complete! Resources: 2 added, 1 changed, 2 destroyed.
+
+Outputs:
+
+client_address = "127.0.0.1:17000"
+client_address_in_cluster = "raftkv-client.raftkv.svc.cluster.local:7000"
+image = "raftkv:v2"
+kubeconfig = "$HOME/projects/raftkv/deploy/terraform/kubeconfig"
+namespace = "raftkv"
+node_container = "raftkv-control-plane"
+nodes = [
+  {
+    "address" = "raftkv-0.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17001"
+    "id" = 1
+    "pod" = "raftkv-0"
+  },
+  {
+    "address" = "raftkv-1.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17002"
+    "id" = 2
+    "pod" = "raftkv-1"
+  },
+  {
+    "address" = "raftkv-2.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17003"
+    "id" = 3
+    "pod" = "raftkv-2"
+  },
+]
+statefulset = "raftkv"
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-0 -- /usr/local/bin/raftkvd --version
+v2
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-1 -- /usr/local/bin/raftkvd --version
+v2
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-2 -- /usr/local/bin/raftkvd --version
+v2
+$ terraform -chdir=deploy/terraform apply -auto-approve -input=false -no-color -var image_tag=v1
+terraform_data.image: Refreshing state... [id=d024e8e1-c589-ca8b-161f-17835a1b244b]
+kind_cluster.this: Refreshing state... [id=raftkv-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5]
+kind_load.image: Refreshing state... [id=raftkv|sha256:e87dbbcb82ed537cec918987ecfbc7985a6e2b705ce58a13003c5ac5691f4e65]
+kubernetes_namespace_v1.raftkv: Refreshing state... [id=raftkv]
+kubernetes_pod_disruption_budget_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+kubernetes_service_v1.peers: Refreshing state... [id=raftkv/raftkv-peers]
+kubernetes_service_v1.pod[2]: Refreshing state... [id=raftkv/raftkv-2-host]
+kubernetes_service_v1.client: Refreshing state... [id=raftkv/raftkv-client]
+kubernetes_service_v1.pod[0]: Refreshing state... [id=raftkv/raftkv-0-host]
+kubernetes_service_v1.pod[1]: Refreshing state... [id=raftkv/raftkv-1-host]
+kubernetes_stateful_set_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # kind_load.image will be replaced due to changes in replace_triggered_by
+-/+ resource "kind_load" "image" {
+      ~ id           = "raftkv|sha256:e87dbbcb82ed537cec918987ecfbc7985a6e2b705ce58a13003c5ac5691f4e65" -> (known after apply)
+      ~ image        = "raftkv:v2" -> "raftkv:v1" # forces replacement
+        # (1 unchanged attribute hidden)
+    }
+
+  # kubernetes_stateful_set_v1.raftkv will be updated in-place
+  ~ resource "kubernetes_stateful_set_v1" "raftkv" {
+        id               = "raftkv/raftkv"
+        # (1 unchanged attribute hidden)
+
+      ~ spec {
+            # (5 unchanged attributes hidden)
+
+          ~ template {
+              ~ spec {
+                    # (18 unchanged attributes hidden)
+
+                  ~ container {
+                      ~ image                      = "raftkv:v2" -> "raftkv:v1"
+                        name                       = "raftkvd"
+                        # (10 unchanged attributes hidden)
+
+                        # (8 unchanged blocks hidden)
+                    }
+
+                    # (2 unchanged blocks hidden)
+                }
+
+                # (1 unchanged block hidden)
+            }
+
+            # (4 unchanged blocks hidden)
+        }
+
+        # (1 unchanged block hidden)
+    }
+
+  # terraform_data.image must be replaced
+-/+ resource "terraform_data" "image" {
+      ~ id               = "d024e8e1-c589-ca8b-161f-17835a1b244b" -> (known after apply)
+      ~ triggers_replace = {
+          ~ image  = "raftkv:v2" -> "raftkv:v1"
+            # (1 unchanged attribute hidden)
+        }
+    }
+
+Plan: 2 to add, 1 to change, 2 to destroy.
+
+Changes to Outputs:
+  ~ image                     = "raftkv:v2" -> "raftkv:v1"
+kind_load.image: Destroying... [id=raftkv|sha256:e87dbbcb82ed537cec918987ecfbc7985a6e2b705ce58a13003c5ac5691f4e65]
+kind_load.image: Destruction complete after 0s
+terraform_data.image: Destroying... [id=d024e8e1-c589-ca8b-161f-17835a1b244b]
+terraform_data.image: Destruction complete after 0s
+terraform_data.image: Creating...
+terraform_data.image: Provisioning with 'local-exec'...
+terraform_data.image (local-exec): Executing: ["/bin/sh" "-c" "docker build --quiet --build-arg VERSION=v1 --tag raftkv:v1 $HOME/projects/raftkv"]
+terraform_data.image (local-exec): sha256:60fdb2acd9cb1abe9d018ded6b9fa22d1a4868995c7705f1bf68e787d92c989c
+terraform_data.image: Creation complete after 1s [id=a9ea6dce-8b36-51b6-9e22-05aff358deaa]
+kind_load.image: Creating...
+kind_load.image: Creation complete after 1s [id=raftkv|sha256:60fdb2acd9cb1abe9d018ded6b9fa22d1a4868995c7705f1bf68e787d92c989c]
+kubernetes_stateful_set_v1.raftkv: Modifying... [id=raftkv/raftkv]
+kubernetes_stateful_set_v1.raftkv: Still modifying... [id=raftkv/raftkv, 00m10s elapsed]
+kubernetes_stateful_set_v1.raftkv: Modifications complete after 16s [id=raftkv/raftkv]
+
+Apply complete! Resources: 2 added, 1 changed, 2 destroyed.
+
+Outputs:
+
+client_address = "127.0.0.1:17000"
+client_address_in_cluster = "raftkv-client.raftkv.svc.cluster.local:7000"
+image = "raftkv:v1"
+kubeconfig = "$HOME/projects/raftkv/deploy/terraform/kubeconfig"
+namespace = "raftkv"
+node_container = "raftkv-control-plane"
+nodes = [
+  {
+    "address" = "raftkv-0.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17001"
+    "id" = 1
+    "pod" = "raftkv-0"
+  },
+  {
+    "address" = "raftkv-1.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17002"
+    "id" = 2
+    "pod" = "raftkv-1"
+  },
+  {
+    "address" = "raftkv-2.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17003"
+    "id" = 3
+    "pod" = "raftkv-2"
+  },
+]
+statefulset = "raftkv"
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-0 -- /usr/local/bin/raftkvd --version
+v1
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-1 -- /usr/local/bin/raftkvd --version
+v1
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-2 -- /usr/local/bin/raftkvd --version
+v1
+$ terraform -chdir=deploy/terraform apply -auto-approve -input=false -no-color -var image_tag=v2
+kind_cluster.this: Refreshing state... [id=raftkv-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5]
+terraform_data.image: Refreshing state... [id=a9ea6dce-8b36-51b6-9e22-05aff358deaa]
+kind_load.image: Refreshing state... [id=raftkv|sha256:60fdb2acd9cb1abe9d018ded6b9fa22d1a4868995c7705f1bf68e787d92c989c]
+kubernetes_namespace_v1.raftkv: Refreshing state... [id=raftkv]
+kubernetes_pod_disruption_budget_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+kubernetes_service_v1.peers: Refreshing state... [id=raftkv/raftkv-peers]
+kubernetes_service_v1.client: Refreshing state... [id=raftkv/raftkv-client]
+kubernetes_service_v1.pod[2]: Refreshing state... [id=raftkv/raftkv-2-host]
+kubernetes_service_v1.pod[0]: Refreshing state... [id=raftkv/raftkv-0-host]
+kubernetes_service_v1.pod[1]: Refreshing state... [id=raftkv/raftkv-1-host]
+kubernetes_stateful_set_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # kind_load.image will be replaced due to changes in replace_triggered_by
+-/+ resource "kind_load" "image" {
+      ~ id           = "raftkv|sha256:60fdb2acd9cb1abe9d018ded6b9fa22d1a4868995c7705f1bf68e787d92c989c" -> (known after apply)
+      ~ image        = "raftkv:v1" -> "raftkv:v2" # forces replacement
+        # (1 unchanged attribute hidden)
+    }
+
+  # kubernetes_stateful_set_v1.raftkv will be updated in-place
+  ~ resource "kubernetes_stateful_set_v1" "raftkv" {
+        id               = "raftkv/raftkv"
+        # (1 unchanged attribute hidden)
+
+      ~ spec {
+            # (5 unchanged attributes hidden)
+
+          ~ template {
+              ~ spec {
+                    # (18 unchanged attributes hidden)
+
+                  ~ container {
+                      ~ image                      = "raftkv:v1" -> "raftkv:v2"
+                        name                       = "raftkvd"
+                        # (10 unchanged attributes hidden)
+
+                        # (8 unchanged blocks hidden)
+                    }
+
+                    # (2 unchanged blocks hidden)
+                }
+
+                # (1 unchanged block hidden)
+            }
+
+            # (4 unchanged blocks hidden)
+        }
+
+        # (1 unchanged block hidden)
+    }
+
+  # terraform_data.image must be replaced
+-/+ resource "terraform_data" "image" {
+      ~ id               = "a9ea6dce-8b36-51b6-9e22-05aff358deaa" -> (known after apply)
+      ~ triggers_replace = {
+          ~ image  = "raftkv:v1" -> "raftkv:v2"
+            # (1 unchanged attribute hidden)
+        }
+    }
+
+Plan: 2 to add, 1 to change, 2 to destroy.
+
+Changes to Outputs:
+  ~ image                     = "raftkv:v1" -> "raftkv:v2"
+kind_load.image: Destroying... [id=raftkv|sha256:60fdb2acd9cb1abe9d018ded6b9fa22d1a4868995c7705f1bf68e787d92c989c]
+kind_load.image: Destruction complete after 0s
+terraform_data.image: Destroying... [id=a9ea6dce-8b36-51b6-9e22-05aff358deaa]
+terraform_data.image: Destruction complete after 0s
+terraform_data.image: Creating...
+terraform_data.image: Provisioning with 'local-exec'...
+terraform_data.image (local-exec): Executing: ["/bin/sh" "-c" "docker build --quiet --build-arg VERSION=v2 --tag raftkv:v2 $HOME/projects/raftkv"]
+terraform_data.image (local-exec): sha256:1ad29ec92fe6881032a055522a99d1479b51b2b688354dcc5fdc5e2a1b52621f
+terraform_data.image: Creation complete after 1s [id=e730af41-c096-880e-ec18-84bb875cebb0]
+kind_load.image: Creating...
+kind_load.image: Creation complete after 1s [id=raftkv|sha256:1ad29ec92fe6881032a055522a99d1479b51b2b688354dcc5fdc5e2a1b52621f]
+kubernetes_stateful_set_v1.raftkv: Modifying... [id=raftkv/raftkv]
+kubernetes_stateful_set_v1.raftkv: Still modifying... [id=raftkv/raftkv, 00m10s elapsed]
+kubernetes_stateful_set_v1.raftkv: Modifications complete after 16s [id=raftkv/raftkv]
+
+Apply complete! Resources: 2 added, 1 changed, 2 destroyed.
+
+Outputs:
+
+client_address = "127.0.0.1:17000"
+client_address_in_cluster = "raftkv-client.raftkv.svc.cluster.local:7000"
+image = "raftkv:v2"
+kubeconfig = "$HOME/projects/raftkv/deploy/terraform/kubeconfig"
+namespace = "raftkv"
+node_container = "raftkv-control-plane"
+nodes = [
+  {
+    "address" = "raftkv-0.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17001"
+    "id" = 1
+    "pod" = "raftkv-0"
+  },
+  {
+    "address" = "raftkv-1.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17002"
+    "id" = 2
+    "pod" = "raftkv-1"
+  },
+  {
+    "address" = "raftkv-2.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17003"
+    "id" = 3
+    "pod" = "raftkv-2"
+  },
+]
+statefulset = "raftkv"
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-0 -- /usr/local/bin/raftkvd --version
+v2
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-1 -- /usr/local/bin/raftkvd --version
+v2
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-2 -- /usr/local/bin/raftkvd --version
+v2
+$ terraform -chdir=deploy/terraform apply -auto-approve -input=false -no-color -var image_tag=v1
+kind_cluster.this: Refreshing state... [id=raftkv-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5]
+terraform_data.image: Refreshing state... [id=e730af41-c096-880e-ec18-84bb875cebb0]
+kind_load.image: Refreshing state... [id=raftkv|sha256:1ad29ec92fe6881032a055522a99d1479b51b2b688354dcc5fdc5e2a1b52621f]
+kubernetes_namespace_v1.raftkv: Refreshing state... [id=raftkv]
+kubernetes_pod_disruption_budget_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+kubernetes_service_v1.client: Refreshing state... [id=raftkv/raftkv-client]
+kubernetes_service_v1.pod[1]: Refreshing state... [id=raftkv/raftkv-1-host]
+kubernetes_service_v1.pod[0]: Refreshing state... [id=raftkv/raftkv-0-host]
+kubernetes_service_v1.peers: Refreshing state... [id=raftkv/raftkv-peers]
+kubernetes_service_v1.pod[2]: Refreshing state... [id=raftkv/raftkv-2-host]
+kubernetes_stateful_set_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # kind_load.image will be replaced due to changes in replace_triggered_by
+-/+ resource "kind_load" "image" {
+      ~ id           = "raftkv|sha256:1ad29ec92fe6881032a055522a99d1479b51b2b688354dcc5fdc5e2a1b52621f" -> (known after apply)
+      ~ image        = "raftkv:v2" -> "raftkv:v1" # forces replacement
+        # (1 unchanged attribute hidden)
+    }
+
+  # kubernetes_stateful_set_v1.raftkv will be updated in-place
+  ~ resource "kubernetes_stateful_set_v1" "raftkv" {
+        id               = "raftkv/raftkv"
+        # (1 unchanged attribute hidden)
+
+      ~ spec {
+            # (5 unchanged attributes hidden)
+
+          ~ template {
+              ~ spec {
+                    # (18 unchanged attributes hidden)
+
+                  ~ container {
+                      ~ image                      = "raftkv:v2" -> "raftkv:v1"
+                        name                       = "raftkvd"
+                        # (10 unchanged attributes hidden)
+
+                        # (8 unchanged blocks hidden)
+                    }
+
+                    # (2 unchanged blocks hidden)
+                }
+
+                # (1 unchanged block hidden)
+            }
+
+            # (4 unchanged blocks hidden)
+        }
+
+        # (1 unchanged block hidden)
+    }
+
+  # terraform_data.image must be replaced
+-/+ resource "terraform_data" "image" {
+      ~ id               = "e730af41-c096-880e-ec18-84bb875cebb0" -> (known after apply)
+      ~ triggers_replace = {
+          ~ image  = "raftkv:v2" -> "raftkv:v1"
+            # (1 unchanged attribute hidden)
+        }
+    }
+
+Plan: 2 to add, 1 to change, 2 to destroy.
+
+Changes to Outputs:
+  ~ image                     = "raftkv:v2" -> "raftkv:v1"
+kind_load.image: Destroying... [id=raftkv|sha256:1ad29ec92fe6881032a055522a99d1479b51b2b688354dcc5fdc5e2a1b52621f]
+kind_load.image: Destruction complete after 0s
+terraform_data.image: Destroying... [id=e730af41-c096-880e-ec18-84bb875cebb0]
+terraform_data.image: Destruction complete after 0s
+terraform_data.image: Creating...
+terraform_data.image: Provisioning with 'local-exec'...
+terraform_data.image (local-exec): Executing: ["/bin/sh" "-c" "docker build --quiet --build-arg VERSION=v1 --tag raftkv:v1 $HOME/projects/raftkv"]
+terraform_data.image (local-exec): sha256:3b154c462551734a713cb7c0f9bb0f148b1e515e18d7497f493302f9ad44ac5a
+terraform_data.image: Creation complete after 2s [id=4240dfbc-86ca-b2a3-1a57-677cbd801ced]
+kind_load.image: Creating...
+kind_load.image: Creation complete after 1s [id=raftkv|sha256:3b154c462551734a713cb7c0f9bb0f148b1e515e18d7497f493302f9ad44ac5a]
+kubernetes_stateful_set_v1.raftkv: Modifying... [id=raftkv/raftkv]
+kubernetes_stateful_set_v1.raftkv: Still modifying... [id=raftkv/raftkv, 00m10s elapsed]
+kubernetes_stateful_set_v1.raftkv: Modifications complete after 16s [id=raftkv/raftkv]
+
+Apply complete! Resources: 2 added, 1 changed, 2 destroyed.
+
+Outputs:
+
+client_address = "127.0.0.1:17000"
+client_address_in_cluster = "raftkv-client.raftkv.svc.cluster.local:7000"
+image = "raftkv:v1"
+kubeconfig = "$HOME/projects/raftkv/deploy/terraform/kubeconfig"
+namespace = "raftkv"
+node_container = "raftkv-control-plane"
+nodes = [
+  {
+    "address" = "raftkv-0.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17001"
+    "id" = 1
+    "pod" = "raftkv-0"
+  },
+  {
+    "address" = "raftkv-1.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17002"
+    "id" = 2
+    "pod" = "raftkv-1"
+  },
+  {
+    "address" = "raftkv-2.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17003"
+    "id" = 3
+    "pod" = "raftkv-2"
+  },
+]
+statefulset = "raftkv"
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-0 -- /usr/local/bin/raftkvd --version
+v1
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-1 -- /usr/local/bin/raftkvd --version
+v1
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv exec raftkv-2 -- /usr/local/bin/raftkvd --version
+v1

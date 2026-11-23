@@ -161,3 +161,104 @@ Each schedule starts a fresh 3-node cluster on Docker Compose (Docker 29.7.2), r
 
 With the `plain-leader-read` bug planted, Porcupine found 7 violations in 20 schedules (`results/audit/m5/planted-plain-leader-read.json`).
 
+## Kubernetes on kind, deployed with Terraform (`make kube-audit` -> `results/k8s-*.json`)
+
+Hardware: Apple M5, 10 cores, 16 GB RAM, macOS 26.5.1 arm64, filesystem apfs, go1.27.2. Collected 2026-11-23T20:14:41Z.
+
+Note: The pods and their volumes are inside Docker's Linux VM. The filesystem named here is the host's, where only the harness runs.
+
+Versions: Docker 29.7.2 with 10 CPUs and 7.7 GB for its VM, Kubernetes v1.37.0 (`kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5`), kubectl v1.36.1, Terraform 1.17.0. Source commit `04d32c1e07049fc10d205bb6124d3e109837d4ee`.
+
+One `terraform apply` creates a one-node kind cluster inside Docker and deploys a StatefulSet of 3 raftkv pods, each with its own volume claim. All three pods share one Kubernetes node, one VM and one disk, so these numbers describe this laptop setup and nothing larger. `cmd/kubebench` runs on the host and reaches the pods through ports kind maps: it starts every `kubectl` and `terraform` command itself, polls each node's Status over gRPC (the measured interval is below), and runs 6 clients that append and read on 4 keys, replaced every 2 s. Every time is read from that one process's clock. A request fails when the client library gives up on it after 4 s of redirects and retries.
+
+### Leader failover: `kubectl delete pod` on the leader, under load
+
+Each trial waits for 3 Ready pods and an agreed leader, runs the load for 3 s, then deletes the leader's pod with a normal `kubectl delete pod --wait=false`. Both times start just before kubectl is started. The time to a new leader ends at the first poll in which any node reports itself leader in a higher term. The time to the first successful write ends when the first write is acknowledged in a higher term, which every acknowledgement carries. It includes the client library's retry pauses, which double up to 500 ms with no jitter.
+
+| Metric | Value | JSON field |
+|---|---|---|
+| Leader failover trials (`kubectl delete pod` on the leader, under load) | 100 | k8s-failover: summary.trials |
+| Trials that elected a new leader, took a write, and settled with 3 Ready pods | 100 of 100 | summary.passed |
+| Time to a new leader: median / p95 / max | 645 ms / 924 ms / 1033 ms | summary.new_leader_ms |
+| Time to the first successful write: median / p95 / max | 674 ms / 1170 ms / 1203 ms | summary.first_write_ms |
+| Acknowledged writes lost | 0 of 83,600 | durability.acknowledged_writes_lost |
+| Writes applied twice / values nobody wrote | 0 / 0 | durability.writes_duplicated, values_never_written |
+| Porcupine on the whole history (139,431 requests, 1,204 keys) | Ok | linearizable |
+| Failed client requests across the 100 failovers | 0 of 139,431 | load.failed_requests |
+| Replacement pods that started from their own volume | 100 of 100 | summary.replacement_did_not_start_from_its_volume |
+| Elections that finished in one term | 94 of 100 | summary.elected_in_one_term |
+| Time to a new leader: minimum | 528 ms | summary.new_leader_ms.min |
+| Time to the first successful write: minimum | 657 ms | summary.first_write_ms.min |
+| First write after the new leader was seen: median / max | 119 ms / 489 ms | summary.first_write_after_new_leader_ms |
+| Trials whose first write took over 1 s | 44 of 100 | summary.first_write_took_over_1s |
+| The old leader's last Status answer after the delete: median / max | 33 ms / 70 ms | summary.old_leader_last_answer_ms |
+| `kubectl delete --wait=false` returned: median | 30 ms | summary.kubectl_delete_returned_ms |
+| All 3 pods Ready again: median / p95 / max | 2873 ms / 3077 ms / 3891 ms | summary.all_pods_ready_ms |
+| Longest stretch with no write acknowledged, per trial: median / max | 649 ms / 1154 ms | summary.longest_write_gap_ms |
+| Trials in which the rejoining pod forced another election | 0 of 100 | summary.trials_with_extra_leader_changes |
+| Requests that needed a retry / retries in all | 600 / 3,272 | load.requests_that_retried, retries |
+| Writes with an unknown outcome | 0 | durability.writes_unknown |
+| Status poll interval per node: median / p99 | 5.5 ms / 8.0 ms | status_poll_interval_ms |
+| Running time | 602 s | wall_seconds |
+
+### Every pod deleted at once
+
+A failover leaves two nodes holding the data, so it would pass even without volumes. Here one `kubectl delete pod` removes all three pods, and what comes back can only come from the volume claims.
+
+| Metric | Value | JSON field |
+|---|---|---|
+| Restarts of every pod at once that recovered, each pod from its volume | 5 of 5 | k8s-restart: summary.passed |
+| Acknowledged writes lost across those restarts | 0 of 2,807 | durability.acknowledged_writes_lost |
+| Writes applied twice / Porcupine | 0 / Ok | durability.writes_duplicated, linearizable |
+| Time from the delete to a leader: median / max | 2203 ms / 2371 ms | summary.new_leader_ms |
+| Time from the delete to the first successful write: median / max | 2219 ms / 3186 ms | summary.first_write_ms |
+| All 3 pods Ready again: median / max | 2893 ms / 2982 ms | summary.all_pods_ready_ms |
+| Failed client requests while no pod was up | 1 of 4,612 | load.failed_requests |
+
+### Rolling update under load
+
+Each round runs `terraform apply -var image_tag=...` to switch between two images built from the same source with different version strings. The StatefulSet controller replaces one pod at a time, highest ordinal first, and waits for each to be ready. The rollout time runs from the first watch event showing the new image in the StatefulSet to the first showing every replica updated and ready. The client numbers cover each round from that first event until the cluster is healthy again.
+
+| Metric | Value | JSON field |
+|---|---|---|
+| Rolling updates under load that finished on the new version | 10 of 10 | k8s-rollout: summary.passed |
+| Rollout time: median / min / max | 8.8 s / 8.3 s / 9.5 s | summary.rollout_seconds |
+| Failed client requests during the rollouts | 0 of 36,924 | summary.failed_requests |
+| Longest any request took during a rollout | 2630 ms | summary.longest_request_ms |
+| Leader changes per rollout: median / max | 2 / 3 | summary.leader_changes_per_rollout |
+| Requests that needed a retry / retries in all | 132 / 717 | summary.requests_that_retried, retries |
+| Terms passed per rollout, counting elections nobody won: median / max | 2 / 5 | summary.terms_passed_per_rollout |
+| Longest stretch with no write acknowledged, per rollout: median / max | 1134 ms / 2633 ms | summary.longest_write_gap_ms |
+| `terraform apply` for the change: median / max | 18.6 s / 21.9 s | summary.terraform_apply_seconds |
+| Acknowledged writes lost over the whole run | 0 of 32,442 | durability.acknowledged_writes_lost |
+| Writes applied twice / Porcupine | 0 / Ok | durability.writes_duplicated, linearizable |
+
+### Cold start
+
+Each round runs `terraform destroy`, checks that no node container and no Terraform state are left, and then times one `terraform apply`. The clock stops at the first moment all 3 pods are Ready and all 3 nodes name the same leader. The kind node image was already in Docker's image store and Docker's build cache was warm, so this leaves out a first download of the node image and a first compile.
+
+| Metric | Value | JSON field |
+|---|---|---|
+| Cold starts that reached 3 Ready pods and a leader with one `terraform apply` | 10 of 10 | k8s-coldstart: summary.passed |
+| Cold start, `terraform apply` to 3 Ready pods with a leader: median / min / max | 34.8 s / 33.7 s / 37.4 s | summary.ready_with_leader_seconds |
+| kind cluster created and its API server answering: median | 26.6 s | summary.api_server_answered_seconds |
+| All 3 pods created: median | 28.0 s | summary.pods_created_seconds |
+| `terraform apply` returned: median / max | 35.5 s / 44.3 s | summary.terraform_apply_seconds |
+| `terraform destroy`: median / max | 14.1 s / 14.5 s | summary.terraform_destroy_seconds |
+
+### Live checks
+
+| Check | Result | What happened |
+|---|---|---|
+| A1 | pass | 3 of 3 pods Ready; every node names raftkv-2 (node 3) leader in term 1 |
+| A2 | pass | StatefulSet: 3 replicas, Parallel start, RollingUpdate, 3 probes; headless Service raftkv-peers publishes not-ready addresses; client Service raftkv-client; budget maxUnavailable 1, 1 disruption allowed; 3 claims Bound |
+| A4 | pass | put and get through raftkv-client.raftkv.svc.cluster.local:7000 from two pods, and through 127.0.0.1:17000 from the host |
+| K1 | pass | raftkv-0 alone: not Ready 3.2 s after the scale-down, still Running with 0 restarts after 20s. The kubelet's last probe failure: Readiness probe failed: HTTP probe failed with statuscode: 503. Scaled back: 3 Ready, and the key written before reads back |
+| K1-plan | pass | terraform plan -detailed-exitcode exited 0 |
+| K2 | pass | the drain evicted raftkv-0 and was refused the other two for 30s ("Cannot evict pod as it would violate the pod's disruption budget"); 2 pods stayed Ready and a write succeeded meanwhile; after uncordon, 3 Ready |
+| K2-plan | pass | terraform plan -detailed-exitcode exited 0 |
+
+With the `no-dedup` bug planted, 20 failover trials left 10 writes applied twice, and Porcupine's answer was Illegal (`results/audit/k8s/planted-no-dedup.json`).
+
+With the data on an `emptyDir` instead of the volume claims, deleting every pod 3 times lost 21,599 of 31,495 acknowledged writes (`results/audit/k8s/planted-emptydir.json`).
+

@@ -1,0 +1,168 @@
+$ terraform -chdir=deploy/terraform output -json
+{
+  "client_address": {
+    "sensitive": false,
+    "type": "string",
+    "value": "127.0.0.1:17000"
+  },
+  "client_address_in_cluster": {
+    "sensitive": false,
+    "type": "string",
+    "value": "raftkv-client.raftkv.svc.cluster.local:7000"
+  },
+  "image": {
+    "sensitive": false,
+    "type": "string",
+    "value": "raftkv:v1"
+  },
+  "kubeconfig": {
+    "sensitive": false,
+    "type": "string",
+    "value": "$HOME/projects/raftkv/deploy/terraform/kubeconfig"
+  },
+  "namespace": {
+    "sensitive": false,
+    "type": "string",
+    "value": "raftkv"
+  },
+  "node_container": {
+    "sensitive": false,
+    "type": "string",
+    "value": "raftkv-control-plane"
+  },
+  "nodes": {
+    "sensitive": false,
+    "type": [
+      "tuple",
+      [
+        [
+          "object",
+          {
+            "address": "string",
+            "host_address": "string",
+            "id": "number",
+            "pod": "string"
+          }
+        ],
+        [
+          "object",
+          {
+            "address": "string",
+            "host_address": "string",
+            "id": "number",
+            "pod": "string"
+          }
+        ],
+        [
+          "object",
+          {
+            "address": "string",
+            "host_address": "string",
+            "id": "number",
+            "pod": "string"
+          }
+        ]
+      ]
+    ],
+    "value": [
+      {
+        "address": "raftkv-0.raftkv-peers.raftkv.svc.cluster.local:7000",
+        "host_address": "127.0.0.1:17001",
+        "id": 1,
+        "pod": "raftkv-0"
+      },
+      {
+        "address": "raftkv-1.raftkv-peers.raftkv.svc.cluster.local:7000",
+        "host_address": "127.0.0.1:17002",
+        "id": 2,
+        "pod": "raftkv-1"
+      },
+      {
+        "address": "raftkv-2.raftkv-peers.raftkv.svc.cluster.local:7000",
+        "host_address": "127.0.0.1:17003",
+        "id": 3,
+        "pod": "raftkv-2"
+      }
+    ]
+  },
+  "statefulset": {
+    "sensitive": false,
+    "type": "string",
+    "value": "raftkv"
+  }
+}
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv delete pod -l app.kubernetes.io/name=raftkv --wait=false
+pod "raftkv-0" deleted from raftkv namespace
+pod "raftkv-1" deleted from raftkv namespace
+pod "raftkv-2" deleted from raftkv namespace
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv logs raftkv-0 --tail=-1
+time=2026-11-23T20:40:00.919Z level=INFO msg=raftkvd version=v1
+time=2026-11-23T20:40:00.922Z level=INFO msg=started node=1 listen=[::]:7000 peers=3 term=0 last_log_index=0 applied=0
+time=2026-11-23T20:40:01.074Z level=INFO msg="stream to peer open" node=1 peer=3
+time=2026-11-23T20:40:01.074Z level=INFO msg="stream to peer open" node=1 peer=2
+time=2026-11-23T20:40:01.677Z level=INFO msg="raft state" node=1 role=candidate term=1 leader=0
+time=2026-11-23T20:40:01.680Z level=INFO msg="raft state" node=1 role=leader term=1 leader=1
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv logs raftkv-1 --tail=-1
+time=2026-11-23T20:40:00.915Z level=INFO msg=raftkvd version=v1
+time=2026-11-23T20:40:00.920Z level=INFO msg=started node=2 listen=[::]:7000 peers=3 term=0 last_log_index=0 applied=0
+time=2026-11-23T20:40:01.073Z level=INFO msg="stream to peer open" node=2 peer=1
+time=2026-11-23T20:40:01.073Z level=INFO msg="stream to peer open" node=2 peer=3
+time=2026-11-23T20:40:01.679Z level=INFO msg="raft state" node=2 role=follower term=1 leader=0
+time=2026-11-23T20:40:01.681Z level=INFO msg="raft state" node=2 role=follower term=1 leader=1
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv logs raftkv-2 --tail=-1
+time=2026-11-23T20:40:00.916Z level=INFO msg=raftkvd version=v1
+time=2026-11-23T20:40:00.921Z level=INFO msg=started node=3 listen=[::]:7000 peers=3 term=0 last_log_index=0 applied=0
+time=2026-11-23T20:40:01.074Z level=INFO msg="stream to peer open" node=3 peer=1
+time=2026-11-23T20:40:01.074Z level=INFO msg="stream to peer open" node=3 peer=2
+time=2026-11-23T20:40:01.679Z level=INFO msg="raft state" node=3 role=follower term=1 leader=0
+time=2026-11-23T20:40:01.680Z level=INFO msg="raft state" node=3 role=follower term=1 leader=1
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv delete pod -l app.kubernetes.io/name=raftkv --wait=false
+pod "raftkv-0" deleted from raftkv namespace
+pod "raftkv-1" deleted from raftkv namespace
+pod "raftkv-2" deleted from raftkv namespace
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv logs raftkv-0 --tail=-1
+time=2026-11-23T20:41:06.031Z level=INFO msg=raftkvd version=v1
+time=2026-11-23T20:41:06.036Z level=INFO msg=started node=1 listen=[::]:7000 peers=3 term=0 last_log_index=0 applied=0
+time=2026-11-23T20:41:06.190Z level=INFO msg="stream to peer open" node=1 peer=2
+time=2026-11-23T20:41:06.190Z level=INFO msg="stream to peer open" node=1 peer=3
+time=2026-11-23T20:41:06.723Z level=INFO msg="raft state" node=1 role=candidate term=1 leader=0
+time=2026-11-23T20:41:06.725Z level=INFO msg="raft state" node=1 role=leader term=1 leader=1
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv logs raftkv-1 --tail=-1
+time=2026-11-23T20:41:06.034Z level=INFO msg=raftkvd version=v1
+time=2026-11-23T20:41:06.040Z level=INFO msg=started node=2 listen=[::]:7000 peers=3 term=0 last_log_index=0 applied=0
+time=2026-11-23T20:41:06.193Z level=INFO msg="stream to peer open" node=2 peer=3
+time=2026-11-23T20:41:06.193Z level=INFO msg="stream to peer open" node=2 peer=1
+time=2026-11-23T20:41:06.724Z level=INFO msg="raft state" node=2 role=follower term=1 leader=0
+time=2026-11-23T20:41:06.725Z level=INFO msg="raft state" node=2 role=follower term=1 leader=1
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv logs raftkv-2 --tail=-1
+time=2026-11-23T20:41:06.035Z level=INFO msg=raftkvd version=v1
+time=2026-11-23T20:41:06.041Z level=INFO msg=started node=3 listen=[::]:7000 peers=3 term=0 last_log_index=0 applied=0
+time=2026-11-23T20:41:06.193Z level=INFO msg="stream to peer open" node=3 peer=2
+time=2026-11-23T20:41:06.193Z level=INFO msg="stream to peer open" node=3 peer=1
+time=2026-11-23T20:41:06.724Z level=INFO msg="raft state" node=3 role=follower term=1 leader=0
+time=2026-11-23T20:41:06.725Z level=INFO msg="raft state" node=3 role=follower term=1 leader=1
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv delete pod -l app.kubernetes.io/name=raftkv --wait=false
+pod "raftkv-0" deleted from raftkv namespace
+pod "raftkv-1" deleted from raftkv namespace
+pod "raftkv-2" deleted from raftkv namespace
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv logs raftkv-0 --tail=-1
+time=2026-11-23T20:42:11.109Z level=INFO msg=raftkvd version=v1
+time=2026-11-23T20:42:11.116Z level=INFO msg=started node=1 listen=[::]:7000 peers=3 term=0 last_log_index=0 applied=0
+time=2026-11-23T20:42:11.270Z level=INFO msg="stream to peer open" node=1 peer=3
+time=2026-11-23T20:42:11.270Z level=INFO msg="stream to peer open" node=1 peer=2
+time=2026-11-23T20:42:11.748Z level=INFO msg="raft state" node=1 role=candidate term=1 leader=0
+time=2026-11-23T20:42:11.750Z level=INFO msg="raft state" node=1 role=leader term=1 leader=1
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv logs raftkv-1 --tail=-1
+time=2026-11-23T20:42:11.105Z level=INFO msg=raftkvd version=v1
+time=2026-11-23T20:42:11.114Z level=INFO msg=started node=2 listen=[::]:7000 peers=3 term=0 last_log_index=0 applied=0
+time=2026-11-23T20:42:11.267Z level=INFO msg="stream to peer open" node=2 peer=3
+time=2026-11-23T20:42:11.267Z level=INFO msg="stream to peer open" node=2 peer=1
+time=2026-11-23T20:42:11.750Z level=INFO msg="raft state" node=2 role=follower term=1 leader=0
+time=2026-11-23T20:42:11.751Z level=INFO msg="raft state" node=2 role=follower term=1 leader=1
+$ kubectl --kubeconfig $HOME/projects/raftkv/deploy/terraform/kubeconfig --namespace raftkv logs raftkv-2 --tail=-1
+time=2026-11-23T20:42:11.106Z level=INFO msg=raftkvd version=v1
+time=2026-11-23T20:42:11.114Z level=INFO msg=started node=3 listen=[::]:7000 peers=3 term=0 last_log_index=0 applied=0
+time=2026-11-23T20:42:11.268Z level=INFO msg="stream to peer open" node=3 peer=2
+time=2026-11-23T20:42:11.268Z level=INFO msg="stream to peer open" node=3 peer=1
+time=2026-11-23T20:42:11.750Z level=INFO msg="raft state" node=3 role=follower term=1 leader=0
+time=2026-11-23T20:42:11.751Z level=INFO msg="raft state" node=3 role=follower term=1 leader=1

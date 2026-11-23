@@ -1,0 +1,483 @@
+{
+  "generated_at": "2026-11-23T20:28:58Z",
+  "command": "kubebench rollout",
+  "hardware": {
+    "collected_at": "2026-11-23T20:25:15Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "The pods and their volumes are inside Docker's Linux VM. The filesystem named here is the host's, where only the harness runs."
+  },
+  "versions": {
+    "docker": "29.7.2",
+    "kubernetes": "v1.37.0",
+    "kubectl": "v1.36.1",
+    "kind_node_image": "kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5",
+    "terraform": "1.17.0",
+    "docker_cpus": 10,
+    "docker_memory_bytes": 8319504384,
+    "source_commit": "04d32c1e07049fc10d205bb6124d3e109837d4ee",
+    "source_tree_had_changes": false,
+    "power": "Battery Power"
+  },
+  "image": "raftkv:v1",
+  "wall_seconds": 223.012478166,
+  "rounds_requested": 10,
+  "summary": {
+    "rounds": 10,
+    "passed": 10,
+    "rollout_seconds": {
+      "n": 10,
+      "min": 8.276907042,
+      "median": 8.805269125,
+      "p95": 9.452507625,
+      "p99": 9.452507625,
+      "max": 9.452507625
+    },
+    "terraform_apply_seconds": {
+      "n": 10,
+      "min": 17.910714708,
+      "median": 18.580548708,
+      "p95": 21.929173167,
+      "p99": 21.929173167,
+      "max": 21.929173167
+    },
+    "requests": 36924,
+    "failed_requests": 0,
+    "failed_requests_percent": 0,
+    "retries": 717,
+    "requests_that_retried": 132,
+    "longest_request_ms": 2630.121375,
+    "longest_write_gap_ms": {
+      "n": 10,
+      "min": 651.567,
+      "median": 1133.962,
+      "p95": 2633.402,
+      "p99": 2633.402,
+      "max": 2633.402
+    },
+    "leader_changes_per_rollout": {
+      "n": 10,
+      "min": 1,
+      "median": 2,
+      "p95": 3,
+      "p99": 3,
+      "max": 3
+    },
+    "terms_passed_per_rollout": {
+      "n": 10,
+      "min": 1,
+      "median": 2,
+      "p95": 5,
+      "p99": 5,
+      "max": 5
+    }
+  },
+  "seed": 1,
+  "clients": 6,
+  "status_poll_interval_ms": {
+    "n": 105981,
+    "min": 5.180292129516602,
+    "median": 5.523915767669678,
+    "p95": 6.650875091552734,
+    "p99": 9.21875,
+    "max": 195.7049560546875
+  },
+  "load": {
+    "requests": 54257,
+    "writes_acknowledged": 32442,
+    "writes_unknown": 0,
+    "reads_served": 21815,
+    "reads_failed": 0,
+    "failed_requests": 0,
+    "retries": 717,
+    "requests_that_retried": 132,
+    "latency_ms": {
+      "n": 54257,
+      "min": 0.264584,
+      "median": 1.439,
+      "p95": 5.632125,
+      "p99": 14.7535,
+      "max": 2630.121375
+    }
+  },
+  "durability": {
+    "keys": 444,
+    "keys_whose_final_read_failed": 0,
+    "writes_acknowledged": 32442,
+    "writes_unknown": 0,
+    "acknowledged_writes_lost": 0,
+    "writes_duplicated": 0,
+    "unknown_writes_found_applied": 0,
+    "values_never_written": 0
+  },
+  "linearizable": "Ok",
+  "check_seconds": 0.013871,
+  "rounds": [
+    {
+      "round": 1,
+      "from_image": "raftkv:v1",
+      "to_image": "raftkv:v2",
+      "terraform_apply_seconds": 21.929173167,
+      "rollout_seconds": 8.854922,
+      "rollout_seen": true,
+      "healthy_after": true,
+      "every_pod_runs_the_new_version": true,
+      "version_by_pod": {
+        "raftkv-0": "v2",
+        "raftkv-1": "v2",
+        "raftkv-2": "v2"
+      },
+      "leader_changes": 2,
+      "terms_passed": 3,
+      "load": {
+        "requests": 3932,
+        "writes_acknowledged": 2374,
+        "writes_unknown": 0,
+        "reads_served": 1558,
+        "reads_failed": 0,
+        "failed_requests": 0,
+        "retries": 60,
+        "requests_that_retried": 12,
+        "latency_ms": {
+          "n": 3932,
+          "min": 0.301667,
+          "median": 1.393125,
+          "p95": 3.77025,
+          "p99": 8.191458,
+          "max": 639.54475
+        }
+      },
+      "longest_write_gap_ms": 658.304
+    },
+    {
+      "round": 2,
+      "from_image": "raftkv:v2",
+      "to_image": "raftkv:v1",
+      "terraform_apply_seconds": 18.183557167,
+      "rollout_seconds": 8.39721225,
+      "rollout_seen": true,
+      "healthy_after": true,
+      "every_pod_runs_the_new_version": true,
+      "version_by_pod": {
+        "raftkv-0": "v1",
+        "raftkv-1": "v1",
+        "raftkv-2": "v1"
+      },
+      "leader_changes": 3,
+      "terms_passed": 5,
+      "load": {
+        "requests": 3260,
+        "writes_acknowledged": 1957,
+        "writes_unknown": 0,
+        "reads_served": 1303,
+        "reads_failed": 0,
+        "failed_requests": 0,
+        "retries": 102,
+        "requests_that_retried": 18,
+        "latency_ms": {
+          "n": 3260,
+          "min": 0.264584,
+          "median": 1.174167,
+          "p95": 2.752709,
+          "p99": 7.480833,
+          "max": 2630.121375
+        }
+      },
+      "longest_write_gap_ms": 2633.402
+    },
+    {
+      "round": 3,
+      "from_image": "raftkv:v1",
+      "to_image": "raftkv:v2",
+      "terraform_apply_seconds": 17.910714708,
+      "rollout_seconds": 8.276907042,
+      "rollout_seen": true,
+      "healthy_after": true,
+      "every_pod_runs_the_new_version": true,
+      "version_by_pod": {
+        "raftkv-0": "v2",
+        "raftkv-1": "v2",
+        "raftkv-2": "v2"
+      },
+      "leader_changes": 3,
+      "terms_passed": 3,
+      "load": {
+        "requests": 3680,
+        "writes_acknowledged": 2199,
+        "writes_unknown": 0,
+        "reads_served": 1481,
+        "reads_failed": 0,
+        "failed_requests": 0,
+        "retries": 96,
+        "requests_that_retried": 18,
+        "latency_ms": {
+          "n": 3680,
+          "min": 0.3045,
+          "median": 1.225375,
+          "p95": 3.126,
+          "p99": 5.925125,
+          "max": 1129.299208
+        }
+      },
+      "longest_write_gap_ms": 1129.388
+    },
+    {
+      "round": 4,
+      "from_image": "raftkv:v2",
+      "to_image": "raftkv:v1",
+      "terraform_apply_seconds": 18.077830708,
+      "rollout_seconds": 9.033103,
+      "rollout_seen": true,
+      "healthy_after": true,
+      "every_pod_runs_the_new_version": true,
+      "version_by_pod": {
+        "raftkv-0": "v1",
+        "raftkv-1": "v1",
+        "raftkv-2": "v1"
+      },
+      "leader_changes": 2,
+      "terms_passed": 2,
+      "load": {
+        "requests": 3675,
+        "writes_acknowledged": 2168,
+        "writes_unknown": 0,
+        "reads_served": 1507,
+        "reads_failed": 0,
+        "failed_requests": 0,
+        "retries": 63,
+        "requests_that_retried": 12,
+        "latency_ms": {
+          "n": 3675,
+          "min": 0.306334,
+          "median": 1.372459,
+          "p95": 6.41375,
+          "p99": 46.263584,
+          "max": 1129.354792
+        }
+      },
+      "longest_write_gap_ms": 651.567
+    },
+    {
+      "round": 5,
+      "from_image": "raftkv:v1",
+      "to_image": "raftkv:v2",
+      "terraform_apply_seconds": 18.858890209,
+      "rollout_seconds": 8.805269125,
+      "rollout_seen": true,
+      "healthy_after": true,
+      "every_pod_runs_the_new_version": true,
+      "version_by_pod": {
+        "raftkv-0": "v2",
+        "raftkv-1": "v2",
+        "raftkv-2": "v2"
+      },
+      "leader_changes": 2,
+      "terms_passed": 2,
+      "load": {
+        "requests": 3903,
+        "writes_acknowledged": 2348,
+        "writes_unknown": 0,
+        "reads_served": 1555,
+        "reads_failed": 0,
+        "failed_requests": 0,
+        "retries": 66,
+        "requests_that_retried": 12,
+        "latency_ms": {
+          "n": 3903,
+          "min": 0.297666,
+          "median": 1.209375,
+          "p95": 3.280833,
+          "p99": 7.225334,
+          "max": 1126.06425
+        }
+      },
+      "longest_write_gap_ms": 1134.88
+    },
+    {
+      "round": 6,
+      "from_image": "raftkv:v2",
+      "to_image": "raftkv:v1",
+      "terraform_apply_seconds": 18.584655708,
+      "rollout_seconds": 8.937344,
+      "rollout_seen": true,
+      "healthy_after": true,
+      "every_pod_runs_the_new_version": true,
+      "version_by_pod": {
+        "raftkv-0": "v1",
+        "raftkv-1": "v1",
+        "raftkv-2": "v1"
+      },
+      "leader_changes": 2,
+      "terms_passed": 2,
+      "load": {
+        "requests": 3710,
+        "writes_acknowledged": 2259,
+        "writes_unknown": 0,
+        "reads_served": 1451,
+        "reads_failed": 0,
+        "failed_requests": 0,
+        "retries": 60,
+        "requests_that_retried": 12,
+        "latency_ms": {
+          "n": 3710,
+          "min": 0.297084,
+          "median": 1.482875,
+          "p95": 5.846625,
+          "p99": 15.350167,
+          "max": 1150.515167
+        }
+      },
+      "longest_write_gap_ms": 1142.769
+    },
+    {
+      "round": 7,
+      "from_image": "raftkv:v1",
+      "to_image": "raftkv:v2",
+      "terraform_apply_seconds": 18.144555,
+      "rollout_seconds": 9.452507625,
+      "rollout_seen": true,
+      "healthy_after": true,
+      "every_pod_runs_the_new_version": true,
+      "version_by_pod": {
+        "raftkv-0": "v2",
+        "raftkv-1": "v2",
+        "raftkv-2": "v2"
+      },
+      "leader_changes": 2,
+      "terms_passed": 2,
+      "load": {
+        "requests": 3821,
+        "writes_acknowledged": 2279,
+        "writes_unknown": 0,
+        "reads_served": 1542,
+        "reads_failed": 0,
+        "failed_requests": 0,
+        "retries": 66,
+        "requests_that_retried": 12,
+        "latency_ms": {
+          "n": 3821,
+          "min": 0.276667,
+          "median": 1.381417,
+          "p95": 4.905042,
+          "p99": 9.693541,
+          "max": 1133.317958
+        }
+      },
+      "longest_write_gap_ms": 1133.962
+    },
+    {
+      "round": 8,
+      "from_image": "raftkv:v2",
+      "to_image": "raftkv:v1",
+      "terraform_apply_seconds": 18.666250083,
+      "rollout_seconds": 8.569487167,
+      "rollout_seen": true,
+      "healthy_after": true,
+      "every_pod_runs_the_new_version": true,
+      "version_by_pod": {
+        "raftkv-0": "v1",
+        "raftkv-1": "v1",
+        "raftkv-2": "v1"
+      },
+      "leader_changes": 1,
+      "terms_passed": 1,
+      "load": {
+        "requests": 3888,
+        "writes_acknowledged": 2359,
+        "writes_unknown": 0,
+        "reads_served": 1529,
+        "reads_failed": 0,
+        "failed_requests": 0,
+        "retries": 36,
+        "requests_that_retried": 6,
+        "latency_ms": {
+          "n": 3888,
+          "min": 0.288625,
+          "median": 2.070458,
+          "p95": 5.961708,
+          "p99": 12.315666,
+          "max": 1127.555
+        }
+      },
+      "longest_write_gap_ms": 1131.153
+    },
+    {
+      "round": 9,
+      "from_image": "raftkv:v1",
+      "to_image": "raftkv:v2",
+      "terraform_apply_seconds": 18.580548708,
+      "rollout_seconds": 8.927228792,
+      "rollout_seen": true,
+      "healthy_after": true,
+      "every_pod_runs_the_new_version": true,
+      "version_by_pod": {
+        "raftkv-0": "v2",
+        "raftkv-1": "v2",
+        "raftkv-2": "v2"
+      },
+      "leader_changes": 3,
+      "terms_passed": 3,
+      "load": {
+        "requests": 3506,
+        "writes_acknowledged": 2127,
+        "writes_unknown": 0,
+        "reads_served": 1379,
+        "reads_failed": 0,
+        "failed_requests": 0,
+        "retries": 96,
+        "requests_that_retried": 18,
+        "latency_ms": {
+          "n": 3506,
+          "min": 0.300792,
+          "median": 1.550542,
+          "p95": 6.846958,
+          "p99": 27.668166,
+          "max": 1133.000458
+        }
+      },
+      "longest_write_gap_ms": 1151.614
+    },
+    {
+      "round": 10,
+      "from_image": "raftkv:v2",
+      "to_image": "raftkv:v1",
+      "terraform_apply_seconds": 19.804357792,
+      "rollout_seconds": 8.797914291,
+      "rollout_seen": true,
+      "healthy_after": true,
+      "every_pod_runs_the_new_version": true,
+      "version_by_pod": {
+        "raftkv-0": "v1",
+        "raftkv-1": "v1",
+        "raftkv-2": "v1"
+      },
+      "leader_changes": 2,
+      "terms_passed": 2,
+      "load": {
+        "requests": 3549,
+        "writes_acknowledged": 2086,
+        "writes_unknown": 0,
+        "reads_served": 1463,
+        "reads_failed": 0,
+        "failed_requests": 0,
+        "retries": 72,
+        "requests_that_retried": 12,
+        "latency_ms": {
+          "n": 3549,
+          "min": 0.288416,
+          "median": 2.053708,
+          "p95": 5.838166,
+          "p99": 11.232167,
+          "max": 1132.260792
+        }
+      },
+      "longest_write_gap_ms": 1146.835
+    }
+  ]
+}
