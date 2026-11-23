@@ -35,8 +35,10 @@ jobs:
           # -detailed-exitcode` is one of the checks.
           terraform_wrapper: false
 
-      - name: Build the harness
-        run: go build ./cmd/kubebench
+      # Fails fast on a compile error, and warms the build cache for the steps
+      # below.
+      - name: Build
+        run: go build ./...
 
       # Creates the kind cluster (the provider has kind built in), builds the
       # image, loads it into the node and deploys raftkv. It returns when all
