@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/abishekprabakar/raftkv/internal/kv"
+	"github.com/abishekprabakar/raftkv/internal/pb"
 	"github.com/abishekprabakar/raftkv/internal/raft"
 )
 
@@ -19,11 +20,12 @@ import (
 // and would throw away a healthy process, so liveness looks only at the loop.
 //
 // Ready: is this node useful to the cluster right now? Kubernetes uses the answer
-// twice. A Service only routes clients to ready pods, and a rolling update only
-// moves on to the next pod once the one it just replaced is ready. If "ready"
-// meant "the process is up", a rolling update would stop the second node while
-// the first was still catching up, and a three-node cluster would be down to one
-// node that has all the data. So ready has to mean what Raft means by it.
+// three times. A Service only routes clients to ready pods, a rolling update only
+// moves on to the next pod once the one it just replaced is ready, and a
+// disruption budget only counts ready pods as healthy. If "ready" meant "the
+// process is up", a rolling update would stop the second node while the first
+// was still catching up, and a three-node cluster would be down to one node that
+// has all the data. So ready has to mean what Raft means by it.
 
 // healthTimeout bounds one health check. The kubelet's own timeout is longer, so
 // it sees this node's answer and reason rather than a hang.
@@ -42,53 +44,61 @@ type Health struct {
 	Leader      uint64 `json:"leader,omitempty"`
 	CommitIndex uint64 `json:"commit_index,omitempty"`
 	LastApplied uint64 `json:"last_applied,omitempty"`
-	// LeaderCommit is the commit index the leader last told this follower.
+	// LeaderCommit is the leader's commit index: its own for a leader, and for a
+	// follower what the leader answered when this check asked it.
 	LeaderCommit uint64 `json:"leader_commit,omitempty"`
 }
 
-// leaderSeen is what a follower last heard from its leader. Only the loop
-// goroutine touches it.
-type leaderSeen struct {
-	term   uint64 // the term the message was accepted in
-	commit uint64 // the highest commit index the leader has named in that term
+// leaderView is what the leader said when a follower asked it for its Status.
+type leaderView struct {
+	err    error // the leader could not be asked
+	role   string
+	term   uint64
+	commit uint64
 }
 
-// noteLeader runs on the loop after every message. A follower's own commit index
-// can't say whether it is caught up: it is min(the leader's commit index, the end
-// of the entries received so far), so a follower in the middle of a long catch-up
-// has applied everything it has committed and still looks up to date. The
-// leader's own commit index, which every AppendEntries carries, is the mark to
-// measure against.
-func (s *Server) noteLeader(msg raft.Message) {
-	var term, commit uint64
-	switch m := msg.(type) {
-	case raft.AppendEntriesArgs:
-		term, commit = m.Term, m.LeaderCommit
-	case raft.InstallSnapshotArgs:
-		term, commit = m.Term, m.LastIncludedIndex // a snapshot only holds committed entries
-	default:
-		return
+// askLeader asks another node for its Status, over the connection this node
+// already keeps open to it.
+func (s *Server) askLeader(ctx context.Context, leader raft.NodeID) leaderView {
+	p, ok := s.peers[leader]
+	if !ok {
+		return leaderView{err: fmt.Errorf("node %d is not a peer", leader)}
 	}
-	// A message from an old term was refused, so it says nothing.
-	if st := s.kv.Status(); st.Term != term || st.Role != raft.Follower {
-		return
+	st, err := pb.NewKVClient(p.connection()).Status(ctx, &pb.StatusRequest{})
+	if err != nil {
+		return leaderView{err: err}
 	}
-	if s.seen.term != term {
-		s.seen = leaderSeen{term: term}
-	}
-	// Messages can arrive out of order, and a commit index never goes back.
-	s.seen.commit = max(s.seen.commit, commit)
+	return leaderView{role: st.Role, term: st.Term, commit: st.CommitIndex}
 }
 
-// followerReady is the readiness rule for a node that is not the leader.
-func followerReady(st raft.Status, seen leaderSeen, allowance uint64) (bool, string) {
+// followerReady is the readiness rule for a node that is not the leader: it
+// follows a leader, that leader agrees it leads this term, and this node has
+// applied what the leader has committed, give or take the allowance.
+//
+// The mark to measure against has to come from the leader, and it has to be
+// fresh. A follower's own commit index can't serve: it is min(the leader's
+// commit index, the end of the entries received so far), so a follower in the
+// middle of a long catch-up has applied everything it has committed and looks up
+// to date. The commit index inside the last AppendEntries can't serve either,
+// though it is the leader's own number, and the first version of this rule used
+// it. While a follower is down, the leader's messages to it wait in a queue, and
+// when it returns they arrive oldest first. The oldest carries the commit index
+// from the moment the follower went down, which is exactly how far the follower
+// has applied. For a few milliseconds a node with everything still to catch up
+// on measured itself against a stale mark and called itself ready. So the leader
+// is asked now, each time the question is.
+func followerReady(st raft.Status, leader leaderView, allowance uint64) (bool, string) {
 	switch {
 	case st.Role == raft.Candidate:
 		return false, fmt.Sprintf("candidate in term %d: no leader", st.Term)
-	case st.Leader == raft.None || seen.term != st.Term:
+	case st.Leader == raft.None:
 		return false, fmt.Sprintf("no leader heard from in term %d", st.Term)
-	case st.LastApplied+allowance < seen.commit:
-		return false, fmt.Sprintf("catching up: applied %d, the leader has committed %d", st.LastApplied, seen.commit)
+	case leader.err != nil:
+		return false, fmt.Sprintf("node %d, the leader, did not answer: %v", st.Leader, leader.err)
+	case leader.role != raft.Leader.String() || leader.term != st.Term:
+		return false, fmt.Sprintf("node %d is followed as leader of term %d, and says it is %s in term %d", st.Leader, st.Term, leader.role, leader.term)
+	case st.LastApplied+allowance < leader.commit:
+		return false, fmt.Sprintf("catching up: applied %d, the leader has committed %d", st.LastApplied, leader.commit)
 	}
 	return true, fmt.Sprintf("following node %d", st.Leader)
 }
@@ -112,15 +122,11 @@ func (s *Server) Live(ctx context.Context) Health {
 func (s *Server) Ready(ctx context.Context) Health {
 	ctx, cancel := context.WithTimeout(ctx, healthTimeout)
 	defer cancel()
-	type view struct {
-		st   raft.Status
-		seen leaderSeen
-	}
-	viewed := make(chan view, 1)     // buffered: the loop must never wait on a handler
-	confirmed := make(chan error, 1) // only a leader sends on this
+	viewed := make(chan raft.Status, 1) // buffered: the loop must never wait on a handler
+	confirmed := make(chan error, 1)    // only a leader sends on this
 	err := s.do(ctx, func() error {
 		st := s.kv.Status()
-		viewed <- view{st, s.seen}
+		viewed <- st
 		if st.Role != raft.Leader {
 			return nil
 		}
@@ -132,19 +138,27 @@ func (s *Server) Ready(ctx context.Context) Health {
 	if err != nil {
 		return Health{Reason: "the node's loop did not take a request: " + err.Error()}
 	}
-	v, err := await(ctx, s, viewed)
+	st, err := await(ctx, s, viewed)
 	if err != nil {
 		return Health{Reason: "the node's loop did not answer: " + err.Error()}
 	}
 	h := Health{
-		ID: uint64(v.st.ID), Role: v.st.Role.String(), Term: v.st.Term, Leader: uint64(v.st.Leader),
-		CommitIndex: v.st.CommitIndex, LastApplied: v.st.LastApplied, LeaderCommit: v.seen.commit,
+		ID: uint64(st.ID), Role: st.Role.String(), Term: st.Term, Leader: uint64(st.Leader),
+		CommitIndex: st.CommitIndex, LastApplied: st.LastApplied,
 	}
-	if v.st.Role != raft.Leader {
-		h.OK, h.Reason = followerReady(v.st, v.seen, s.cfg.ReadyLag)
+	if st.Role != raft.Leader {
+		// This node's applied index was read first and the leader is asked
+		// second. Applied only grows, so if it was within the allowance of what
+		// the leader reports afterwards, it still is.
+		var leader leaderView
+		if st.Role == raft.Follower && st.Leader != raft.None {
+			leader = s.askLeader(ctx, st.Leader)
+			h.LeaderCommit = leader.commit
+		}
+		h.OK, h.Reason = followerReady(st, leader, s.cfg.ReadyLag)
 		return h
 	}
-	h.LeaderCommit = v.st.CommitIndex
+	h.LeaderCommit = st.CommitIndex
 	switch err, waitErr := await(ctx, s, confirmed); {
 	case waitErr != nil:
 		h.Reason = "leader, but no majority confirmed it within " + healthTimeout.String()

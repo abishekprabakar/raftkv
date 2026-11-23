@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"log/slog"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -57,9 +58,20 @@ type peer struct {
 	id      raft.NodeID
 	addr    string
 	queue   chan *pb.Envelope
-	conn    *grpc.ClientConn
 	log     *slog.Logger
 	dropped atomic.Uint64
+
+	// conn is replaced when run finds it connected to the wrong node, and a
+	// health check may be reading it at that moment, so it has a lock.
+	mu   sync.Mutex
+	conn *grpc.ClientConn
+}
+
+// connection returns the connection to the peer as it is now.
+func (p *peer) connection() *grpc.ClientConn {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	return p.conn
 }
 
 func newPeer(id raft.NodeID, addr string, log *slog.Logger) (*peer, error) {
@@ -76,7 +88,9 @@ func target(addr string) string { return "passthrough:///" + addr }
 
 func (p *peer) dial() error {
 	conn, err := grpc.NewClient(target(p.addr), dialOptions()...)
+	p.mu.Lock()
 	p.conn = conn
+	p.mu.Unlock()
 	return err
 }
 
@@ -93,7 +107,7 @@ func (p *peer) send(env *pb.Envelope) {
 // When the stream breaks, the message being sent is lost and the next stream
 // carries on from the queue. Raft never assumes a message arrives.
 func (p *peer) run(ctx context.Context) {
-	client := pb.NewRaftClient(p.conn)
+	client := pb.NewRaftClient(p.connection())
 	pause := 50 * time.Millisecond
 	for ctx.Err() == nil {
 		stream, err := client.Stream(ctx)
@@ -112,12 +126,12 @@ func (p *peer) run(ctx context.Context) {
 				// address now belongs to someone else. The connection itself is
 				// healthy, so gRPC would keep reusing it. Drop it, and dial again,
 				// which looks the name up afresh.
-				p.conn.Close()
+				p.connection().Close()
 				if err := p.dial(); err != nil {
 					p.log.Error("redialing peer", "peer", p.id, "err", err)
 					return
 				}
-				client = pb.NewRaftClient(p.conn)
+				client = pb.NewRaftClient(p.connection())
 			}
 		}
 		if ctx.Err() != nil {

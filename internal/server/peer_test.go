@@ -64,7 +64,7 @@ func TestPeerRedialsWhenItReachesTheWrongNode(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	done := make(chan struct{})
 	go func() { p.run(ctx); close(done) }()
-	defer func() { cancel(); <-done; p.conn.Close() }()
+	defer func() { cancel(); <-done; p.connection().Close() }()
 
 	for deadline := time.Now().Add(5 * time.Second); time.Now().Before(deadline) && lis.accepted.Load() < 3; time.Sleep(20 * time.Millisecond) {
 		p.send(&pb.Envelope{From: 1, To: 2, Message: &pb.Envelope_RequestVoteReply{RequestVoteReply: &pb.RequestVoteReply{Term: 1}}})
@@ -124,7 +124,7 @@ func TestPeerReopensAStreamThatDiedWhileIdle(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	done := make(chan struct{})
 	go func() { p.run(ctx); close(done) }()
-	defer func() { cancel(); <-done; p.conn.Close() }()
+	defer func() { cancel(); <-done; p.connection().Close() }()
 
 	waitFor := func(what string, cond func() bool) {
 		t.Helper()

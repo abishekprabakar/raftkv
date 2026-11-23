@@ -56,7 +56,8 @@ type Config struct {
 	// ReadyLag is how many entries a follower's applied index may trail the
 	// leader's commit index and still count as ready. Default 64, one
 	// AppendEntries worth: under steady writes a healthy follower is always a
-	// message behind, and it should not flap in and out of readiness for that.
+	// message behind the leader, and it should not flap in and out of readiness
+	// for that.
 	ReadyLag uint64
 
 	Logger *slog.Logger
@@ -114,11 +115,10 @@ type Server struct {
 	cfg Config
 	log *slog.Logger
 
-	// Only the loop goroutine touches these four after Start returns.
+	// Only the loop goroutine touches these three after Start returns.
 	kv        *kv.Server
 	raftFiles *raft.FileStorage
 	store     *kv.LSM
-	seen      leaderSeen // what this node last heard from its leader; see health.go
 
 	peers map[raft.NodeID]*peer // read-only after Start
 	grpc  *grpc.Server
@@ -151,8 +151,8 @@ func Start(cfg Config) (*Server, error) {
 	if err := s.open(); err != nil {
 		s.closeFiles()
 		for _, p := range s.peers {
-			if p.conn != nil {
-				p.conn.Close()
+			if conn := p.connection(); conn != nil {
+				conn.Close()
 			}
 		}
 		return nil, err
@@ -253,9 +253,7 @@ func (s *Server) loop() {
 		case <-ticker.C:
 			err = s.kv.Tick()
 		case in := <-s.inbox:
-			if err = s.kv.Receive(in.from, in.msg); err == nil {
-				s.noteLeader(in.msg)
-			}
+			err = s.kv.Receive(in.from, in.msg)
 		case call := <-s.calls:
 			err = call()
 		}
@@ -328,7 +326,7 @@ func (s *Server) Stop() error {
 		s.stopPeers()
 		s.wg.Wait()
 		for _, p := range s.peers {
-			p.conn.Close()
+			p.connection().Close()
 		}
 		s.stopErr = s.closeFiles()
 		s.log.Info("stopped")

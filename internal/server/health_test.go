@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -100,26 +101,34 @@ func TestFollowerBehindIsNotReady(t *testing.T) {
 	follower := func(applied uint64) raft.Status {
 		return raft.Status{ID: 2, Role: raft.Follower, Term: 7, Leader: 1, CommitIndex: applied, LastApplied: applied}
 	}
+	leaderAt := func(commit uint64) leaderView { return leaderView{role: "leader", term: 7, commit: commit} }
 	cases := []struct {
-		name string
-		st   raft.Status
-		seen leaderSeen
-		want bool
+		name   string
+		st     raft.Status
+		leader leaderView
+		want   bool
 	}{
-		{"caught up", follower(1000), leaderSeen{term: 7, commit: 1000}, true},
-		{"one entry behind", follower(999), leaderSeen{term: 7, commit: 1000}, true},
-		{"behind by exactly the allowance", follower(1000 - allowance), leaderSeen{term: 7, commit: 1000}, true},
-		{"behind by one more than the allowance", follower(1000 - allowance - 1), leaderSeen{term: 7, commit: 1000}, false},
+		{"caught up", follower(1000), leaderAt(1000), true},
+		{"one entry behind", follower(999), leaderAt(1000), true},
+		{"behind by exactly the allowance", follower(1000 - allowance), leaderAt(1000), true},
+		{"behind by one more than the allowance", follower(1000 - allowance - 1), leaderAt(1000), false},
 		// A restarted node partway through catching up has applied everything it
 		// has committed, so its own indexes look fine. Only the leader's commit
 		// index shows how far it still has to go.
-		{"restarted and far behind", follower(64), leaderSeen{term: 7, commit: 50_000}, false},
-		{"leader known, but nothing heard in this term yet", follower(1000), leaderSeen{term: 6, commit: 1000}, false},
-		{"no leader", raft.Status{ID: 2, Role: raft.Follower, Term: 7, LastApplied: 1000}, leaderSeen{term: 7, commit: 1000}, false},
-		{"candidate", raft.Status{ID: 2, Role: raft.Candidate, Term: 8, LastApplied: 1000}, leaderSeen{term: 7, commit: 1000}, false},
+		{"restarted and far behind", follower(64), leaderAt(50_000), false},
+		// What the second acceptance run caught: the node has applied 3 entries,
+		// and the last message it accepted said the leader had committed 3,
+		// because that message had waited in a queue while 300 more were
+		// committed. Asked now, the leader says 303.
+		{"restarted, and the last message it accepted was an old one", follower(3), leaderAt(303), false},
+		{"the leader did not answer", follower(1000), leaderView{err: errors.New("connection refused")}, false},
+		{"the node it follows has moved to a newer term", follower(1000), leaderView{role: "follower", term: 8, commit: 1000}, false},
+		{"the node it follows no longer leads", follower(1000), leaderView{role: "candidate", term: 7, commit: 1000}, false},
+		{"no leader", raft.Status{ID: 2, Role: raft.Follower, Term: 7, LastApplied: 1000}, leaderAt(1000), false},
+		{"candidate", raft.Status{ID: 2, Role: raft.Candidate, Term: 8, LastApplied: 1000}, leaderAt(1000), false},
 	}
 	for _, tc := range cases {
-		if got, reason := followerReady(tc.st, tc.seen, allowance); got != tc.want || reason == "" {
+		if got, reason := followerReady(tc.st, tc.leader, allowance); got != tc.want || reason == "" {
 			t.Errorf("%s: ready = %v (%q), want %v", tc.name, got, reason, tc.want)
 		}
 	}
@@ -151,9 +160,19 @@ func TestLeaderWithoutMajorityIsNotReady(t *testing.T) {
 	}
 }
 
-// A follower that restarts hears the leader's commit index in the first message
-// it accepts, and is ready again once it has applied that far.
-func TestRestartedFollowerBecomesReadyAgain(t *testing.T) {
+// Regression test for a bug the second acceptance run caught. Readiness used to
+// measure a follower against the commit index in the last AppendEntries it had
+// accepted. While a follower is down, the leader's messages to it pile up in a
+// queue, and when it comes back they arrive oldest first. The oldest carries the
+// commit index from the moment the follower went down, which is exactly as far as
+// the follower has applied, so for a moment it looked caught up with everything
+// still to do. A probe that landed in that moment got "ready".
+//
+// Now a follower asks the leader for its commit index when the question is asked.
+// This test stops a follower, makes it miss 300 writes, restarts it, and asks as
+// fast as it can: the first "ready" must come with those writes applied.
+func TestRestartedFollowerIsNotReadyUntilItHasCaughtUp(t *testing.T) {
+	const missed = 300
 	c := startCluster(t, 3, 0)
 	leader := c.leader()
 	var follower raft.NodeID
@@ -165,7 +184,7 @@ func TestRestartedFollowerBecomesReadyAgain(t *testing.T) {
 	}
 	cl := c.client(leader)
 	c.stop(follower)
-	for i := range 200 {
+	for i := range missed {
 		if err := cl.Put(ctx(t), []byte(fmt.Sprintf("k%d", i)), []byte("v")); err != nil {
 			t.Fatal(err)
 		}
@@ -173,13 +192,14 @@ func TestRestartedFollowerBecomesReadyAgain(t *testing.T) {
 	c.restart(follower)
 	s := c.nodes[follower]
 	var h Health
-	c.waitFor("the restarted follower is ready", func() bool {
-		_, h = probe(t, s, "/readyz")
-		return h.OK
-	})
-	// Ready must mean it holds the writes it missed, within the allowance.
-	if h.LastApplied+s.cfg.ReadyLag < 200 || h.LeaderCommit < 200 {
-		t.Errorf("ready with applied %d, leader commit %d, after 200 writes it missed", h.LastApplied, h.LeaderCommit)
+	for deadline := time.Now().Add(10 * time.Second); !h.OK; {
+		if time.Now().After(deadline) {
+			t.Fatalf("the restarted follower never became ready: %+v", h)
+		}
+		h = s.Ready(context.Background()) // no pause: the window was a few milliseconds wide
+	}
+	if h.LastApplied+s.cfg.ReadyLag < missed {
+		t.Errorf("ready with applied %d (the leader's commit index reported as %d), after %d writes it missed", h.LastApplied, h.LeaderCommit, missed)
 	}
 }
 
