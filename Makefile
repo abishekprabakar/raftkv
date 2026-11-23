@@ -56,7 +56,7 @@ kube-smoke:
 	$(GO) run ./cmd/kubebench failover -trials 5 -out results/tmp/k8s/failover.json -artifacts results/tmp/k8s/failover
 	$(GO) run ./cmd/kubebench rollout -rounds 1 -out results/tmp/k8s/rollout.json -artifacts results/tmp/k8s/rollout
 
-# Everything in docs/acceptance/k8s.md -> results/k8s-*.json (about 45 minutes).
+# Everything in docs/acceptance/k8s.md -> results/k8s-*.json (about 35 minutes).
 # It destroys the cluster first and leaves none behind.
 kube-audit:
 	scripts/audit/k8s/run.sh

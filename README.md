@@ -151,7 +151,7 @@ kubectl -n raftkv exec raftkv-0 -- raftkv --addr raftkv-client:7000 put greeting
 kubectl -n raftkv exec raftkv-1 -- raftkv --addr raftkv-client:7000 -v get greeting   # -v shows the redirect to the leader
 kubectl -n raftkv delete pod raftkv-0             # it comes back with the same name and the same volume
 make kube-smoke                                   # the live checks, 5 leader failovers, one rolling update (what CI runs)
-make kube-audit                                   # everything in docs/acceptance/k8s.md, writes results/k8s-*.json (~45 min)
+make kube-audit                                   # everything in docs/acceptance/k8s.md, writes results/k8s-*.json (~35 min)
 make kube-down                                    # terraform destroy: nothing is left
 ```
 
