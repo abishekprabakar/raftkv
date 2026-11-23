@@ -256,6 +256,15 @@ A1, A2, A4, K1, K2, 5 failover trials with D1 to D4, one rolling update, and
 the repository is pushed, so it is not part of this acceptance run. Its first run
 gets reported when it happens.
 
+**The first run** was on 2026-11-23, on commit `9bf406a`, the first commit pushed:
+<https://github.com/abishekprabakar/raftkv/actions/runs/45269030246>. Every step
+passed without a change to the workflow. `terraform apply` returned with the cluster
+up, all 7 live checks passed, the 5 failover trials passed with 0 acknowledged writes
+lost and a history Porcupine found linearizable, the rolling update finished on the
+new version with no failed request, and `terraform destroy` left nothing. The log is
+public, and it holds no credentials: the destroy step shows `[redacted]` where the
+cluster's key would be.
+
 ## Hardware and clocks
 
 One laptop runs everything: the kind node is a container in Docker Desktop's Linux

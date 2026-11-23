@@ -24,7 +24,7 @@ container, and Terraform creates that too, so no cloud account is involved.
 - **`cmd/kubebench`**, which deletes pods with kubectl, rolls images with terraform,
   and times what happens, while six clients keep appending and reading.
 - **A CI workflow** that does apply, checks, 5 failovers, one rolling update and
-  destroy. It hasn't run yet: the repository isn't pushed.
+  destroy, on every push. Its first run, on the first push, passed every step.
 
 The acceptance suite ran three times, and all three are reported below.
 
@@ -245,7 +245,9 @@ cluster took 26.6 s to exist and answer, and raftkv went from pods created at
 - The host reaches the pods through Docker's port forwarding, which adds a hop to
   every request and to every Status poll.
 - Cold start had the node image and Docker's build cache already on the machine.
-- The CI workflow has not run.
+- The CI workflow runs 5 failovers and one rolling update, enough to catch something
+  broken and far too few to measure anything. Its timings are a different machine's
+  and are not reported.
 - A seed fixes each client's operations, not how real processes interleave.
 
 ### Questions and answers

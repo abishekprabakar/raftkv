@@ -1,5 +1,7 @@
 # raftkv
 
+[![kubernetes](https://github.com/abishekprabakar/raftkv/actions/workflows/k8s.yml/badge.svg)](https://github.com/abishekprabakar/raftkv/actions/workflows/k8s.yml)
+
 A replicated key-value store written from scratch in Go: a log-structured
 merge-tree storage engine on every node, replicated with Raft, and deployed on
 Kubernetes with Terraform. No external storage engine or consensus library is used.
