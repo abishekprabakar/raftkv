@@ -13,9 +13,12 @@ raftkv/
   cmd/
     storagebench/      make bench-storage  -> results/storage.json
     crashtest/         make crash-test     -> results/crash.json
+    kubebench/         make kube-audit     -> results/k8s-*.json
     results/           make results        -> results/RESULTS.md and the README block
+  deploy/terraform/    a kind cluster and raftkv on it, in one apply
   internal/
     hwinfo/            records CPU, memory, OS, filesystem for every results file
+    kube/              measures the cluster on Kubernetes: failover, rollout, cold start
     kv/                replicated store: sessions, reads, snapshots, backends
     raft/              consensus: election, replication, commit, durable state
       sim/             deterministic simulator and its safety checks
@@ -472,6 +475,105 @@ Failover time comes from two logs on the same clock, the Docker VM's: Docker's
 network events say when the leader was cut off, and the nodes' "raft state" log lines
 say when another node became leader. Every run's logs, events and history are kept
 under `results/audit/m5/runs/`.
+
+## Kubernetes deployment
+
+`deploy/terraform` creates a one-node kind cluster and deploys raftkv into it with
+one `terraform apply`. Everything is local: kind runs the Kubernetes node as a Docker
+container. The criteria are in `docs/acceptance/k8s.md`.
+
+**Why a StatefulSet.** A Raft node is not interchangeable with its peers. It has an
+identity (its ID, which the others vote for and replicate to) and state that belongs
+to that identity (its term, its vote, its log). A Deployment gives pods random names
+and no stable storage. A StatefulSet gives each pod a fixed name, `raftkv-0` to
+`raftkv-2`, and a replacement pod gets the same name and the same volume back, so it
+comes back as the same Raft node. `raftkvd --id-from-hostname` turns the name into
+the ID: pod `raftkv-N` is node N+1, since ID 0 means "nobody".
+
+**Pods start together.** A StatefulSet by default starts pod 0 and waits for it to
+be ready before starting pod 1. One node of three can never be ready, because it has
+no majority to elect a leader with, so the default would wait forever.
+`podManagementPolicy: Parallel` starts all three at once. Updates are still one pod
+at a time.
+
+**The headless Service is the membership list.** `raftkv-peers` has no virtual IP.
+It exists so that each pod has a DNS name,
+`raftkv-N.raftkv-peers.raftkv.svc.cluster.local`, which stays the same when the pod's
+IP changes on every restart. Those names are the `--peers` list. It must publish
+addresses of pods that are not ready (`publishNotReadyAddresses`): a node becomes
+ready by joining the cluster, and it can't join a cluster whose names don't resolve
+yet. Nodes look a name up on every connection attempt (M5's `passthrough` fix), which
+is what makes a new IP work at once.
+
+**Two questions, two probes.** `/livez` asks whether the process works: the node's
+single loop must take a request within a second. If not, the kubelet restarts the
+container. It says nothing about the cluster, because a node with no leader is
+healthy and restarting it fixes nothing. `/readyz` asks whether the node is useful
+right now. A follower must be following a leader of the current term and have applied
+what that leader had committed, give or take 64 entries. A leader must complete a
+ReadIndex round, which a majority has to answer. A failed readiness probe never
+restarts anything. It takes the pod out of the client Service, holds a rolling update
+at that pod, and counts against the disruption budget. A startup probe gives a node
+60 s to replay its WAL before liveness starts counting.
+
+**Why a follower's own indexes can't say it is caught up.** A follower's commit
+index is the smaller of the leader's commit index and the end of the entries it has
+received. In the middle of a long catch-up it has applied everything it has
+committed, and looks fine. So the server notes the leader's own commit index from
+each AppendEntries and measures the applied index against that.
+
+**Volume claims.** Each pod has a claim, `data-raftkv-N`, for its Raft log and its
+LSM store. The claim outlives the pod. The failover test can't show this matters,
+since two other nodes always hold the data, so a separate test deletes all three
+pods at once, and the same test on an `emptyDir` is the planted failure.
+
+**The client Service** routes to any ready pod. A pod that isn't the leader answers
+with the leader's address and the client library goes there. gRPC keeps one
+connection open, so the Service balances connections, not requests, which is fine
+here: every request ends up at the leader anyway.
+
+**The disruption budget** is `maxUnavailable: 1`. It applies to evictions, which is
+how a node drain or a cluster upgrade removes pods, and it keeps a second raftkv pod
+from being evicted while one is already down. It does nothing for a crash, a deleted
+pod, or a rolling update, which has its own one-at-a-time rule.
+
+**Rolling updates** go highest ordinal first and wait for each replaced pod to be
+ready, which with the readiness rule above means caught up. There is no leadership
+transfer, so when the update reaches the leader's pod the cluster has an election,
+and it can have more than one: if the new leader has a lower ordinal, its turn comes
+later.
+
+**What a restarted node can do to the others.** Pre-vote is not implemented. A node
+that restarts and hears no leader for one election timeout starts an election in a
+higher term, which makes the current leader step down, even though the restarted
+node's log is behind and it can't win. The failover results count how often this
+happened.
+
+**Getting in from the host.** On macOS the node container's address isn't reachable
+from the host, so kind maps four host ports to NodePort Services: one for the client
+Service and one per pod. The per-pod Services exist only for that. A client outside
+the cluster is redirected to a pod's DNS name, which the host can't resolve, so the
+client library takes a dial hook, and the test harness maps each name to its port.
+
+**Terraform.** Three steps in one apply: the `tehcyx/kind` provider creates the
+cluster, a `local-exec` step runs `docker build` and `kind_load` copies the image
+into the node, and the `hashicorp/kubernetes` provider creates the objects, with credentials taken
+straight from the cluster resource, so nothing reads a kubeconfig. Provider versions
+are exact, the node image is pinned by digest, and the lock file is committed. State
+is local and not committed: it holds the cluster's client key. The kind provider
+doesn't mark that key as sensitive, so a destroy prints it; `scripts/k8s/terraform.sh`
+and the harness replace it with `[redacted]` before anything is shown or logged. The pod template
+carries a hash of the image's source, so rebuilding the image under the same tag
+still replaces the pods.
+
+**Measuring it.** `cmd/kubebench` runs on the host and uses one clock for
+everything. It starts each `kubectl` and `terraform` command itself, polls every
+node's Status about every 6 ms, and runs the clients. Every write acknowledgement
+carries the term of the node that sent it, so the first write a new leader took can
+be told from the last ones the old leader took after the delete was issued.
+
+Not done: TLS, more than one Kubernetes node, leadership transfer on shutdown,
+pre-vote, and resizing the cluster, which needs membership changes.
 
 ## Tradeoffs
 

@@ -1,14 +1,16 @@
 # raftkv
 
 A replicated key-value store written from scratch in Go: a log-structured
-merge-tree storage engine on every node, replicated with Raft, deployed on
-AWS. No external storage engine or consensus library is used.
+merge-tree storage engine on every node, replicated with Raft, and deployed on
+Kubernetes with Terraform. No external storage engine or consensus library is used.
 
 Status: **the storage engine, Raft and the replicated KV store run as a real
-cluster over gRPC**, locally on Docker Compose, with a CLI client that follows leader
-redirects. Histories recorded while Docker cuts nodes off the network are checked for
-linearizability with Porcupine. Benchmarks of the cluster and an AWS deployment are
-still to come.
+cluster over gRPC**, on Docker Compose and on Kubernetes, with a CLI client that
+follows leader redirects. Histories recorded while Docker cuts nodes off the network,
+and while Kubernetes deletes and replaces pods, are checked for linearizability with
+Porcupine. The Kubernetes cluster is a local kind cluster that one `terraform apply`
+creates: no cloud account is involved. Throughput benchmarks of the cluster are still
+to come.
 
 ## Architecture
 
@@ -36,6 +38,52 @@ still to come.
              LOCK
 ```
 
+### On Kubernetes
+
+```
+ terraform apply  (deploy/terraform)
+   ├─ kind_cluster ......... one Docker container that is a whole Kubernetes node
+   ├─ docker build, kind_load   the raftkv image, copied into that node
+   └─ kubernetes_* ......... everything in the box below
+
+ namespace raftkv
+ ┌─────────────────────────────────────────────────────────────────────────┐
+ │  Service raftkv-client ─────► any pod that is READY                     │
+ │                                                                         │
+ │  StatefulSet raftkv: 3 pods, started together, updated one at a time    │
+ │   ┌────────────┐      ┌────────────┐      ┌────────────┐                │
+ │   │ raftkv-0   │◄────►│ raftkv-1   │◄────►│ raftkv-2   │  Raft nodes    │
+ │   │ gRPC :7000 │      │ gRPC :7000 │      │ gRPC :7000 │  1, 2 and 3    │
+ │   │ /livez     │      │ /livez     │      │ /livez     │  probed by     │
+ │   │ /readyz    │      │ /readyz    │      │ /readyz    │  the kubelet   │
+ │   └─────┬──────┘      └─────┬──────┘      └─────┬──────┘                │
+ │   PVC data-raftkv-0   PVC data-raftkv-1   PVC data-raftkv-2             │
+ │   (Raft log, WAL and SSTables; each outlives its pod)                   │
+ │                                                                         │
+ │  headless Service raftkv-peers: a DNS name per pod, the --peers list    │
+ │  PodDisruptionBudget raftkv: at most 1 pod evicted at a time            │
+ └─────────────────────────────────────────────────────────────────────────┘
+ host: 127.0.0.1:17000 ► raftkv-client, :17001 to :17003 ► one pod each
+```
+
+- **StatefulSet, not Deployment.** A Raft node has an identity and a log that belong
+  to it. A replaced pod gets the same name and the same volume back, so it returns as
+  the same node.
+- **Headless Service.** No load balancing, only a DNS name per pod that survives
+  restarts. Those names are how the nodes find each other.
+- **Readiness is Raft's answer, liveness is the process's.** A follower is ready when
+  it follows a leader and has caught up; a leader when a majority confirms it. A node
+  with no leader is alive and not ready, so it is taken out of the client Service and
+  never restarted for it. A rolling update waits on readiness, so it never stops a
+  second node while the first is still catching up.
+- **PodDisruptionBudget.** A node drain may evict one raftkv pod and is refused the
+  next, which always leaves a majority.
+- **Terraform owns all of it.** One `apply` from nothing to three ready pods, one
+  `destroy` back to nothing. Provider versions are exact, the node image is pinned by
+  digest, and the lock file is committed.
+
+Why each piece is the way it is: [docs/DESIGN.md](docs/DESIGN.md#kubernetes-deployment).
+
 Full design, on-disk formats and tradeoffs: [docs/DESIGN.md](docs/DESIGN.md).
 Failure modes, alternatives, and questions with answers: [docs/NOTES.md](docs/NOTES.md).
 
@@ -47,6 +95,7 @@ Failure modes, alternatives, and questions with answers: [docs/NOTES.md](docs/NO
 | `internal/client` | client library: follows leader redirects, retries writes under the same session |
 | `internal/pb` | the wire format, `raftkv.proto`, and the code generated from it |
 | `internal/chaos` | partition harness: seeded faults with `docker network disconnect`, client histories, the Porcupine model, failover read from logs |
+| `internal/kube` | Kubernetes harness: deletes pods with kubectl, rolls images with terraform, times failover on one clock, counts lost writes |
 | `internal/kv` | replicated store: sessions for exactly-once writes, ReadIndex reads, snapshots |
 | `internal/raft` | Raft from Figure 2: election, replication, commit, durable state, snapshots, ReadIndex |
 | `internal/raft/sim` | deterministic simulator: faults, crash points, clients and safety checks, all from one seed |
@@ -59,6 +108,9 @@ Failure modes, alternatives, and questions with answers: [docs/NOTES.md](docs/NO
 | `cmd/raftkv` | the command-line client |
 | `cmd/kvworker` | a client the partition harness runs inside each node's container |
 | `cmd/chaos` | seeded partition schedules on Docker, checked with Porcupine -> `results/chaos.json` |
+| `cmd/kubebench` | failover, restart, rolling update and cold start on Kubernetes -> `results/k8s-*.json` |
+| `deploy/terraform` | a kind cluster and raftkv on it: StatefulSet, Services, volume claims, disruption budget, probes |
+| `.github/workflows/k8s.yml` | CI: apply, the live checks, 5 failovers, one rolling update, destroy |
 | `cmd/storagebench` | benchmarks -> `results/storage.json` |
 | `cmd/crashtest` | SIGKILL crash-recovery harness -> `results/crash.json` |
 | `cmd/raftsim` | seeded simulation schedules -> `results/sim.json` |
@@ -74,7 +126,7 @@ make bench-storage   # storage benchmarks, writes results/storage.json (~3 min)
 make crash-test      # 500 SIGKILL trials, writes results/crash.json (~4 min)
 make sim             # 10,000 simulated Raft schedules, writes results/sim.json
 make chaos           # 100 partition schedules on Docker, writes results/chaos.json (slow: a fresh cluster each)
-make results         # regenerate results/RESULTS.md and the table below
+make results         # regenerate results/RESULTS.md and the tables below
 ```
 
 A 3-node cluster on Docker Compose:
@@ -88,8 +140,27 @@ docker compose kill node1                         # kill a node; if it led, writ
 docker compose down -v                            # stop and delete the data
 ```
 
-Requirements: Go 1.27 or newer. Docker for the cluster. `make proto` needs `protoc`;
-the generated code is committed, so building doesn't.
+The same three nodes on Kubernetes. Terraform creates the cluster too, so there is
+nothing to set up first beyond Docker:
+
+```sh
+make kube-up                                      # terraform apply: kind cluster, image, raftkv; returns when 3 pods are ready
+export KUBECONFIG=deploy/terraform/kubeconfig     # this cluster only; ~/.kube/config is never touched
+kubectl -n raftkv get pods,statefulset,pvc,pdb,svc
+kubectl -n raftkv exec raftkv-0 -- raftkv --addr raftkv-client:7000 put greeting hello
+kubectl -n raftkv exec raftkv-1 -- raftkv --addr raftkv-client:7000 -v get greeting   # -v shows the redirect to the leader
+kubectl -n raftkv delete pod raftkv-0             # it comes back with the same name and the same volume
+make kube-smoke                                   # the live checks, 5 leader failovers, one rolling update (what CI runs)
+make kube-audit                                   # everything in docs/acceptance/k8s.md, writes results/k8s-*.json (~45 min)
+make kube-down                                    # terraform destroy: nothing is left
+```
+
+Requirements: Go 1.27 or newer. Docker for either cluster. Kubernetes also needs
+Terraform 1.9 or newer and `kubectl`; the kind command-line tool is not needed, since
+the Terraform provider has kind built in. The `make` targets run Terraform through
+`scripts/k8s/terraform.sh`, which hides the cluster's client key: a plain `terraform
+destroy` prints it. `make proto` needs `protoc`; the generated
+code is committed, so building doesn't.
 
 ## Results
 
