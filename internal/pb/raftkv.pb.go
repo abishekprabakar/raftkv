@@ -917,8 +917,12 @@ func (x *WriteRequest) GetValue() []byte {
 }
 
 type WriteResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	NotLeader     *NotLeader             `protobuf:"bytes,1,opt,name=not_leader,json=notLeader,proto3" json:"not_leader,omitempty"` // set if this node could not take the write
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	NotLeader *NotLeader             `protobuf:"bytes,1,opt,name=not_leader,json=notLeader,proto3" json:"not_leader,omitempty"` // set if this node could not take the write
+	// term is the answering node's term when it acknowledged the write, and 0 with
+	// not_leader. A client that watched a leader fail can tell from it which
+	// acknowledgements came from the leader elected afterwards.
+	Term          uint64 `protobuf:"varint,2,opt,name=term,proto3" json:"term,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -958,6 +962,13 @@ func (x *WriteResponse) GetNotLeader() *NotLeader {
 		return x.NotLeader
 	}
 	return nil
+}
+
+func (x *WriteResponse) GetTerm() uint64 {
+	if x != nil {
+		return x.Term
+	}
+	return 0
 }
 
 type GetRequest struct {
@@ -1324,10 +1335,11 @@ const file_internal_pb_raftkv_proto_rawDesc = "" +
 	"\x03seq\x18\x02 \x01(\x04R\x03seq\x12\x1d\n" +
 	"\x02op\x18\x03 \x01(\x0e2\r.raftkv.v1.OpR\x02op\x12\x10\n" +
 	"\x03key\x18\x04 \x01(\fR\x03key\x12\x14\n" +
-	"\x05value\x18\x05 \x01(\fR\x05value\"D\n" +
+	"\x05value\x18\x05 \x01(\fR\x05value\"X\n" +
 	"\rWriteResponse\x123\n" +
 	"\n" +
-	"not_leader\x18\x01 \x01(\v2\x14.raftkv.v1.NotLeaderR\tnotLeader\"\x1e\n" +
+	"not_leader\x18\x01 \x01(\v2\x14.raftkv.v1.NotLeaderR\tnotLeader\x12\x12\n" +
+	"\x04term\x18\x02 \x01(\x04R\x04term\"\x1e\n" +
 	"\n" +
 	"GetRequest\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\fR\x03key\"n\n" +

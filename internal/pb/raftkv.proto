@@ -136,6 +136,10 @@ message WriteRequest {
 
 message WriteResponse {
   NotLeader not_leader = 1; // set if this node could not take the write
+  // term is the answering node's term when it acknowledged the write, and 0 with
+  // not_leader. A client that watched a leader fail can tell from it which
+  // acknowledgements came from the leader elected afterwards.
+  uint64 term = 2;
 }
 
 message GetRequest {

@@ -364,3 +364,70 @@ func TestBadWritesAreRefused(t *testing.T) {
 		}
 	}
 }
+
+// A client outside the nodes' network reaches them through its Dial hook: here
+// the node is known by a name that resolves nowhere, and the hook maps it.
+func TestClientDialsThroughTheHook(t *testing.T) {
+	c := startCluster(t, 3, 0)
+	leader := c.leader()
+	var follower raft.NodeID
+	for id := range c.peers {
+		if id != leader {
+			follower = id
+			break
+		}
+	}
+	var dialed []string
+	cl, err := client.New([]string{"some-follower.invalid:7000"}, client.Options{
+		Dial: func(ctx context.Context, addr string) (net.Conn, error) {
+			dialed = append(dialed, addr)
+			if addr == "some-follower.invalid:7000" {
+				addr = c.peers[follower]
+			}
+			return (&net.Dialer{}).DialContext(ctx, "tcp", addr)
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer cl.Close()
+	if err := cl.Put(ctx(t), []byte("k"), []byte("v")); err != nil {
+		t.Fatal(err)
+	}
+	if cl.Redirects != 1 || len(dialed) < 2 || dialed[0] != "some-follower.invalid:7000" {
+		t.Errorf("redirects %d, dialed %v; want the made-up name first, then the leader", cl.Redirects, dialed)
+	}
+}
+
+// Every acknowledged write carries the term of the node that acknowledged it, so
+// a client can tell a write taken by a new leader from one taken by the old.
+func TestWriteAcknowledgementCarriesTheTerm(t *testing.T) {
+	c := startCluster(t, 3, 0)
+	leader := c.leader()
+	var ids []raft.NodeID
+	for id := range c.peers {
+		ids = append(ids, id)
+	}
+	cl := c.client(ids...)
+	if err := cl.Put(ctx(t), []byte("k"), []byte("1")); err != nil {
+		t.Fatal(err)
+	}
+	st, err := c.status(leader)
+	if err != nil {
+		t.Fatal(err)
+	}
+	first := cl.Term
+	if first == 0 || first != st.Term {
+		t.Fatalf("the write was acknowledged in term %d, and the leader is in term %d", first, st.Term)
+	}
+	c.stop(leader)
+	if err := cl.Put(ctx(t), []byte("k"), []byte("2")); err != nil {
+		t.Fatal(err)
+	}
+	if cl.Term <= first {
+		t.Errorf("after the leader stopped, a write was acknowledged in term %d, not above %d", cl.Term, first)
+	}
+	if cl.Retries == 0 {
+		t.Error("the client reached a stopped leader and counted no retry")
+	}
+}

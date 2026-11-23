@@ -96,11 +96,15 @@ func (h kvService) Write(ctx context.Context, req *pb.WriteRequest) (*pb.WriteRe
 	type outcome struct {
 		err    error
 		leader raft.NodeID
+		term   uint64
 	}
 	done := make(chan outcome, 1) // buffered: the loop must never wait on a handler
 	err = s.do(ctx, func() error {
 		// The callback runs on the loop too, later, so it may ask who leads.
-		return s.kv.Submit(cmd, func(err error) { done <- outcome{err, s.kv.Leader()} })
+		return s.kv.Submit(cmd, func(err error) {
+			st := s.kv.Status()
+			done <- outcome{err, st.Leader, st.Term}
+		})
 	})
 	if err != nil {
 		return nil, failed(err)
@@ -110,7 +114,7 @@ func (h kvService) Write(ctx context.Context, req *pb.WriteRequest) (*pb.WriteRe
 	case err != nil:
 		return nil, failed(err)
 	case o.err == nil:
-		return &pb.WriteResponse{}, nil
+		return &pb.WriteResponse{Term: o.term}, nil
 	case errors.Is(o.err, kv.ErrNotLeader):
 		return &pb.WriteResponse{NotLeader: s.notLeader(o.leader)}, nil
 	case errors.Is(o.err, raft.ErrEntryTooLarge):

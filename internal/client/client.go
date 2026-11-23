@@ -13,6 +13,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"net"
 	"slices"
 	"time"
 
@@ -38,6 +39,11 @@ type Options struct {
 	AttemptTimeout time.Duration
 	// Log, if set, hears about every redirect and every failed attempt.
 	Log func(format string, args ...any)
+	// Dial, if set, opens every connection instead of a plain TCP dial to the
+	// address. Nodes hand out the addresses they know each other by, and a client
+	// outside their network may need to reach them some other way: the Kubernetes
+	// harness turns a pod's DNS name into a port on the host.
+	Dial func(ctx context.Context, addr string) (net.Conn, error)
 }
 
 // Client talks to one cluster. It is not safe for concurrent use: writes are
@@ -53,6 +59,11 @@ type Client struct {
 
 	// Redirects counts the redirects this client has followed.
 	Redirects int
+	// Retries counts the attempts that ended in a pause and another try: a node
+	// that couldn't be reached, didn't answer in time, or knew no leader.
+	Retries int
+	// Term is the term of the node that acknowledged this client's latest write.
+	Term uint64
 }
 
 // New returns a client that starts with these addresses. It doesn't connect until
@@ -99,7 +110,7 @@ func (c *Client) conn(addr string) (*grpc.ClientConn, error) {
 	// "passthrough" looks the name up on every connection attempt rather than
 	// caching it for 30 s, so a node that comes back on a new address is found at
 	// once. See target in internal/server/peer.go for the longer story.
-	conn, err := grpc.NewClient("passthrough:///"+addr,
+	dialOpts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithConnectParams(grpc.ConnectParams{
 			Backoff:           backoff.Config{BaseDelay: 50 * time.Millisecond, Multiplier: 1.6, Jitter: 0.2, MaxDelay: time.Second},
@@ -108,7 +119,11 @@ func (c *Client) conn(addr string) (*grpc.ClientConn, error) {
 		// As between nodes: ping an idle connection every 10 s, and on Linux close
 		// one whose data goes unacknowledged for 2 s.
 		grpc.WithKeepaliveParams(keepalive.ClientParameters{Time: 10 * time.Second, Timeout: 2 * time.Second, PermitWithoutStream: true}),
-	)
+	}
+	if c.opts.Dial != nil {
+		dialOpts = append(dialOpts, grpc.WithContextDialer(c.opts.Dial))
+	}
+	conn, err := grpc.NewClient("passthrough:///"+addr, dialOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -188,6 +203,7 @@ func (c *Client) call(ctx context.Context, try attempt) error {
 			}
 			why = errors.New("redirects went round in a circle")
 		}
+		c.Retries++
 		c.logf("%v; retrying in %v", why, pause)
 		select {
 		case <-time.After(pause):
@@ -206,6 +222,9 @@ func (c *Client) write(ctx context.Context, op pb.Op, key, value []byte) error {
 		resp, err := kv.Write(ctx, req)
 		if err != nil {
 			return nil, err
+		}
+		if resp.NotLeader == nil {
+			c.Term = resp.Term
 		}
 		return resp.NotLeader, nil
 	})
