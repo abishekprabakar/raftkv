@@ -4,3 +4,12 @@
 *.out
 /results/tmp/
 .DS_Store
+
+# Terraform: downloaded providers, local state (it holds the local cluster's
+# client key), and the kubeconfig the kind provider writes.
+/deploy/terraform/.terraform/
+/deploy/terraform/terraform.tfstate*
+/deploy/terraform/kubeconfig
+
+# Notes that stay on this machine.
+/private/
