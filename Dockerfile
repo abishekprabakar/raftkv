@@ -10,7 +10,13 @@ COPY go.mod go.sum ./
 RUN go mod download
 COPY cmd ./cmd
 COPY internal ./internal
-RUN CGO_ENABLED=0 go build -trimpath -o /out/raftkvd ./cmd/raftkvd \
+# VERSION is what `raftkvd --version` prints. The rolling-update test builds this
+# source twice under two versions, so it can tell which image a pod is running.
+ARG VERSION=dev
+# The cache mount keeps Go's build cache between builds, so a build that only
+# changes VERSION relinks one binary instead of compiling everything again.
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 go build -trimpath -ldflags "-X main.version=${VERSION}" -o /out/raftkvd ./cmd/raftkvd \
  && CGO_ENABLED=0 go build -trimpath -o /out/raftkv ./cmd/raftkv \
  && CGO_ENABLED=0 go build -trimpath -o /out/kvworker ./cmd/kvworker \
  && mkdir /out/data
@@ -22,5 +28,7 @@ COPY --from=build /out/raftkvd /out/raftkv /out/kvworker /usr/local/bin/
 # A fresh named volume copies the ownership of the directory it is mounted on, so
 # /data must already belong to the nonroot user (65532) for the node to write it.
 COPY --from=build --chown=65532:65532 /out/data /data
-EXPOSE 7000
+# 7000 is gRPC, for peers and clients. 8080 is the health endpoints, when
+# --health turns them on.
+EXPOSE 7000 8080
 ENTRYPOINT ["/usr/local/bin/raftkvd"]
