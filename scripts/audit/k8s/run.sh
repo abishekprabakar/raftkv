@@ -189,7 +189,7 @@ step t6-binary-deps binaries_use_allowed_modules
 step t7-terraform-fmt terraform_ fmt -check -recursive
 step a3-pins pins
 step t8-terraform-validate terraform_ validate -no-color
-step h-health go test -count=1 -v -run '^(TestLonelyNodeIsLiveButNotReady|TestClusterBecomesReady|TestFollowerBehindIsNotReady|TestLeaderWithoutMajorityIsNotReady|TestIDFromHostname|TestPeerReopensAStreamThatDiedWhileIdle)$' ./internal/server ./cmd/raftkvd
+step h-health go test -count=1 -v -run '^(TestLonelyNodeIsLiveButNotReady|TestClusterBecomesReady|TestFollowerBehindIsNotReady|TestLeaderWithoutMajorityIsNotReady|TestIDFromHostname|TestPeerReopensAStreamThatDiedWhileIdle|TestRestartedFollowerIsNotReadyUntilItHasCaughtUp|TestRedactHidesCredentials)$' ./internal/server ./cmd/raftkvd ./internal/kube
 step p1-durability go test -count=1 -v -run '^TestDurabilityCountsLostAndDuplicatedWrites$' ./internal/kube
 
 go build -o "$work/kubebench" ./cmd/kubebench || exit 1

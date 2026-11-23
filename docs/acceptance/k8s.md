@@ -372,6 +372,54 @@ that are committed are the ones the fixed tooling wrote, not logs edited by hand
 The second run's numbers differ a little, as any two runs do. Both are real. The
 second is the one in the README because it is the one on the final commit.
 
+## Third addendum: the second run failed a test, and readiness was wrong
+
+The second run, on commit `c561fc8`, failed T3 and T4 in its first minute, and was
+stopped there: a code fix was needed, and after a code fix everything runs again
+anyway. Its record is in `results/audit/k8s/second-run/`. The log of T4 was deleted
+before it was read, which was a mistake. On that commit the test below fails about
+one run in six under the race detector, with no data race reported, so the same
+cause is the likely one, and that is an inference.
+
+**The failure.** `TestRestartedFollowerBecomesReadyAgain`: a follower that had missed
+200 writes reported ready with 3 entries applied, and with the leader's commit index
+recorded as 3.
+
+**The bug, which was in the readiness rule itself.** A follower measured itself
+against the commit index in the last AppendEntries it had accepted. While a follower
+is down, the leader's messages to it wait in a queue of up to 1,024, and when it
+returns they arrive oldest first. The oldest carries the commit index from the moment
+the follower went down, which is exactly how far the follower has applied. So for a
+few milliseconds, a node with everything still to catch up on measured itself against
+a stale mark and called itself ready. A probe that landed in that window would have
+let a rolling update move on to the next pod too early. The first run's tests passed
+because the window is narrow.
+
+Nothing about safety changes: readiness never decides what Raft commits. It decides
+what Kubernetes does next, and it gave a wrong answer.
+
+**The fix: ask the leader now.** When a follower is asked whether it is ready, it
+asks the node it follows for its Status, over the connection it already keeps open to
+it, and compares its own applied index with the commit index in that answer. The
+answer is as old as one request, not as old as a queue. This replaces the first
+bullet under "What ready means":
+
+- **Follower:** it follows a leader of the current term, that node answers a Status
+  request and says it leads that term, and the follower has applied what the answer
+  says is committed, give or take the same allowance of 64 entries.
+
+So a follower whose leader doesn't answer is not ready, which is right: it has not
+joined anything it can reach.
+
+**Regression tests.** `TestRestartedFollowerIsNotReadyUntilItHasCaughtUp` replaces
+the test that failed. It makes the follower miss 300 writes and asks for readiness
+with no pause, so it lands in the window when there is one: on the old code it failed
+6 runs of 20, and on the fix it passed 30 of 30. H3 gained the case that failed, and
+cases for a leader that doesn't answer or no longer leads. The runner's step H runs
+both.
+
+**Then everything runs again**, from T1 to X1, on the final commit.
+
 ## If something fails
 
 A failed criterion gets reported, not rerun until it passes. A target that isn't met

@@ -516,11 +516,17 @@ restarts anything. It takes the pod out of the client Service, holds a rolling u
 at that pod, and counts against the disruption budget. A startup probe gives a node
 60 s to replay its WAL before liveness starts counting.
 
-**Why a follower's own indexes can't say it is caught up.** A follower's commit
-index is the smaller of the leader's commit index and the end of the entries it has
-received. In the middle of a long catch-up it has applied everything it has
-committed, and looks fine. So the server notes the leader's own commit index from
-each AppendEntries and measures the applied index against that.
+**Why a follower has to ask the leader.** A follower's own commit index can't say
+whether it is caught up: it is the smaller of the leader's commit index and the end
+of the entries it has received, so in the middle of a long catch-up it has applied
+everything it has committed, and looks fine. The commit index in the last
+AppendEntries is the leader's own number, and the first version of the rule used it.
+That was wrong too. While a follower is down, the leader's messages to it wait in a
+queue, and when it returns they arrive oldest first, so for a few milliseconds the
+newest message it has seen is one from the moment it went down. A test caught a
+restarted follower calling itself ready with 3 entries applied and 200 to go. So the
+readiness check asks the node it follows for its Status, over the connection it
+already has, and measures the applied index against the commit index in that answer.
 
 **Volume claims.** Each pod has a claim, `data-raftkv-N`, for its Raft log and its
 LSM store. The claim outlives the pod. The failover test can't show this matters,

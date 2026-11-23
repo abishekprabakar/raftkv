@@ -1,0 +1,27 @@
+?   	github.com/abishekprabakar/raftkv/cmd/chaos	[no test files]
+?   	github.com/abishekprabakar/raftkv/cmd/crashtest	[no test files]
+?   	github.com/abishekprabakar/raftkv/cmd/kubebench	[no test files]
+?   	github.com/abishekprabakar/raftkv/cmd/kvworker	[no test files]
+?   	github.com/abishekprabakar/raftkv/cmd/raftkv	[no test files]
+ok  	github.com/abishekprabakar/raftkv/cmd/raftkvd	0.211s
+?   	github.com/abishekprabakar/raftkv/cmd/raftsim	[no test files]
+?   	github.com/abishekprabakar/raftkv/cmd/results	[no test files]
+?   	github.com/abishekprabakar/raftkv/cmd/storagebench	[no test files]
+ok  	github.com/abishekprabakar/raftkv/internal/chaos	0.352s
+ok  	github.com/abishekprabakar/raftkv/internal/client	1.520s
+?   	github.com/abishekprabakar/raftkv/internal/hwinfo	[no test files]
+ok  	github.com/abishekprabakar/raftkv/internal/kube	0.663s
+ok  	github.com/abishekprabakar/raftkv/internal/kv	2.804s
+?   	github.com/abishekprabakar/raftkv/internal/pb	[no test files]
+ok  	github.com/abishekprabakar/raftkv/internal/raft	5.568s
+ok  	github.com/abishekprabakar/raftkv/internal/raft/sim	4.875s
+--- FAIL: TestRestartedFollowerBecomesReadyAgain (4.01s)
+    health_test.go:182: ready with applied 3, leader commit 3, after 200 writes it missed
+FAIL
+FAIL	github.com/abishekprabakar/raftkv/internal/server	15.524s
+ok  	github.com/abishekprabakar/raftkv/internal/storage/engine	15.466s
+ok  	github.com/abishekprabakar/raftkv/internal/storage/ikey	1.556s
+ok  	github.com/abishekprabakar/raftkv/internal/storage/memtable	1.553s
+ok  	github.com/abishekprabakar/raftkv/internal/storage/sstable	1.600s
+ok  	github.com/abishekprabakar/raftkv/internal/storage/wal	3.271s
+FAIL
