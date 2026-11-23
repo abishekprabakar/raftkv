@@ -140,6 +140,14 @@ resource "kubernetes_stateful_set_v1" "raftkv" {
     template {
       metadata {
         labels = local.labels
+
+        # The image is rebuilt under the same tag when the source changes, and a
+        # pod template that still says "raftkv:v1" would not roll. Recording the
+        # source's hash here makes a rebuild a change to the template, so the
+        # running pods are replaced with the new build.
+        annotations = {
+          "raftkv/source-hash" = local.source_hash
+        }
       }
 
       spec {
