@@ -48,6 +48,8 @@ type waiter struct {
 type pendingRead struct {
 	key  []byte
 	done func(value []byte, found bool, err error)
+	// confirmOnly marks a Confirm: the same ReadIndex round, and no key to read.
+	confirmOnly bool
 }
 
 // Server joins a Raft node to a Store. Like Node, it expects one call at a time.
@@ -132,9 +134,23 @@ func (s *Server) Submit(cmd Command, done func(error)) error {
 // Read starts a linearizable read of key. done runs when the read is confirmed or
 // has failed. The returned error means the node itself has failed.
 func (s *Server) Read(key []byte, done func(value []byte, found bool, err error)) error {
+	return s.read(pendingRead{key: key, done: done})
+}
+
+// Confirm asks the question a read asks, without reading anything: is this node
+// the leader, and does a majority still accept it right now? done runs with nil
+// once the ReadIndex round completes, and with ErrNotLeader or ErrRetry if it
+// can't. A health check uses it to tell a working leader from one that only
+// believes it leads. The returned error means the node itself has failed.
+func (s *Server) Confirm(done func(error)) error {
+	return s.read(pendingRead{confirmOnly: true, done: func(_ []byte, _ bool, err error) { done(err) }})
+}
+
+func (s *Server) read(r pendingRead) error {
 	s.nextRead++
 	id := s.nextRead
-	s.reads[id] = pendingRead{key, done}
+	s.reads[id] = r
+	done := r.done
 	err := s.node.ReadIndex(id)
 	switch {
 	case errors.Is(err, raft.ErrNotLeader):
@@ -154,6 +170,10 @@ func (s *Server) Read(key []byte, done func(value []byte, found bool, err error)
 func (s *Server) ReadReady(id uint64) {
 	r := s.reads[id]
 	delete(s.reads, id)
+	if r.confirmOnly {
+		r.done(nil, false, nil)
+		return
+	}
 	value, found, err := s.store.Get(r.key)
 	if err != nil {
 		panic(fmt.Sprintf("kv: reading %q: %v", r.key, err))

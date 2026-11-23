@@ -53,6 +53,11 @@ type Config struct {
 	// and 1,000.
 	SnapshotEvery   uint64
 	TrailingEntries uint64
+	// ReadyLag is how many entries a follower's applied index may trail the
+	// leader's commit index and still count as ready. Default 64, one
+	// AppendEntries worth: under steady writes a healthy follower is always a
+	// message behind, and it should not flap in and out of readiness for that.
+	ReadyLag uint64
 
 	Logger *slog.Logger
 }
@@ -87,6 +92,9 @@ func (c Config) withDefaults() (Config, error) {
 	if c.TrailingEntries == 0 {
 		c.TrailingEntries = 1_000
 	}
+	if c.ReadyLag == 0 {
+		c.ReadyLag = 64
+	}
 	if c.Logger == nil {
 		c.Logger = slog.Default()
 	}
@@ -106,10 +114,11 @@ type Server struct {
 	cfg Config
 	log *slog.Logger
 
-	// Only the loop goroutine touches these three after Start returns.
+	// Only the loop goroutine touches these four after Start returns.
 	kv        *kv.Server
 	raftFiles *raft.FileStorage
 	store     *kv.LSM
+	seen      leaderSeen // what this node last heard from its leader; see health.go
 
 	peers map[raft.NodeID]*peer // read-only after Start
 	grpc  *grpc.Server
@@ -149,6 +158,8 @@ func Start(cfg Config) (*Server, error) {
 		return nil, err
 	}
 
+	recovered := s.kv.Status() // before the loop starts, so nothing else is using it
+
 	ctx, cancel := context.WithCancel(context.Background())
 	s.stopPeers = cancel
 	for _, p := range s.peers {
@@ -161,7 +172,10 @@ func Start(cfg Config) (*Server, error) {
 			s.log.Error("gRPC server ended", "err", err)
 		}
 	})
-	s.log.Info("started", "listen", lis.Addr().String(), "peers", len(cfg.Peers))
+	// What the node found on disk. A node that has run before starts with its
+	// term and its log; one that starts with neither has an empty data directory.
+	s.log.Info("started", "listen", lis.Addr().String(), "peers", len(cfg.Peers),
+		"term", recovered.Term, "last_log_index", recovered.LastLogIndex, "applied", recovered.LastApplied)
 	return s, nil
 }
 
@@ -239,7 +253,9 @@ func (s *Server) loop() {
 		case <-ticker.C:
 			err = s.kv.Tick()
 		case in := <-s.inbox:
-			err = s.kv.Receive(in.from, in.msg)
+			if err = s.kv.Receive(in.from, in.msg); err == nil {
+				s.noteLeader(in.msg)
+			}
 		case call := <-s.calls:
 			err = call()
 		}
