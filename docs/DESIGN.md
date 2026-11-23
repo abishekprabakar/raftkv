@@ -386,7 +386,7 @@ that replays.
 
 Bytes are only built when a lagging follower needs them. The follower restores
 before it saves the marker. If it crashes between the two, the state machine is ahead
-of the log, and startup finishes the job. In the other order, the log would claim
+of the log, and startup finishes it. In the other order, the log would claim
 entries the state machine never received. `Replace` builds a new engine generation
 beside the old one and switches with an atomic rename, so a crash leaves one or the
 other.

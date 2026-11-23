@@ -175,7 +175,7 @@ so mixing them would measure the clock difference too.
 
 **Q: Tell me about a bug you found.**
 Bug 1 above. It's a good story because nothing in the Raft code was wrong: the
-receiver's address check did its job, and the cost was liveness. The fix was in how
+receiver's address check worked, and the cost was liveness. The fix was in how
 gRPC resolves names and reuses connections.
 
 **Q: Why didn't you add check-quorum?**

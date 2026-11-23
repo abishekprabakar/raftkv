@@ -79,7 +79,7 @@ resource "kubernetes_service_v1" "client" {
 
 # One Service per pod, only so the host can reach a particular node: a client
 # outside the cluster that is redirected to the leader has to get to that pod and
-# no other. Inside the cluster nobody needs these; the DNS names above do the job.
+# no other. Inside the cluster nobody needs these: the DNS names above are enough.
 resource "kubernetes_service_v1" "pod" {
   count = var.replicas
 
