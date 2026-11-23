@@ -4,6 +4,292 @@ One section per milestone, newest first: what was done, the ideas behind it, and
 the questions worth being able to answer about it. Every number comes from a real
 run. Criteria are in `docs/acceptance/`, and the runs are in `results/audit/`.
 
+## Kubernetes and Terraform: the same three nodes on a real orchestrator
+
+Criteria: `docs/acceptance/k8s.md`. Results: `results/k8s-*.json` and
+`results/audit/k8s/`. Code: `deploy/terraform`, `internal/server/health.go`,
+`internal/kube` and `cmd/kubebench`.
+
+Everything is local and free. kind runs a whole Kubernetes node as one Docker
+container, and Terraform creates that too, so no cloud account is involved.
+
+### What was built
+
+- **One `terraform apply`** creates the kind cluster, builds the image, copies it into
+  the node, and deploys raftkv. It returns when all three pods are ready. One
+  `terraform destroy` removes all of it.
+- **A StatefulSet of 3 pods**, each with its own volume claim, behind a headless
+  Service for the nodes and a normal Service for clients, with a disruption budget.
+- **Health endpoints on the node**, `/livez` and `/readyz`, for the kubelet's probes.
+- **`cmd/kubebench`**, which deletes pods with kubectl, rolls images with terraform,
+  and times what happens, while six clients keep appending and reading.
+- **A CI workflow** that does apply, checks, 5 failovers, one rolling update and
+  destroy. It hasn't run yet: the repository isn't pushed.
+
+The acceptance suite ran three times, and all three are reported below.
+
+### The ideas in plain language
+
+**Why a StatefulSet.** A Raft node is its identity plus its log. The others vote for
+"node 2" and send entries to "node 2". A Deployment replaces a pod with a stranger: a
+new name and an empty disk. A StatefulSet replaces `raftkv-1` with a new `raftkv-1`
+that gets the same volume back, so it is the same Raft node, restarted.
+
+**Start together, update one at a time.** A StatefulSet normally starts pod 0 and
+waits for it to be ready before starting pod 1. One node of three can never be ready,
+because it has no majority, so that would wait forever. `Parallel` starts all three.
+
+**A headless Service is a phone book, not a load balancer.** It gives each pod a DNS
+name that survives restarts, while the pod's IP changes every time. Those names are
+the `--peers` list. It has to publish names of pods that aren't ready yet: a node
+becomes ready by joining the cluster, and it can't join what it can't find.
+
+**Live and ready are different questions.** Live: is the process working? If not,
+restart it. Ready: is this node useful right now? If not, send it nothing, and don't
+restart anything. A node with no leader is alive and not ready. If liveness looked at
+the cluster, any outage would have Kubernetes restarting every node in a loop.
+
+**Ready has to be Raft's answer.** Kubernetes uses readiness three times: the client
+Service routes only to ready pods, a rolling update moves on only when the replaced
+pod is ready, and the disruption budget counts only ready pods. If ready meant "the
+process is up", a rolling update would stop the second node while the first was still
+catching up. So a follower is ready when it follows a leader and has applied what
+that leader has committed, and a leader is ready when a majority answers a ReadIndex
+round.
+
+**"Caught up" needs a fresh mark to measure against.** A follower's own commit index
+is no use: it is the smaller of the leader's commit index and the end of what the
+follower has received, so far behind and halfway through catching up, it has applied
+everything it has committed and looks perfect. The leader's commit index from the
+last AppendEntries looks like the answer and isn't, for a reason the second bug below
+explains. The rule that holds is to ask the leader at the moment the question is
+asked.
+
+**A disruption budget covers evictions only.** Draining a node asks the API server
+to evict each pod, and the API server refuses an eviction that would leave fewer than
+the budget allows. It does nothing about a crash, a deleted pod or a rolling update.
+
+**Terraform is a description plus a memory.** The files say what should exist, the
+state file remembers what Terraform made, and `plan` shows the difference before
+anything changes. Pinning has three layers here: exact provider versions, a lock
+file with the providers' checksums, and a node image pinned by digest.
+
+**One clock.** M5 lined up Docker's event log with the nodes' logs. Here one process
+starts kubectl, polls every node's Status and runs the clients, so every time comes
+from the same clock and nothing is read out of a log.
+
+**Telling the new leader's writes from the old leader's.** After `kubectl delete`
+returns, the old leader keeps serving until its signal arrives. So "the first write
+after the delete" would usually be one the old leader took. Every write
+acknowledgement now carries the term of the node that sent it, and the first
+acknowledgement in a higher term is the first write the new leader took.
+
+### Two real bugs and one mistake
+
+**1. A vote lost on a stream nobody was watching.** Two of the first three
+development trials elected a leader in two terms instead of one. The surviving
+node's log showed why: at the instant it became a candidate and sent its vote
+requests, it logged `stream to peer lost` for its stream to the other survivor.
+
+Two followers send each other nothing between elections, so the stream between them
+sits idle. Every trial restarts a pod, which kills that idle stream, and nothing
+noticed, because only a `Send` finds out that a stream has ended. The first message
+written to it was the next election's RequestVote, or the reply to one, and it was
+lost with the stream. That election failed, and failover waited for the other node's
+timer.
+
+Nothing in the Raft code was wrong, and no history was illegal: Raft assumes any
+message can be lost. It cost an election timeout in most failovers. The fix is in
+`internal/server/peer.go`: every stream has a receive waiting on it, which returns as
+soon as the stream ends, so an idle stream is reopened before anything needs it.
+`TestPeerReopensAStreamThatDiedWhileIdle` fails without it.
+
+In the acceptance run, 94 of 100 elections finished in one term.
+The rest took two, and that is a different thing. A development run with every pod's
+log recorded caught one: the first candidate's request arrived, with no stream lost,
+and was refused, and the other node won on its own timer. That is the election rule
+working: a node that is missing the last entries the leader sent can't be elected by
+the node that has them.
+
+M5's 100 partition schedules never showed this, because there the two nodes left
+after a leader was cut off had not restarted since they last talked. A new kind of
+fault found a new bug.
+
+**2. Ready, measured against a stale number.** The first readiness rule compared a
+follower's applied index with the commit index in the last AppendEntries it had
+accepted. The second acceptance run failed a test on it: a follower that had missed
+200 writes said it was ready with 3 entries applied, and with the leader's commit
+index recorded as 3.
+
+While a follower is down, the leader's messages to it wait in a queue. When it
+returns they arrive oldest first, and the oldest carries the commit index from the
+moment the follower went down, which is exactly how far the follower has applied. For
+a few milliseconds a node with everything still to do measured itself against that
+and passed. A probe landing in that window would have let a rolling update move on to
+the next pod early.
+
+This one was a wrong design, not a slip. The fix is that a follower asks the node it
+follows for its Status when it is asked whether it is ready, and compares against
+that answer. The test that caught it was rewritten to ask with no pause, so it hits
+the window when there is one: 6 failures in 20 runs on the old rule, 30 passes in 30
+on the new. It passed most runs before, which is why the first acceptance run was
+clean. A test that fails one time in six is telling the truth one time in six.
+
+**3. A private key in the logs.** The runner keeps Terraform's output as evidence.
+`terraform destroy` prints what it is about to remove, and the kind provider doesn't
+mark the cluster's client key as sensitive, so four logs of the first run held a
+private key. Each key opened only a local cluster that was already gone, and none of
+the logs was committed. They were deleted. `scripts/k8s/terraform.sh` and
+`kube.Redact` now replace credentials with `[redacted]` before anything is shown or
+written, and the runner greps everything it records.
+
+### Three runs
+
+| Run | Commit | What happened |
+|---|---|---|
+| First | `51ab47e` | passed every criterion. Its logs held the key, so they were deleted and the run is not the one reported. Its reports are in `results/audit/k8s/first-run/` |
+| Second | `c561fc8` | failed T3 and T4 on the readiness test in its first minute, and was stopped there. Its record is in `results/audit/k8s/second-run/` |
+| Third | `04d32c1` | the run reported here, on the final code |
+
+The first run's numbers were close to the third's: a new leader in a median of
+705 ms against 645 ms, and a cold start in
+34.1 s against 34.8 s.
+
+### Results
+
+Every number here is read from `results/k8s-*.json` and `results/audit/k8s/`, from
+one run of `scripts/audit/k8s/run.sh` on commit `04d32c1`, the third. The full
+tables are in `results/RESULTS.md`. The laptop was on battery for this run and on
+mains for the first.
+
+| Check | Result |
+|---|---|
+| Format, vet, tests, race detector, dependencies, Terraform format and validate | all pass |
+| One `terraform apply` from nothing | 3 pods Ready and one agreed leader when it returned |
+| Live checks: objects, client Service, readiness, disruption budget | 7 of 7 pass |
+| Leader failovers | 100 of 100 elected a new leader, took a write and settled |
+| Time to a new leader: median / p95 / max | 645 / 924 / 1,033 ms |
+| Time to the first successful write: median / p95 / max | 674 / 1,170 / 1,203 ms |
+| Acknowledged writes lost across the failovers | 0 of 83,600 |
+| Writes applied twice, and Porcupine's answer | 0, and Ok |
+| Failed client requests across the failovers | 0 of 139,431 |
+| Replacement pods that started from their own volume | 100 of 100 |
+| Every pod deleted at once | 5 of 5 recovered, 0 of 2,807 acknowledged writes lost |
+| Rolling updates under load | 10 of 10 finished on the new version |
+| Rollout time: median / min / max | 8.8 / 8.3 / 9.5 s |
+| Failed client requests during the rollouts (target 0) | 0 of 36,924 |
+| Cold start: median / min / max of 10 | 34.8 / 33.7 / 37.4 s |
+| `no-dedup` planted, 20 failovers | 10 writes applied twice, Porcupine: Illegal |
+| Data on an `emptyDir`, every pod deleted 3 times | 21,599 of 31,495 acknowledged writes lost |
+| Credentials in anything the run recorded | none |
+
+### Reading the numbers
+
+**A new leader in about 645 ms.** Election timeouts are drawn from 500 ms
+to 1 s and restart at every message from the leader, so when the leader stops, two
+timers are running and the earlier one usually wins. The old leader kept answering
+for a median of 33 ms after kubectl was started, which is how long
+Kubernetes took to deliver the signal. M5 measured a median of 584 ms from a network
+cut, which is a different starting point, so the two are not the same measurement.
+
+**The first write lags the leader, and the lag comes in two sizes.** The first write
+was acknowledged a median of 119 ms after the new leader was first seen,
+and in 44 of 100 trials it took over a second from the
+delete. The cluster could take writes the whole time. The clients were waiting: the
+client library's pause between tries doubles from 20 ms to 500 ms with no jitter, so
+six clients that failed together retry together. If the leader appears just after a
+retry, they all wait for the next one. Random jitter in the pause would fix that. It
+was measured as it is.
+
+**No request failed in a rolling update, and that is not the same as nobody
+noticing.** Every rollout replaced the leader's pod at least once: 1
+to 3 leader changes per rollout, and the term moved by up to
+5, which counts elections nobody won. Requests have 4 s and the library
+retries, so none failed. 132 of 36,924 needed a retry, the longest
+stretch with no write acknowledged was 2,633 ms, and the slowest request took
+2,630 ms.
+
+**Why one rollout causes several elections.** Pods are replaced highest ordinal
+first. When the leader's pod goes, the other two elect one of themselves. If the new
+leader has a lower ordinal, its turn comes a few seconds later, and there is another
+election. Handing leadership to a pod that has already been replaced, before
+stopping, would make it one election or none. That is not built.
+
+**A node that rejoins could force an election, and in the failover trials it never
+did.** Pre-vote is not implemented, so a restarted node that hears no leader for one
+election timeout starts an election in a higher term, and the leader steps down for
+it even though it can't win. It happened in 0 of 100 failover
+trials: the leader reached each replacement before its first timeout ran out. The
+rollouts did have elections nobody won, which this and a refused candidate both
+produce, and the reports can't tell the two apart.
+
+**Deleting every pod is the test of the volumes.** A failover leaves two nodes
+holding the data, so it would pass on any storage. With all three pods gone, only
+the volume claims can bring anything back: 0 of 2,807 acknowledged
+writes lost, and every pod started with its term and its log. On an `emptyDir` the
+same test lost 21,599 of 31,495, and the nodes forgot their term as well.
+All three pods were Ready again a median of 2.9 s after the delete, and
+1 of 4,612 requests ran out of its 4 s in that gap.
+
+**Cold start is mostly Kubernetes starting.** Of the 34.8 s, the kind
+cluster took 26.6 s to exist and answer, and raftkv went from pods created at
+28.0 s to three ready pods with a leader at 34.8 s.
+
+### What this does not show
+
+- One laptop, one Kubernetes node. All three pods share one VM and one disk, and the
+  network between them is a bridge inside it. None of this is a production number.
+- `kubectl delete pod` is a clean stop: SIGTERM, files closed. It is not a power cut,
+  since the node container keeps running and its page cache survives. M0's crash
+  harness kills the engine with SIGKILL; M5 cut the network.
+- The host reaches the pods through Docker's port forwarding, which adds a hop to
+  every request and to every Status poll.
+- Cold start had the node image and Docker's build cache already on the machine.
+- The CI workflow has not run.
+- A seed fixes each client's operations, not how real processes interleave.
+
+### Questions and answers
+
+**Q: Why a StatefulSet and not a Deployment?**
+A Raft node is an identity plus a log. A StatefulSet gives a replacement pod the same
+name and the same volume, so it comes back as the same node. A Deployment would give
+it a new name and an empty disk.
+
+**Q: What is the headless Service for?**
+A DNS name per pod that survives restarts. Nodes have to reach one particular peer,
+not any of them, and a pod's IP changes every time it is replaced.
+
+**Q: What is the difference between liveness and readiness here?**
+Liveness asks whether the node's loop still answers, and a failure restarts the
+container. Readiness asks whether the node is useful to the cluster now, and a
+failure only stops traffic and holds a rolling update. A node with no leader is alive
+and not ready.
+
+**Q: How does a follower know it is caught up?**
+It asks its leader for its commit index when the question is asked, and compares
+that with what it has applied. Its own commit index can't tell it, and neither can
+the last message it received, which may have sat in a queue.
+
+**Q: What does the disruption budget protect against?**
+Evictions: a node drain or an upgrade taking two pods at once. Not crashes, not a
+deleted pod, not a rolling update.
+
+**Q: How do you know no acknowledged write was lost?**
+Clients only append, and every appended value is unique. After the run, one client
+reads every key, and every acknowledged value must be there exactly once. Porcupine
+then checks the whole history. Both checks are shown to fail on a planted bug.
+
+**Q: How is failover timed?**
+One process starts kubectl, polls each node's Status about every 5.5 ms,
+and runs the clients, so every time is on one clock. The start is just before kubectl
+runs. The end is the first poll showing a leader in a higher term, or the first write
+acknowledged in a higher term.
+
+**Q: What would make failover faster?**
+A shorter election timeout, at the risk of elections on a slow network. Leadership
+transfer when a node is told to stop. Jitter in the client's retries, which would cut
+the time to the first write without touching the cluster.
+
 ## M5: partitions on real containers, checked with Porcupine
 
 Criteria: `docs/acceptance/M5.md`. Results: `results/chaos.json` and
