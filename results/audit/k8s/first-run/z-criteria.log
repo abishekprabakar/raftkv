@@ -1,0 +1,31 @@
+ok   A1 after one apply, 3 pods are Ready and the nodes agree on a leader
+ok   A2 the StatefulSet, Services, budget, claims and probes are as specified
+ok   A4 a write and a read through the client Service, from a pod and from the host
+ok   K1 a node without a majority is Running, not Ready, and not restarted
+ok   K1-plan terraform plan reports no changes after K1
+ok   K2 the disruption budget lets a drain evict only one pod
+ok   K2-plan terraform plan reports no changes after K2
+ok   F1 100 trials: 0 without a new leader, 0 not settled, 0 errors
+ok   F2 replacements that did not start from their volume: 0 of 100
+ok   failover D1 acknowledged writes lost: 0 of 81813
+ok   failover D2 duplicated: 0, never written: 0
+ok   failover D3 final reads failed: 0 of 1204 keys
+ok   failover D4 Porcupine: Ok in 0.0 s
+     time to a new leader: median 705 ms, p95 954 ms, min 541, max 1014 (n=100)
+     time to the first successful write: median 755 ms, p95 1193 ms, min 662, max 1214 (n=100)
+ok   R1 5 of 5 rounds recovered, every pod from its volume
+ok   restart D1 acknowledged writes lost: 0 of 2841
+ok   restart D2 duplicated: 0, never written: 0
+ok   restart D3 final reads failed: 0 of 60 keys
+ok   restart D4 Porcupine: Ok in 0.0 s
+ok   U1 10 of 10 rollouts finished on the new version
+ok   rollout D1 acknowledged writes lost: 0 of 30709
+ok   rollout D2 duplicated: 0, never written: 0
+ok   rollout D3 final reads failed: 0 of 432 keys
+ok   rollout D4 Porcupine: Ok in 0.0 s
+ok   U3 failed client requests (target 0): 0 of 35103
+     rollout time: median 8.9 s, min 8.7, max 10.2
+ok   C1 10 of 10 cold starts reached 3 Ready pods and a leader
+     cold start: median 34.1 s, min 33.1, max 36.6
+ok   P2 with no-dedup planted: 15 duplicated writes, Porcupine Illegal
+ok   P3 on an emptyDir: 11414 of 21347 acknowledged writes lost

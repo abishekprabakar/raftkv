@@ -1,0 +1,14 @@
+round 1: raftkv:v1 -> raftkv:v2; rollout 9.1 s (apply 19.7 s); 3254 requests, 0 failed, 108 retries, longest 1141 ms; longest write gap 1149 ms; 3 leader changes; new version everywhere true
+round 2: raftkv:v2 -> raftkv:v1; rollout 8.8 s (apply 18.0 s); 3708 requests, 0 failed, 61 retries, longest 1314 ms; longest write gap 1149 ms; 2 leader changes; new version everywhere true
+round 3: raftkv:v1 -> raftkv:v2; rollout 9.1 s (apply 18.4 s); 3844 requests, 0 failed, 60 retries, longest 640 ms; longest write gap 655 ms; 2 leader changes; new version everywhere true
+round 4: raftkv:v2 -> raftkv:v1; rollout 8.9 s (apply 17.9 s); 3626 requests, 0 failed, 63 retries, longest 1316 ms; longest write gap 1144 ms; 2 leader changes; new version everywhere true
+round 5: raftkv:v1 -> raftkv:v2; rollout 10.2 s (apply 18.6 s); 3428 requests, 0 failed, 102 retries, longest 1134 ms; longest write gap 1138 ms; 3 leader changes; new version everywhere true
+round 6: raftkv:v2 -> raftkv:v1; rollout 9.0 s (apply 17.9 s); 3511 requests, 0 failed, 73 retries, longest 2645 ms; longest write gap 1153 ms; 2 leader changes; new version everywhere true
+round 7: raftkv:v1 -> raftkv:v2; rollout 8.9 s (apply 18.8 s); 3222 requests, 0 failed, 78 retries, longest 2633 ms; longest write gap 2641 ms; 3 leader changes; new version everywhere true
+round 8: raftkv:v2 -> raftkv:v1; rollout 8.7 s (apply 18.1 s); 3558 requests, 0 failed, 94 retries, longest 1305 ms; longest write gap 1140 ms; 3 leader changes; new version everywhere true
+round 9: raftkv:v1 -> raftkv:v2; rollout 8.9 s (apply 18.5 s); 3506 requests, 0 failed, 96 retries, longest 1131 ms; longest write gap 1137 ms; 3 leader changes; new version everywhere true
+round 10: raftkv:v2 -> raftkv:v1; rollout 8.7 s (apply 17.8 s); 3446 requests, 0 failed, 90 retries, longest 2633 ms; longest write gap 1146 ms; 3 leader changes; new version everywhere true
+clients: 51337 requests, 0 failed, 825 retries; writes 30709 acknowledged, 0 unknown
+durability over 432 keys: 0 acknowledged writes lost, 0 duplicated, 0 values never written, 0 keys not read
+Porcupine: Ok in 0.0 s
+10 rounds, 10 passed; rollout time median 8.9 s (min 8.7, max 10.2); 0 of 35103 requests failed (0.000%)

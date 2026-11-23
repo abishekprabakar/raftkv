@@ -1,0 +1,149 @@
+terraform_data.image: Refreshing state... [id=a72df5bb-219f-a747-3a62-5c5d25ab6884]
+kind_cluster.this: Refreshing state... [id=raftkv-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5]
+kind_load.image: Refreshing state... [id=raftkv|sha256:6994904ff71416fee7afa8d3dd9ae92e011ba63a0520a5f19d692a0351870c1b]
+kubernetes_namespace_v1.raftkv: Refreshing state... [id=raftkv]
+kubernetes_service_v1.pod[2]: Refreshing state... [id=raftkv/raftkv-2-host]
+kubernetes_service_v1.peers: Refreshing state... [id=raftkv/raftkv-peers]
+kubernetes_pod_disruption_budget_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+kubernetes_service_v1.pod[0]: Refreshing state... [id=raftkv/raftkv-0-host]
+kubernetes_service_v1.pod[1]: Refreshing state... [id=raftkv/raftkv-1-host]
+kubernetes_service_v1.client: Refreshing state... [id=raftkv/raftkv-client]
+kubernetes_stateful_set_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # kind_load.image will be replaced due to changes in replace_triggered_by
+-/+ resource "kind_load" "image" {
+      ~ id           = "raftkv|sha256:6994904ff71416fee7afa8d3dd9ae92e011ba63a0520a5f19d692a0351870c1b" -> (known after apply)
+      ~ image        = "raftkv:v1" -> "raftkv:no-dedup" # forces replacement
+        # (1 unchanged attribute hidden)
+    }
+
+  # kubernetes_stateful_set_v1.raftkv will be updated in-place
+  ~ resource "kubernetes_stateful_set_v1" "raftkv" {
+        id               = "raftkv/raftkv"
+        # (1 unchanged attribute hidden)
+
+      ~ spec {
+            # (5 unchanged attributes hidden)
+
+          ~ template {
+              ~ metadata {
+                  ~ annotations      = {
+                      ~ "raftkv/source-hash" = "0457feacc3950cc1755d7540b0085f5f1cc87537b882b7f7b778b9f0d76e832c" -> "2cdf86442be3186ba4edeefa88bc21b2a3a915d6fa66fb1d9f9228e8376c5b05"
+                    }
+                    name             = null
+                    # (6 unchanged attributes hidden)
+                }
+              ~ spec {
+                    # (18 unchanged attributes hidden)
+
+                  ~ container {
+                      ~ image                      = "raftkv:v1" -> "raftkv:no-dedup"
+                        name                       = "raftkvd"
+                        # (10 unchanged attributes hidden)
+
+                        # (8 unchanged blocks hidden)
+                    }
+
+                    # (2 unchanged blocks hidden)
+                }
+            }
+
+            # (4 unchanged blocks hidden)
+        }
+
+        # (1 unchanged block hidden)
+    }
+
+  # terraform_data.image must be replaced
+-/+ resource "terraform_data" "image" {
+      ~ id               = "a72df5bb-219f-a747-3a62-5c5d25ab6884" -> (known after apply)
+      ~ triggers_replace = {
+          ~ image  = "raftkv:v1" -> "raftkv:no-dedup"
+          ~ source = "0457feacc3950cc1755d7540b0085f5f1cc87537b882b7f7b778b9f0d76e832c" -> "2cdf86442be3186ba4edeefa88bc21b2a3a915d6fa66fb1d9f9228e8376c5b05"
+        }
+    }
+
+Plan: 2 to add, 1 to change, 2 to destroy.
+
+Changes to Outputs:
+  ~ image                     = "raftkv:v1" -> "raftkv:no-dedup"
+kind_load.image: Destroying... [id=raftkv|sha256:6994904ff71416fee7afa8d3dd9ae92e011ba63a0520a5f19d692a0351870c1b]
+kind_load.image: Destruction complete after 0s
+terraform_data.image: Destroying... [id=a72df5bb-219f-a747-3a62-5c5d25ab6884]
+terraform_data.image: Destruction complete after 0s
+terraform_data.image: Creating...
+terraform_data.image: Provisioning with 'local-exec'...
+terraform_data.image (local-exec): Executing: ["/bin/sh" "-c" "docker build --quiet --build-arg VERSION=no-dedup --tag raftkv:no-dedup $TMPDIR/raftkv-k8s.W56dKh/src"]
+terraform_data.image (local-exec): sha256:7b0fa1b3f66452c8b38342070a966e353359bdd73de7dfa303809b92a7f3a697
+terraform_data.image: Creation complete after 2s [id=8d678555-1193-1542-7033-12519ddf8de5]
+kind_load.image: Creating...
+kind_load.image: Creation complete after 1s [id=raftkv|sha256:7b0fa1b3f66452c8b38342070a966e353359bdd73de7dfa303809b92a7f3a697]
+kubernetes_stateful_set_v1.raftkv: Modifying... [id=raftkv/raftkv]
+kubernetes_stateful_set_v1.raftkv: Still modifying... [id=raftkv/raftkv, 00m10s elapsed]
+kubernetes_stateful_set_v1.raftkv: Modifications complete after 16s [id=raftkv/raftkv]
+
+Apply complete! Resources: 2 added, 1 changed, 2 destroyed.
+
+Outputs:
+
+client_address = "127.0.0.1:17000"
+client_address_in_cluster = "raftkv-client.raftkv.svc.cluster.local:7000"
+image = "raftkv:no-dedup"
+kubeconfig = "$HOME/projects/raftkv/deploy/terraform/kubeconfig"
+namespace = "raftkv"
+node_container = "raftkv-control-plane"
+nodes = [
+  {
+    "address" = "raftkv-0.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17001"
+    "id" = 1
+    "pod" = "raftkv-0"
+  },
+  {
+    "address" = "raftkv-1.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17002"
+    "id" = 2
+    "pod" = "raftkv-1"
+  },
+  {
+    "address" = "raftkv-2.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17003"
+    "id" = 3
+    "pod" = "raftkv-2"
+  },
+]
+statefulset = "raftkv"
+trial 1: deleted [raftkv-0] in term 3; new leader raftkv-2 in term 4 after 592 ms; first write after 691 ms; pods ready after 2469 ms; settled after 2469 ms; 0 extra leader changes; from volume true
+trial 2: deleted [raftkv-2] in term 4; new leader raftkv-0 in term 5 after 726 ms; first write after 1177 ms; pods ready after 2753 ms; settled after 2753 ms; 0 extra leader changes; from volume true
+trial 3: deleted [raftkv-0] in term 5; new leader raftkv-2 in term 6 after 609 ms; first write after 662 ms; pods ready after 3102 ms; settled after 3102 ms; 0 extra leader changes; from volume true
+trial 4: deleted [raftkv-2] in term 6; new leader raftkv-0 in term 7 after 541 ms; first write after 670 ms; pods ready after 2813 ms; settled after 2813 ms; 0 extra leader changes; from volume true
+trial 5: deleted [raftkv-0] in term 7; new leader raftkv-2 in term 8 after 769 ms; first write after 1166 ms; pods ready after 2788 ms; settled after 2788 ms; 0 extra leader changes; from volume true
+trial 6: deleted [raftkv-2] in term 8; new leader raftkv-1 in term 9 after 707 ms; first write after 1167 ms; pods ready after 2976 ms; settled after 2976 ms; 0 extra leader changes; from volume true
+trial 7: deleted [raftkv-1] in term 9; new leader raftkv-0 in term 10 after 635 ms; first write after 666 ms; pods ready after 2907 ms; settled after 2907 ms; 0 extra leader changes; from volume true
+trial 8: deleted [raftkv-0] in term 10; new leader raftkv-2 in term 11 after 542 ms; first write after 663 ms; pods ready after 2813 ms; settled after 2813 ms; 0 extra leader changes; from volume true
+trial 9: deleted [raftkv-2] in term 11; new leader raftkv-1 in term 12 after 789 ms; first write after 1173 ms; pods ready after 3069 ms; settled after 3069 ms; 0 extra leader changes; from volume true
+trial 10: deleted [raftkv-1] in term 12; new leader raftkv-2 in term 13 after 535 ms; first write after 677 ms; pods ready after 2812 ms; settled after 2812 ms; 0 extra leader changes; from volume true
+trial 11: deleted [raftkv-2] in term 13; new leader raftkv-1 in term 14 after 573 ms; first write after 663 ms; pods ready after 2871 ms; settled after 2871 ms; 0 extra leader changes; from volume true
+trial 12: deleted [raftkv-1] in term 14; new leader raftkv-2 in term 15 after 793 ms; first write after 1179 ms; pods ready after 2828 ms; settled after 2828 ms; 0 extra leader changes; from volume true
+trial 13: deleted [raftkv-2] in term 15; new leader raftkv-0 in term 16 after 717 ms; first write after 1164 ms; pods ready after 2988 ms; settled after 2988 ms; 0 extra leader changes; from volume true
+trial 14: deleted [raftkv-0] in term 16; new leader raftkv-2 in term 17 after 633 ms; first write after 662 ms; pods ready after 2897 ms; settled after 2897 ms; 0 extra leader changes; from volume true
+trial 15: deleted [raftkv-2] in term 17; new leader raftkv-0 in term 18 after 647 ms; first write after 668 ms; pods ready after 2915 ms; settled after 2915 ms; 0 extra leader changes; from volume true
+trial 16: deleted [raftkv-0] in term 18; new leader raftkv-2 in term 19 after 744 ms; first write after 1168 ms; pods ready after 2766 ms; settled after 2766 ms; 0 extra leader changes; from volume true
+trial 17: deleted [raftkv-2] in term 19; new leader raftkv-1 in term 21 after 678 ms; first write after 687 ms; pods ready after 2953 ms; settled after 2953 ms; 0 extra leader changes; from volume true
+trial 18: deleted [raftkv-1] in term 21; new leader raftkv-0 in term 23 after 850 ms; first write after 1163 ms; pods ready after 2863 ms; settled after 2863 ms; 0 extra leader changes; from volume true
+trial 19: deleted [raftkv-0] in term 23; new leader raftkv-1 in term 24 after 804 ms; first write after 1170 ms; pods ready after 3080 ms; settled after 3080 ms; 0 extra leader changes; from volume true
+trial 20: deleted [raftkv-1] in term 24; new leader raftkv-2 in term 25 after 651 ms; first write after 667 ms; pods ready after 2904 ms; settled after 2904 ms; 0 extra leader changes; from volume true
+clients: 27929 requests, 0 failed, 653 retries; writes 16684 acknowledged, 0 unknown
+durability over 244 keys: 0 acknowledged writes lost, 15 duplicated, 0 values never written, 0 keys not read
+Porcupine: Illegal in 0.0 s
+a drawing of the violation is in $HOME/projects/raftkv/results/audit/k8s/planted-no-dedup/violation.html.gz
+20 trials, 20 passed: 0 without a new leader, 0 without a first write, 0 not settled, 0 not from the volume
+time to a new leader: median 651 ms, p95 804 ms, min 535, max 850
+time to the first successful write: median 687 ms, p95 1177 ms, min 662, max 1179

@@ -1,0 +1,76 @@
+{
+  "generated_at": "2026-11-23T09:06:14Z",
+  "command": "kubebench check",
+  "hardware": {
+    "collected_at": "2026-11-23T09:05:16Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "The pods and their volumes are inside Docker's Linux VM. The filesystem named here is the host's, where only the harness runs."
+  },
+  "versions": {
+    "docker": "29.7.2",
+    "kubernetes": "v1.37.0",
+    "kubectl": "v1.36.1",
+    "kind_node_image": "kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5",
+    "terraform": "1.17.0",
+    "docker_cpus": 10,
+    "docker_memory_bytes": 8319504384,
+    "source_commit": "51ab47e58980b8d75ec520f319948acfe269c456",
+    "source_tree_had_changes": true,
+    "power": "AC Power"
+  },
+  "image": "raftkv:v1",
+  "wall_seconds": 57.718469375,
+  "passed": 7,
+  "failed": 0,
+  "checks": [
+    {
+      "id": "A1",
+      "what": "after one apply, 3 pods are Ready and the nodes agree on a leader",
+      "pass": true,
+      "detail": "3 of 3 pods Ready; every node names raftkv-0 (node 1) leader in term 1"
+    },
+    {
+      "id": "A2",
+      "what": "the StatefulSet, Services, budget, claims and probes are as specified",
+      "pass": true,
+      "detail": "StatefulSet: 3 replicas, Parallel start, RollingUpdate, 3 probes; headless Service raftkv-peers publishes not-ready addresses; client Service raftkv-client; budget maxUnavailable 1, 1 disruption allowed; 3 claims Bound"
+    },
+    {
+      "id": "A4",
+      "what": "a write and a read through the client Service, from a pod and from the host",
+      "pass": true,
+      "detail": "put and get through raftkv-client.raftkv.svc.cluster.local:7000 from two pods, and through 127.0.0.1:17000 from the host"
+    },
+    {
+      "id": "K1",
+      "what": "a node without a majority is Running, not Ready, and not restarted",
+      "pass": true,
+      "detail": "raftkv-0 alone: not Ready 4.8 s after the scale-down, still Running with 0 restarts after 20s. The kubelet's last probe failure: Readiness probe failed: HTTP probe failed with statuscode: 503. Scaled back: 3 Ready, and the key written before reads back"
+    },
+    {
+      "id": "K1-plan",
+      "what": "terraform plan reports no changes after K1",
+      "pass": true,
+      "detail": "terraform plan -detailed-exitcode exited 0"
+    },
+    {
+      "id": "K2",
+      "what": "the disruption budget lets a drain evict only one pod",
+      "pass": true,
+      "detail": "the drain evicted raftkv-0 and was refused the other two for 30s (\"Cannot evict pod as it would violate the pod's disruption budget\"); 2 pods stayed Ready and a write succeeded meanwhile; after uncordon, 3 Ready"
+    },
+    {
+      "id": "K2-plan",
+      "what": "terraform plan reports no changes after K2",
+      "pass": true,
+      "detail": "terraform plan -detailed-exitcode exited 0"
+    }
+  ]
+}

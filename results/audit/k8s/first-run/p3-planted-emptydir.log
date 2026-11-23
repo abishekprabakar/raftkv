@@ -1,0 +1,248 @@
+terraform_data.image: Refreshing state... [id=8d678555-1193-1542-7033-12519ddf8de5]
+kind_cluster.this: Refreshing state... [id=raftkv-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5]
+kind_load.image: Refreshing state... [id=raftkv|sha256:7b0fa1b3f66452c8b38342070a966e353359bdd73de7dfa303809b92a7f3a697]
+kubernetes_namespace_v1.raftkv: Refreshing state... [id=raftkv]
+kubernetes_pod_disruption_budget_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+kubernetes_service_v1.peers: Refreshing state... [id=raftkv/raftkv-peers]
+kubernetes_service_v1.pod[1]: Refreshing state... [id=raftkv/raftkv-1-host]
+kubernetes_service_v1.pod[2]: Refreshing state... [id=raftkv/raftkv-2-host]
+kubernetes_service_v1.client: Refreshing state... [id=raftkv/raftkv-client]
+kubernetes_service_v1.pod[0]: Refreshing state... [id=raftkv/raftkv-0-host]
+kubernetes_stateful_set_v1.raftkv: Refreshing state... [id=raftkv/raftkv]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # kind_load.image will be replaced due to changes in replace_triggered_by
+-/+ resource "kind_load" "image" {
+      ~ id           = "raftkv|sha256:7b0fa1b3f66452c8b38342070a966e353359bdd73de7dfa303809b92a7f3a697" -> (known after apply)
+      ~ image        = "raftkv:no-dedup" -> "raftkv:v1" # forces replacement
+        # (1 unchanged attribute hidden)
+    }
+
+  # kubernetes_stateful_set_v1.raftkv must be replaced
+-/+ resource "kubernetes_stateful_set_v1" "raftkv" {
+      ~ id               = "raftkv/raftkv" -> (known after apply)
+        # (1 unchanged attribute hidden)
+
+      ~ metadata {
+          - annotations      = {} -> null
+          ~ generation       = 2 -> (known after apply)
+            name             = "raftkv"
+          ~ resource_version = "2006" -> (known after apply)
+          ~ uid              = "bc8f8d77-76a2-487b-8dc4-f8ab3c06d474" -> (known after apply)
+            # (3 unchanged attributes hidden)
+        }
+
+      ~ spec {
+          ~ revision_history_limit = 0 -> (known after apply)
+            # (4 unchanged attributes hidden)
+
+          ~ persistent_volume_claim_retention_policy (known after apply)
+          - persistent_volume_claim_retention_policy {
+              - when_deleted = "Retain" -> null
+              - when_scaled  = "Retain" -> null
+            }
+
+          ~ template {
+              ~ metadata {
+                  ~ annotations      = {
+                      ~ "raftkv/source-hash" = "2cdf86442be3186ba4edeefa88bc21b2a3a915d6fa66fb1d9f9228e8376c5b05" -> "0457feacc3950cc1755d7540b0085f5f1cc87537b882b7f7b778b9f0d76e832c"
+                    }
+                  ~ generation       = 0 -> (known after apply)
+                  + name             = (known after apply)
+                  + resource_version = (known after apply)
+                  + uid              = (known after apply)
+                    # (3 unchanged attributes hidden)
+                }
+              ~ spec {
+                  - active_deadline_seconds          = 0 -> null
+                  + hostname                         = (known after apply)
+                  + node_name                        = (known after apply)
+                  - node_selector                    = {} -> null
+                  ~ scheduler_name                   = "default-scheduler" -> (known after apply)
+                  + service_account_name             = (known after apply)
+                    # (12 unchanged attributes hidden)
+
+                  ~ container {
+                      - command                    = [] -> null
+                      ~ image                      = "raftkv:no-dedup" -> "raftkv:v1"
+                        name                       = "raftkvd"
+                      + restart_policy             = (known after apply)
+                      ~ termination_message_policy = "File" -> (known after apply)
+                        # (7 unchanged attributes hidden)
+
+                      ~ liveness_probe {
+                          - initial_delay_seconds = 0 -> null
+                            # (4 unchanged attributes hidden)
+
+                            # (1 unchanged block hidden)
+                        }
+
+                      ~ port {
+                          - host_port      = 0 -> null
+                            name           = "grpc"
+                            # (3 unchanged attributes hidden)
+                        }
+                      ~ port {
+                          - host_port      = 0 -> null
+                            name           = "health"
+                            # (3 unchanged attributes hidden)
+                        }
+
+                      ~ readiness_probe {
+                          - initial_delay_seconds = 0 -> null
+                            # (4 unchanged attributes hidden)
+
+                            # (1 unchanged block hidden)
+                        }
+
+                      ~ security_context {
+                          - run_as_non_root            = false -> null
+                            # (5 unchanged attributes hidden)
+
+                          ~ capabilities {
+                              - add  = [] -> null
+                                # (1 unchanged attribute hidden)
+                            }
+                        }
+
+                      ~ startup_probe {
+                          - initial_delay_seconds = 0 -> null
+                            # (4 unchanged attributes hidden)
+
+                            # (1 unchanged block hidden)
+                        }
+
+                        # (2 unchanged blocks hidden)
+                    }
+
+                  ~ image_pull_secrets (known after apply)
+
+                  ~ readiness_gate (known after apply)
+
+                  ~ security_context {
+                      - supplemental_groups    = [] -> null
+                        # (5 unchanged attributes hidden)
+
+                        # (1 unchanged block hidden)
+                    }
+
+                  ~ topology_spread_constraint {
+                      - match_label_keys     = [] -> null
+                      - min_domains          = 0 -> null
+                        # (5 unchanged attributes hidden)
+
+                        # (1 unchanged block hidden)
+                    }
+
+                  + volume {
+                      + name = "data"
+
+                      + empty_dir {}
+                    }
+                }
+            }
+
+          - volume_claim_template { # forces replacement
+              - metadata {
+                  - annotations      = {} -> null
+                  - generation       = 0 -> null
+                  - labels           = {} -> null
+                  - name             = "data" -> null
+                  - namespace        = "default" -> null
+                    # (3 unchanged attributes hidden)
+                }
+              - spec {
+                  - access_modes       = [ # forces replacement
+                      - "ReadWriteOnce",
+                    ] -> null
+                  - volume_mode        = "Filesystem" -> null
+                    # (2 unchanged attributes hidden)
+
+                  - resources {
+                      - limits   = {} -> null
+                      - requests = {
+                          - "storage" = "1Gi"
+                        } -> null
+                    }
+                }
+            }
+
+            # (2 unchanged blocks hidden)
+        }
+    }
+
+  # terraform_data.image must be replaced
+-/+ resource "terraform_data" "image" {
+      ~ id               = "8d678555-1193-1542-7033-12519ddf8de5" -> (known after apply)
+      ~ triggers_replace = {
+          ~ image  = "raftkv:no-dedup" -> "raftkv:v1"
+          ~ source = "2cdf86442be3186ba4edeefa88bc21b2a3a915d6fa66fb1d9f9228e8376c5b05" -> "0457feacc3950cc1755d7540b0085f5f1cc87537b882b7f7b778b9f0d76e832c"
+        }
+    }
+
+Plan: 3 to add, 0 to change, 3 to destroy.
+
+Changes to Outputs:
+  ~ image                     = "raftkv:no-dedup" -> "raftkv:v1"
+kubernetes_stateful_set_v1.raftkv: Destroying... [id=raftkv/raftkv]
+kubernetes_stateful_set_v1.raftkv: Destruction complete after 0s
+kind_load.image: Destroying... [id=raftkv|sha256:7b0fa1b3f66452c8b38342070a966e353359bdd73de7dfa303809b92a7f3a697]
+kind_load.image: Destruction complete after 0s
+terraform_data.image: Destroying... [id=8d678555-1193-1542-7033-12519ddf8de5]
+terraform_data.image: Destruction complete after 0s
+terraform_data.image: Creating...
+terraform_data.image: Provisioning with 'local-exec'...
+terraform_data.image (local-exec): Executing: ["/bin/sh" "-c" "docker build --quiet --build-arg VERSION=v1 --tag raftkv:v1 $HOME/projects/raftkv"]
+terraform_data.image (local-exec): sha256:460cc40ba18779cdfcf2b3cd20377ce7fd99c0fa7491a004d59e4e6df044dfda
+terraform_data.image: Creation complete after 1s [id=ec11710b-7b2b-b6e3-658d-851607642305]
+kind_load.image: Creating...
+kind_load.image: Creation complete after 1s [id=raftkv|sha256:460cc40ba18779cdfcf2b3cd20377ce7fd99c0fa7491a004d59e4e6df044dfda]
+kubernetes_stateful_set_v1.raftkv: Creating...
+kubernetes_stateful_set_v1.raftkv: Creation complete after 3s [id=raftkv/raftkv]
+
+Apply complete! Resources: 3 added, 0 changed, 3 destroyed.
+
+Outputs:
+
+client_address = "127.0.0.1:17000"
+client_address_in_cluster = "raftkv-client.raftkv.svc.cluster.local:7000"
+image = "raftkv:v1"
+kubeconfig = "$HOME/projects/raftkv/deploy/terraform/kubeconfig"
+namespace = "raftkv"
+node_container = "raftkv-control-plane"
+nodes = [
+  {
+    "address" = "raftkv-0.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17001"
+    "id" = 1
+    "pod" = "raftkv-0"
+  },
+  {
+    "address" = "raftkv-1.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17002"
+    "id" = 2
+    "pod" = "raftkv-1"
+  },
+  {
+    "address" = "raftkv-2.raftkv-peers.raftkv.svc.cluster.local:7000"
+    "host_address" = "127.0.0.1:17003"
+    "id" = 3
+    "pod" = "raftkv-2"
+  },
+]
+statefulset = "raftkv"
+trial 1: deleted [raftkv-0 raftkv-1 raftkv-2] in term 1; new leader raftkv-1 in term 4 after 3297 ms; first write after 4082 ms; pods ready after 4343 ms; settled after 4343 ms; 0 extra leader changes; from volume false
+trial 2: deleted [raftkv-0 raftkv-1 raftkv-2] in term 4; new leader  in term 0 after 0 ms; first write after 0 ms; pods ready after 60230 ms; settled after 60230 ms; 0 extra leader changes; from volume false
+trial 3: deleted [raftkv-0 raftkv-1 raftkv-2] in term 1; new leader  in term 0 after 0 ms; first write after 0 ms; pods ready after 60827 ms; settled after 60827 ms; 0 extra leader changes; from volume false
+clients: 35731 requests, 7 failed, 203 retries; writes 21347 acknowledged, 6 unknown
+durability over 272 keys: 11414 acknowledged writes lost, 0 duplicated, 0 values never written, 0 keys not read
+Porcupine: Illegal in 0.0 s
+a drawing of the violation is in $HOME/projects/raftkv/results/audit/k8s/planted-emptydir/violation.html.gz
+3 trials, 0 passed: 2 without a new leader, 2 without a first write, 0 not settled, 3 not from the volume
+time to a new leader: median 3297 ms, p95 3297 ms, min 3297, max 3297
+time to the first successful write: median 4082 ms, p95 4082 ms, min 4082, max 4082

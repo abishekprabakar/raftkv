@@ -1,0 +1,187 @@
+{
+  "generated_at": "2026-11-23T09:28:40Z",
+  "command": "kubebench coldstart",
+  "hardware": {
+    "collected_at": "2026-11-23T09:20:27Z",
+    "os": "darwin",
+    "os_version": "macOS 26.5.1",
+    "arch": "arm64",
+    "cpu": "Apple M5",
+    "cores": 10,
+    "memory_bytes": 17179869184,
+    "filesystem": "apfs",
+    "go_version": "go1.27.2",
+    "note": "The pods and their volumes are inside Docker's Linux VM. The filesystem named here is the host's, where only the harness runs."
+  },
+  "versions": {
+    "docker": "29.7.2",
+    "kubernetes": "v1.37.0",
+    "kubectl": "v1.36.1",
+    "kind_node_image": "kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5",
+    "terraform": "1.17.0",
+    "docker_cpus": 10,
+    "docker_memory_bytes": 8319504384,
+    "source_commit": "51ab47e58980b8d75ec520f319948acfe269c456",
+    "source_tree_had_changes": true,
+    "power": "AC Power"
+  },
+  "image": "raftkv:v1",
+  "wall_seconds": 493.309955709,
+  "rounds_requested": 10,
+  "summary": {
+    "rounds": 10,
+    "passed": 10,
+    "ready_with_leader_seconds": {
+      "n": 10,
+      "min": 33.0956765,
+      "median": 34.096088208,
+      "p95": 36.559190833,
+      "p99": 36.559190833,
+      "max": 36.559190833
+    },
+    "terraform_apply_seconds": {
+      "n": 10,
+      "min": 33.568172792,
+      "median": 34.735918208,
+      "p95": 36.811860333,
+      "p99": 36.811860333,
+      "max": 36.811860333
+    },
+    "api_server_answered_seconds": {
+      "n": 10,
+      "min": 24.623283208,
+      "median": 25.758341541,
+      "p95": 27.754867083,
+      "p99": 27.754867083,
+      "max": 27.754867083
+    },
+    "pods_created_seconds": {
+      "n": 10,
+      "min": 26.12721225,
+      "median": 27.282403625,
+      "p95": 29.285980375,
+      "p99": 29.285980375,
+      "max": 29.285980375
+    },
+    "terraform_destroy_seconds": {
+      "n": 10,
+      "min": 14.100411542,
+      "median": 14.126881958,
+      "p95": 14.26445225,
+      "p99": 14.26445225,
+      "max": 14.26445225
+    }
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "terraform_destroy_seconds": 14.26445225,
+      "nothing_left_after_destroy": true,
+      "api_server_answered_seconds": 27.754867083,
+      "pods_created_seconds": 29.285980375,
+      "ready_with_leader_seconds": 36.559190833,
+      "ready_with_leader": true,
+      "terraform_apply_seconds": 36.811860333,
+      "terraform_apply_succeeded": true
+    },
+    {
+      "round": 2,
+      "terraform_destroy_seconds": 14.123254917,
+      "nothing_left_after_destroy": true,
+      "api_server_answered_seconds": 25.99132525,
+      "pods_created_seconds": 27.508136291,
+      "ready_with_leader_seconds": 34.12333125,
+      "ready_with_leader": true,
+      "terraform_apply_seconds": 34.996422416,
+      "terraform_apply_succeeded": true
+    },
+    {
+      "round": 3,
+      "terraform_destroy_seconds": 14.142974875,
+      "nothing_left_after_destroy": true,
+      "api_server_answered_seconds": 25.758341541,
+      "pods_created_seconds": 27.282403625,
+      "ready_with_leader_seconds": 34.489897041,
+      "ready_with_leader": true,
+      "terraform_apply_seconds": 34.735918208,
+      "terraform_apply_succeeded": true
+    },
+    {
+      "round": 4,
+      "terraform_destroy_seconds": 14.248468041,
+      "nothing_left_after_destroy": true,
+      "api_server_answered_seconds": 24.623283208,
+      "pods_created_seconds": 26.12721225,
+      "ready_with_leader_seconds": 33.0956765,
+      "ready_with_leader": true,
+      "terraform_apply_seconds": 33.568172792,
+      "terraform_apply_succeeded": true
+    },
+    {
+      "round": 5,
+      "terraform_destroy_seconds": 14.126881958,
+      "nothing_left_after_destroy": true,
+      "api_server_answered_seconds": 25.140604666,
+      "pods_created_seconds": 26.692635791,
+      "ready_with_leader_seconds": 33.414205083,
+      "ready_with_leader": true,
+      "terraform_apply_seconds": 34.089526,
+      "terraform_apply_succeeded": true
+    },
+    {
+      "round": 6,
+      "terraform_destroy_seconds": 14.100411542,
+      "nothing_left_after_destroy": true,
+      "api_server_answered_seconds": 26.692308083,
+      "pods_created_seconds": 28.167793625,
+      "ready_with_leader_seconds": 35.148185791,
+      "ready_with_leader": true,
+      "terraform_apply_seconds": 35.623911791,
+      "terraform_apply_succeeded": true
+    },
+    {
+      "round": 7,
+      "terraform_destroy_seconds": 14.107478416,
+      "nothing_left_after_destroy": true,
+      "api_server_answered_seconds": 25.867456084,
+      "pods_created_seconds": 27.398047792,
+      "ready_with_leader_seconds": 33.960385375,
+      "ready_with_leader": true,
+      "terraform_apply_seconds": 34.824336542,
+      "terraform_apply_succeeded": true
+    },
+    {
+      "round": 8,
+      "terraform_destroy_seconds": 14.115539041,
+      "nothing_left_after_destroy": true,
+      "api_server_answered_seconds": 25.651964208,
+      "pods_created_seconds": 27.18684325,
+      "ready_with_leader_seconds": 34.082443625,
+      "ready_with_leader": true,
+      "terraform_apply_seconds": 34.588218625,
+      "terraform_apply_succeeded": true
+    },
+    {
+      "round": 9,
+      "terraform_destroy_seconds": 14.186953833,
+      "nothing_left_after_destroy": true,
+      "api_server_answered_seconds": 27.588866167,
+      "pods_created_seconds": 29.135502375,
+      "ready_with_leader_seconds": 35.029875125,
+      "ready_with_leader": true,
+      "terraform_apply_seconds": 36.544141,
+      "terraform_apply_succeeded": true
+    },
+    {
+      "round": 10,
+      "terraform_destroy_seconds": 14.177867541,
+      "nothing_left_after_destroy": true,
+      "api_server_answered_seconds": 25.412235542,
+      "pods_created_seconds": 26.911159167,
+      "ready_with_leader_seconds": 34.096088208,
+      "ready_with_leader": true,
+      "terraform_apply_seconds": 34.432820167,
+      "terraform_apply_succeeded": true
+    }
+  ]
+}

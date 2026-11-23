@@ -1,0 +1,11 @@
+trial 1: deleted [raftkv-0 raftkv-1 raftkv-2] in term 102; new leader raftkv-1 in term 103 after 2325 ms; first write after 4073 ms; pods ready after 3884 ms; settled after 3884 ms; 1 extra leader changes; from volume true
+trial 2: deleted [raftkv-0 raftkv-1 raftkv-2] in term 106; new leader raftkv-0 in term 107 after 1670 ms; first write after 1678 ms; pods ready after 2724 ms; settled after 2724 ms; 0 extra leader changes; from volume true
+trial 3: deleted [raftkv-0 raftkv-1 raftkv-2] in term 107; new leader raftkv-2 in term 108 after 2147 ms; first write after 2371 ms; pods ready after 2702 ms; settled after 2702 ms; 0 extra leader changes; from volume true
+trial 4: deleted [raftkv-0 raftkv-1 raftkv-2] in term 108; new leader raftkv-2 in term 110 after 2129 ms; first write after 2365 ms; pods ready after 2925 ms; settled after 2925 ms; 0 extra leader changes; from volume true
+trial 5: deleted [raftkv-0 raftkv-1 raftkv-2] in term 110; new leader raftkv-2 in term 111 after 2123 ms; first write after 2366 ms; pods ready after 2669 ms; settled after 2669 ms; 0 extra leader changes; from volume true
+clients: 4665 requests, 6 failed, 201 retries; writes 2841 acknowledged, 6 unknown
+durability over 60 keys: 0 acknowledged writes lost, 0 duplicated, 0 values never written, 0 keys not read
+Porcupine: Ok in 0.0 s
+5 trials, 5 passed: 0 without a new leader, 0 without a first write, 0 not settled, 0 not from the volume
+time to a new leader: median 2129 ms, p95 2325 ms, min 1670, max 2325
+time to the first successful write: median 2366 ms, p95 4073 ms, min 1678, max 4073

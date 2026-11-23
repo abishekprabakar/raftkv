@@ -1,0 +1,11 @@
+round 1: destroy 14.3 s, nothing left true; API server after 27.8 s; pods created after 29.3 s; 3 Ready with a leader after 36.6 s; apply returned after 36.8 s
+round 2: destroy 14.1 s, nothing left true; API server after 26.0 s; pods created after 27.5 s; 3 Ready with a leader after 34.1 s; apply returned after 35.0 s
+round 3: destroy 14.1 s, nothing left true; API server after 25.8 s; pods created after 27.3 s; 3 Ready with a leader after 34.5 s; apply returned after 34.7 s
+round 4: destroy 14.2 s, nothing left true; API server after 24.6 s; pods created after 26.1 s; 3 Ready with a leader after 33.1 s; apply returned after 33.6 s
+round 5: destroy 14.1 s, nothing left true; API server after 25.1 s; pods created after 26.7 s; 3 Ready with a leader after 33.4 s; apply returned after 34.1 s
+round 6: destroy 14.1 s, nothing left true; API server after 26.7 s; pods created after 28.2 s; 3 Ready with a leader after 35.1 s; apply returned after 35.6 s
+round 7: destroy 14.1 s, nothing left true; API server after 25.9 s; pods created after 27.4 s; 3 Ready with a leader after 34.0 s; apply returned after 34.8 s
+round 8: destroy 14.1 s, nothing left true; API server after 25.7 s; pods created after 27.2 s; 3 Ready with a leader after 34.1 s; apply returned after 34.6 s
+round 9: destroy 14.2 s, nothing left true; API server after 27.6 s; pods created after 29.1 s; 3 Ready with a leader after 35.0 s; apply returned after 36.5 s
+round 10: destroy 14.2 s, nothing left true; API server after 25.4 s; pods created after 26.9 s; 3 Ready with a leader after 34.1 s; apply returned after 34.4 s
+10 rounds, 10 passed; cold start median 34.1 s (min 33.1, max 36.6)

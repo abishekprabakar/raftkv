@@ -1,0 +1,15 @@
+ok   A1: after one apply, 3 pods are Ready and the nodes agree on a leader
+     3 of 3 pods Ready; every node names raftkv-0 (node 1) leader in term 1
+ok   A2: the StatefulSet, Services, budget, claims and probes are as specified
+     StatefulSet: 3 replicas, Parallel start, RollingUpdate, 3 probes; headless Service raftkv-peers publishes not-ready addresses; client Service raftkv-client; budget maxUnavailable 1, 1 disruption allowed; 3 claims Bound
+ok   A4: a write and a read through the client Service, from a pod and from the host
+     put and get through raftkv-client.raftkv.svc.cluster.local:7000 from two pods, and through 127.0.0.1:17000 from the host
+ok   K1: a node without a majority is Running, not Ready, and not restarted
+     raftkv-0 alone: not Ready 4.8 s after the scale-down, still Running with 0 restarts after 20s. The kubelet's last probe failure: Readiness probe failed: HTTP probe failed with statuscode: 503. Scaled back: 3 Ready, and the key written before reads back
+ok   K1-plan: terraform plan reports no changes after K1
+     terraform plan -detailed-exitcode exited 0
+ok   K2: the disruption budget lets a drain evict only one pod
+     the drain evicted raftkv-0 and was refused the other two for 30s ("Cannot evict pod as it would violate the pod's disruption budget"); 2 pods stayed Ready and a write succeeded meanwhile; after uncordon, 3 Ready
+ok   K2-plan: terraform plan reports no changes after K2
+     terraform plan -detailed-exitcode exited 0
+7 checks passed, 0 failed

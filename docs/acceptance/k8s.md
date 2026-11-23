@@ -324,6 +324,54 @@ the old one", and each P3 round waits out the full 60 s.
 **Order of the run.** T, H, P1 and A3 first. Then destroy anything left over, A1, the
 live checks, F with D, R, U, C, P2, P3 and X.
 
+## Second addendum: the first acceptance run, and why everything ran again
+
+The first run of `scripts/audit/k8s/run.sh`, on commit `51ab47e`, passed every
+criterion above. It is not the run that is reported.
+
+**What was wrong.** Nothing in the system: something in what the run wrote down.
+`terraform destroy` lists what it is about to remove, and the kind provider does not
+mark the cluster's client key as sensitive, so Terraform printed the key and the
+kubeconfig in full. Four of the run's logs held them: the destroy before A1, the
+destroy at X1, the apply at A1, and the cold start rounds. Each key opened only a
+local cluster that had already been destroyed. None of those logs was committed, and
+all four were deleted.
+
+**What changed before the second run.**
+
+- Credentials are replaced with `[redacted]` before anything is shown or written:
+  `scripts/k8s/terraform.sh` for the `make` targets and the runner, and `kube.Redact`
+  inside `cmd/kubebench`. Test: `TestRedactHidesCredentials`.
+- A new criterion, below.
+- The reports gained three numbers, so that everything the notes quote is in a
+  results file: how many elections finished in one term, how long after the new
+  leader the first write came, and how many terms passed during each rollout.
+- Two comments were reworded.
+
+None of this changes a node, a Terraform resource, the client load or how anything is
+timed. It still counts as a code change, and the rule at the end of this file says a
+code change means everything runs again on the final commit. It also means the logs
+that are committed are the ones the fixed tooling wrote, not logs edited by hand.
+
+| ID | What | Pass criterion |
+|---|---|---|
+| S1 | `grep` over everything the run recorded | no file holds a private key, or a kubeconfig's key or certificate data |
+
+**The first run, for the record.** Its reports and step logs are in
+`results/audit/k8s/first-run/`. Its client histories and command logs were not kept.
+
+| Measured in the first run | Value |
+|---|---|
+| Time to a new leader: median / p95, 100 trials | 705 ms / 954 ms |
+| Time to the first successful write: median / p95 | 755 ms / 1,193 ms |
+| Acknowledged writes lost across the failovers | 0 of 81,813 |
+| Failed client requests across 10 rolling updates | 0 of 35,103 |
+| Rollout time: median | 8.9 s |
+| Cold start: median of 10 | 34.1 s |
+
+The second run's numbers differ a little, as any two runs do. Both are real. The
+second is the one in the README because it is the one on the final commit.
+
 ## If something fails
 
 A failed criterion gets reported, not rerun until it passes. A target that isn't met
