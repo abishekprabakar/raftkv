@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"errors"
 	"io"
 	"log/slog"
 	"sync/atomic"
@@ -105,10 +104,6 @@ func (p *peer) run(ctx context.Context) {
 			p.log.Info("stream to peer open", "peer", p.id)
 			pause = 50 * time.Millisecond
 			err = p.pump(ctx, stream)
-			if errors.Is(err, io.EOF) {
-				// Send only says the stream ended. The receiver's reason is here.
-				_, err = stream.CloseAndRecv()
-			}
 			if ctx.Err() == nil {
 				p.log.Info("stream to peer lost", "peer", p.id, "err", err)
 			}
@@ -138,13 +133,42 @@ func (p *peer) run(ctx context.Context) {
 	}
 }
 
+// pump sends queued messages on the stream until the stream ends, and says why
+// it ended.
+//
+// It has to notice a stream that dies while nothing is being sent. A follower
+// sends nothing to another follower between elections, so that stream is idle
+// for as long as the leader is healthy. If the other node restarts meanwhile,
+// the stream is dead, and Send is the only call that would find out: the first
+// message written to it, which is the RequestVote of the next election or the
+// reply to one, would be lost with it. The Kubernetes failover runs caught
+// exactly that: most elections failed once and had to be run again.
 func (p *peer) pump(ctx context.Context, stream pb.Raft_StreamClient) error {
+	// The peer answers a stream only once, when it ends, so this receive blocks
+	// for as long as the stream is alive and returns the reason when it isn't.
+	ended := make(chan error, 1)
+	go func() {
+		err := stream.RecvMsg(new(pb.StreamClosed))
+		if err == nil {
+			err = io.EOF // the peer closed the stream without an error
+		}
+		ended <- err
+	}()
 	for {
 		select {
 		case env := <-p.queue:
 			if err := stream.Send(env); err != nil {
-				return err
+				// Send only says the stream ended. The receive has the reason,
+				// and gets it at once, since the stream is over.
+				select {
+				case why := <-ended:
+					return why
+				case <-time.After(time.Second):
+					return err
+				}
 			}
+		case err := <-ended:
+			return err
 		case <-ctx.Done():
 			return ctx.Err()
 		}
